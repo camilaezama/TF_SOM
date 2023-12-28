@@ -171,11 +171,15 @@ class _HomePageState extends State<HomePage> {
 
                       String jsonResult = jsonEncode(result);
 
-                      print(jsonResult);
+                      //print(jsonResult);
 
                       try {
                         var url = Uri.parse('http://localhost:7777');
-                        var response = await http.post(url, body: jsonResult);
+                        var response = await http.post(url,
+                            headers: {
+                              'Accept':'/*'
+                            },
+                            body: jsonResult);
 
                         print('Response status: ${response.statusCode}');
                         print('Response body: ${response.body}');
