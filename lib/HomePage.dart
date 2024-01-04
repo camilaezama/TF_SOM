@@ -151,72 +151,75 @@ class _HomePageState extends State<HomePage> {
               Center(
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
-                  child: Row(mainAxisAlignment: MainAxisAlignment.center,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton(
                           onPressed: () async {
                             //Navigator.pushNamed(context, '/grillas');
-                      
+
                             ByteData byteData = csvToByteData(csvData);
-                      
-                            String content =
-                                String.fromCharCodes(byteData.buffer.asUint8List());
-                      
+
+                            String content = String.fromCharCodes(
+                                byteData.buffer.asUint8List());
+
                             // Parsear el contenido CSV con el delimitador ';'
                             List<List<dynamic>> rows = const CsvToListConverter(
                                     eol: '\n', fieldDelimiter: ';')
                                 .convert(content);
-                      
+
                             //print(rows);
-                      
+
                             List<Map<String, String>> result =
                                 convertRowsToMap(rows);
-                      
+
                             //print(result);
-                      
+
                             String jsonResult = jsonEncode(result);
-                      
+
                             //print(jsonResult);
-                      
+
                             try {
-                              var url = Uri.parse('http://localhost:7777');
-                      
+                              var url = Uri.parse('http://localhost:7777' + '/json');
+
                               setState(() {
                                 //boton = "Cargando...";
                                 cargando = true;
                               });
+                              // var response = await http.post(url,
+                              //     headers: {'Accept': '/*'}, body: jsonResult);
                               var response = await http.post(url,
-                                  headers: {'Accept': '/*'}, body: jsonResult);
-                      
+                                  headers: {'Accept': '/*'}, body: jsonEncode({"datos":jsonResult, "tipo":"json"}));
+
                               // print('Response status: ${response.statusCode}');
                               // print('Response body: ${response.body}');
-                      
+
                               // Map<String, dynamic> jsonList = json.decode(response.body);
                               // Map<String,Map<String, String>> mapaRta = Map<String,Map<String, String>>.from(jsonList);
-                      
+
                               // Decodificar la cadena JSON
                               Map<String, dynamic> decodedJson =
                                   json.decode(response.body);
-                      
+
                               // Mapa final que deseas obtener
                               Map<String, Map<String, String>> mapaRta = {};
-                      
+
                               // Iterar sobre las claves externas del primer nivel
                               for (String outerKey in decodedJson.keys) {
                                 // Obtener el valor correspondiente a la clave externa
                                 Map<String, dynamic> innerMap =
                                     decodedJson[outerKey];
-                      
+
                                 // Convertir el mapa interno a Map<String, String>
                                 Map<String, String> innerMapString = {};
                                 innerMap.forEach((key, value) {
                                   innerMapString[key] = value.toString();
                                 });
-                      
+
                                 // Agregar el par clave-valor al mapa final
                                 mapaRta[outerKey] = innerMapString;
-                              }                          
-                      
+                              }
+
                               Map<String, String> mapaUdist = mapaRta["Udist"]!;
                               // print('\n\n\n');
                               // print('/////////////////////////// Mapa: ${mapaRta}');
@@ -227,7 +230,7 @@ class _HomePageState extends State<HomePage> {
                                 //boton = 'La respuesta fue: ${response.body}';
                                 Navigator.pushNamed(context, '/grillas',
                                     arguments: mapaUdist);
-                      
+
                                 cargando = false;
                               });
                             } catch (e) {
@@ -252,8 +255,7 @@ class _HomePageState extends State<HomePage> {
                                   botonAceptar,
                                   style: TextStyle(fontSize: 16),
                                 )),
-                                ElevatedButton(onPressed: () {}, child: Text(botonParam)
-                                )
+                      ElevatedButton(onPressed: () {}, child: Text(botonParam))
                     ],
                   ),
                 ),
