@@ -143,11 +143,6 @@ class _GrillaSimpleState extends State<GrillaSimple> {
 
     Uint8List pngBytes = byteData!.buffer.asUint8List();
 
-    // // // Ruta de destino para guardar la imagen
-    // String filePath = r'assets\imagen.png';
-    // // Escribir los bytes en un archivo
-    // await File(filePath).writeAsBytes(pngBytes);
-
     final blob = html.Blob([pngBytes]);
     final url = html.Url.createObjectUrlFromBlob(blob);
     final anchor = html.AnchorElement(href: url)
@@ -176,18 +171,4 @@ class _GrillaSimpleState extends State<GrillaSimple> {
       },
     );
   }
-
-  // Future<String> widgetToSvg(GlobalKey key) async {
-  // // Create a PictureRecorder to record the widget as an image
-  // final recorder = ui.PictureRecorder();
-  // final RenderRepaintBoundary boundary = key.currentContext!.findRenderObject() as RenderRepaintBoundary;
-  // final image = await boundary.toImage(pixelRatio: 3.0);
-  // final canvas = Canvas(recorder);
-
-  // // Convert the widget to an SVG image
-  // canvas.drawImage(image, Offset.zero, Paint());
-  // final svgBytes = await recorder.endRecording().toSvg();
-
-  // return svgBytes;
-  // }
 }
