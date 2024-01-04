@@ -19,6 +19,7 @@ class _GrillasPageState extends State<GrillasPage>
   bool showControls = true;
 
   late TabController tabController;
+  Map<String, String> data = {};
 
   @override
   void initState() {
@@ -41,6 +42,10 @@ class _GrillasPageState extends State<GrillasPage>
 
   @override
   Widget build(BuildContext context) {
+
+    data =
+        ModalRoute.of(context)!.settings.arguments as Map<String, String>;
+
     return Scaffold(
         appBar: AppBar(
           title: const Text('Grillas Page'),
@@ -53,8 +58,9 @@ class _GrillasPageState extends State<GrillasPage>
               bottom: TabBar(
                 controller: tabController,
                 tabs: const [
-                  Tab(text: 'Umat'),
                   Tab(text: 'BMUs'),
+                  Tab(text: 'Umat'),
+                  
                 ],
               ),
               toolbarHeight: 0.0,
@@ -63,8 +69,9 @@ class _GrillasPageState extends State<GrillasPage>
               controller: tabController,
               physics: const NeverScrollableScrollPhysics(),
               children: [
-                _buildWidgetUMat(),
-                _buildWidgetBMUs()
+                 _buildWidgetBMUs(),
+                _buildWidgetUMat()
+               
                 // _buildWidget2(),
               ],
             ),
@@ -127,7 +134,8 @@ class _GrillasPageState extends State<GrillasPage>
         } else {
           // Construir la interfaz con los datos cargados
           Map<String, String> dataMap = snapshot.data!;
-          return GrillaSimple(gradiente: gradiente, dataMap: dataMap);
+          print('Mapa actual que usamos: ${data}');
+          return GrillaSimple(gradiente: gradiente, dataMap: data);
         }
       },
     );

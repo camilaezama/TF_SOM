@@ -13,6 +13,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<List<dynamic>> csvData = [];
   String boton = 'Aceptar';
+  bool cargando = false;
 
   void _loadCSVData(FilePickerResult result) async {
     Uint8List? fileBytes = result.files.first.bytes;
@@ -150,59 +151,104 @@ class _HomePageState extends State<HomePage> {
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: ElevatedButton(
-                    onPressed: () async {
-                      //Navigator.pushNamed(context, '/grillas');
+                      onPressed: () async {
+                        //Navigator.pushNamed(context, '/grillas');
 
-                      ByteData byteData = csvToByteData(csvData);
+                        ByteData byteData = csvToByteData(csvData);
 
-                      String content =
-                          String.fromCharCodes(byteData.buffer.asUint8List());
+                        String content =
+                            String.fromCharCodes(byteData.buffer.asUint8List());
 
-                      // Parsear el contenido CSV con el delimitador ';'
-                      List<List<dynamic>> rows = const CsvToListConverter(
-                              eol: '\n', fieldDelimiter: ';')
-                          .convert(content);
+                        // Parsear el contenido CSV con el delimitador ';'
+                        List<List<dynamic>> rows = const CsvToListConverter(
+                                eol: '\n', fieldDelimiter: ';')
+                            .convert(content);
 
-                      //print(rows);
+                        //print(rows);
 
-                      List<Map<String, String>> result = convertRowsToMap(rows);
+                        List<Map<String, String>> result =
+                            convertRowsToMap(rows);
 
-                      //print(result);
+                        //print(result);
 
-                      String jsonResult = jsonEncode(result);
+                        String jsonResult = jsonEncode(result);
 
-                      //print(jsonResult);
+                        //print(jsonResult);
 
-                      try {
-                        var url = Uri.parse('http://localhost:7777');
-                        var response = await http.post(url,
-                            headers: {
-                              'Accept':'/*'
-                            },
-                            body: jsonResult);
+                        try {
+                          var url = Uri.parse('http://localhost:7777');
 
-                        print('Response status: ${response.statusCode}');
-                        print('Response body: ${response.body}');
-                        setState(() {
-                          boton = 'La respuesta fue: ${response.body}';
-                        });
-                      } catch (e) {
-                        print('Error: $e');
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                          setState(() {
+                            //boton = "Cargando...";
+                            cargando = true;
+                          });
+                          var response = await http.post(url,
+                              headers: {'Accept': '/*'}, body: jsonResult);
+
+                          // print('Response status: ${response.statusCode}');
+                          // print('Response body: ${response.body}');
+
+                          // Map<String, dynamic> jsonList = json.decode(response.body);
+                          // Map<String,Map<String, String>> mapaRta = Map<String,Map<String, String>>.from(jsonList);
+
+                          // Decodificar la cadena JSON
+                          Map<String, dynamic> decodedJson =
+                              json.decode(response.body);
+
+                          // Mapa final que deseas obtener
+                          Map<String, Map<String, String>> mapaRta = {};
+
+                          // Iterar sobre las claves externas del primer nivel
+                          for (String outerKey in decodedJson.keys) {
+                            // Obtener el valor correspondiente a la clave externa
+                            Map<String, dynamic> innerMap =
+                                decodedJson[outerKey];
+
+                            // Convertir el mapa interno a Map<String, String>
+                            Map<String, String> innerMapString = {};
+                            innerMap.forEach((key, value) {
+                              innerMapString[key] = value.toString();
+                            });
+
+                            // Agregar el par clave-valor al mapa final
+                            mapaRta[outerKey] = innerMapString;
+                          }                          
+
+                          Map<String, String> mapaUdist = mapaRta["Udist"]!;
+                          // print('\n\n\n');
+                          // print('/////////////////////////// Mapa: ${mapaRta}');
+                          // print('\n\n\n');
+                          // print('/////////////////////////// Mapa Udist: ${mapaUdist}');
+                          // print('\n\n\n');
+                          setState(() {
+                            //boton = 'La respuesta fue: ${response.body}';
+                            Navigator.pushNamed(context, '/grillas',
+                                arguments: mapaUdist);
+
+                            cargando = false;
+                          });
+                        } catch (e) {
+                          print('Error: $e');
+                          setState(() {
+                            cargando = false;
+                            boton = "Aceptar.";
+                          });
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
                       ),
-                    ),
-                    child: Text(
-                      boton,
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ),
+                      child: cargando
+                          ? CircularProgressIndicator()
+                          : Text(
+                              boton,
+                              style: TextStyle(fontSize: 16),
+                            )),
                 ),
               ),
             ],
