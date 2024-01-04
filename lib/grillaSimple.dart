@@ -5,12 +5,13 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_application_1/utils.dart';
 import 'package:hexagon/hexagon.dart';
 
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:ui' as ui;
+import 'dart:html' as html;
+import 'dart:typed_data';
 
 class GrillaSimple extends StatefulWidget {
   final Gradient? gradiente;
@@ -135,57 +136,39 @@ class _GrillaSimpleState extends State<GrillaSimple> {
   }
 
   void save() async {
-    final boundary = _widgetKey.currentContext!.findRenderObject()!
-        as RenderRepaintBoundary;
+    final boundary =
+        _widgetKey.currentContext!.findRenderObject()! as RenderRepaintBoundary;
     final image = await boundary.toImage(pixelRatio: 2);
     final byteData = await image.toByteData(format: ImageByteFormat.png);
 
     Uint8List pngBytes = byteData!.buffer.asUint8List();
 
-    // // Ruta de destino para guardar la imagen
-    // String filePath = 'C:/Users/dell/Desktop/pruebas imagenes/imagen.png';
+    final blob = html.Blob([pngBytes]);
+    final url = html.Url.createObjectUrlFromBlob(blob);
+    final anchor = html.AnchorElement(href: url)
+      ..setAttribute('download', "image.png")
+      ..click();
 
-    // // Escribir los bytes en un archivo
-    // await File(filePath).writeAsBytes(pngBytes);
+    html.Url.revokeObjectUrl(url);
 
     showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text('Imagen generada'),
-        content: Container(
-          child: Image.memory(pngBytes),
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text('Cerrar'),
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Imagen generada'),
+          content: Container(
+            child: Image.memory(pngBytes),
           ),
-        ],
-      );
-    },
-  );
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cerrar'),
+            ),
+          ],
+        );
+      },
+    );
   }
-
-    // Future<String> widgetToSvg(GlobalKey key) async {
-    // // Create a PictureRecorder to record the widget as an image
-    // final recorder = ui.PictureRecorder();
-    // final RenderRepaintBoundary boundary = key.currentContext!.findRenderObject() as RenderRepaintBoundary;
-    // final image = await boundary.toImage(pixelRatio: 3.0);
-    // final canvas = Canvas(recorder);
-
-    // // Convert the widget to an SVG image
-    // canvas.drawImage(image, Offset.zero, Paint());
-    // final svgBytes = await recorder.endRecording().toSvg();
-
-    // return svgBytes;
-  // }
 }
-
-
-
-
-
-

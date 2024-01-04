@@ -255,7 +255,36 @@ class _HomePageState extends State<HomePage> {
                                   botonAceptar,
                                   style: TextStyle(fontSize: 16),
                                 )),
-                      ElevatedButton(onPressed: () {}, child: Text(botonParam))
+                                ElevatedButton(onPressed: () {
+                    //loadData();
+                    showDialog<void>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Parametros configurables'),
+                          content: const SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                TextField(decoration: InputDecoration(border: OutlineInputBorder(),labelText: 'Cantidad de filas')),
+                                SizedBox(height: 5,),
+                                TextField(decoration: InputDecoration(border: OutlineInputBorder(),labelText: 'Cantidad de columnas')),
+                                Text( 'PENDIENTE'),
+                              ],
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context)
+                                    .pop(); // Cerrar el cuadro de diálogo
+                              },
+                              child: Text('Cerrar'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }, child: Text(botonParam))
                     ],
                   ),
                 ),
