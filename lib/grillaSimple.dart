@@ -5,12 +5,8 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_application_1/utils.dart';
 import 'package:hexagon/hexagon.dart';
 
-import 'dart:io';
-import 'dart:typed_data';
 
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'dart:ui' as ui;
+import 'dart:typed_data';
 
 class GrillaSimple extends StatefulWidget {
   final Gradient? gradiente;
