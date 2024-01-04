@@ -24,7 +24,7 @@ class _GrillasPageState extends State<GrillasPage>
   @override
   void initState() {
     super.initState();
-    tabController = TabController(initialIndex: 0, length: 2, vsync: this);
+    tabController = TabController(initialIndex: 0, length: 3, vsync: this);
     tabController.addListener(_onTabChange);
   }
 
@@ -42,25 +42,23 @@ class _GrillasPageState extends State<GrillasPage>
 
   @override
   Widget build(BuildContext context) {
-
-    data =
-        ModalRoute.of(context)!.settings.arguments as Map<String, String>;
+    data = ModalRoute.of(context)!.settings.arguments as Map<String, String>;
 
     return Scaffold(
         appBar: AppBar(
           title: const Text('Grillas Page'),
         ),
         body: DefaultTabController(
-          length: 2,
+          length: 3,
           initialIndex: 0,
           child: Scaffold(
-            appBar: AppBar(              
+            appBar: AppBar(
               bottom: TabBar(
                 controller: tabController,
                 tabs: const [
                   Tab(text: 'BMUs'),
                   Tab(text: 'Umat'),
-                  
+                  Tab(text: 'Componentes'),
                 ],
               ),
               toolbarHeight: 0.0,
@@ -69,14 +67,19 @@ class _GrillasPageState extends State<GrillasPage>
               controller: tabController,
               physics: const NeverScrollableScrollPhysics(),
               children: [
-                 _buildWidgetBMUs(),
-                _buildWidgetUMat()
-               
+                _buildWidgetBMUs(),
+                _buildWidgetUMat(),
+                _buildWidgetComponentes(),
+
                 // _buildWidget2(),
               ],
             ),
           ),
         ));
+  }
+
+  Widget _buildWidgetComponentes() {
+    return Text('hola a todos');
   }
 
   Widget _buildWidgetUMat() {
