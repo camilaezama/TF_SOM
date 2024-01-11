@@ -5,6 +5,8 @@ import 'grillaCompleja.dart';
 import 'grillaSimple.dart';
 import 'utils.dart';
 
+import 'buttons/dropdownbutton_componentes.dart';
+
 class GrillasPage extends StatefulWidget {
   @override
   State<GrillasPage> createState() => _GrillasPageState();
@@ -19,7 +21,8 @@ class _GrillasPageState extends State<GrillasPage>
   bool showControls = true;
 
   late TabController tabController;
-  Map<String, String> data = {};
+  Map<String, String> dataUdist = {};
+  Map<String, dynamic> mapaRta = {};
 
   @override
   void initState() {
@@ -42,7 +45,9 @@ class _GrillasPageState extends State<GrillasPage>
 
   @override
   Widget build(BuildContext context) {
-    data = ModalRoute.of(context)!.settings.arguments as Map<String, String>;
+    mapaRta =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    dataUdist = mapaRta["Udist"]!;
 
     return Scaffold(
         appBar: AppBar(
@@ -69,7 +74,7 @@ class _GrillasPageState extends State<GrillasPage>
               children: [
                 _buildWidgetBMUs(),
                 _buildWidgetUMat(),
-                _buildWidgetComponentes(),
+                _buildWidgetComponentes(mapaRta),
 
                 // _buildWidget2(),
               ],
@@ -78,8 +83,24 @@ class _GrillasPageState extends State<GrillasPage>
         ));
   }
 
-  Widget _buildWidgetComponentes() {
-    return Text('hola a todos');
+  Widget _buildWidgetComponentes(Map<String, dynamic> mapaRta) {
+    List<String> options = [];
+    //Ignora las primeras 6 (i = 7) porque son BMU, Udist, etc etc, me quedo con las que son componentes
+    List<String> keys = mapaRta.keys.toList();
+    for (var i = 7; i < keys.length; i++) {
+      options.add(keys[i]);
+    }
+
+    //Aca hay que generar la/las grilla(s), meterla en el widget que se hace return
+    return Center(
+        child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text('Elija la componente a mostrar: '),
+        const SizedBox(width: 5),
+        DropdownMenuComponentes(listaOpciones: options)
+      ],
+    ));
   }
 
   Widget _buildWidgetUMat() {
@@ -137,8 +158,8 @@ class _GrillasPageState extends State<GrillasPage>
         } else {
           // Construir la interfaz con los datos cargados
           Map<String, String> dataMap = snapshot.data!;
-          print('Mapa actual que usamos: ${data}');
-          return GrillaSimple(gradiente: gradiente, dataMap: data);
+          print('Mapa actual que usamos: ${dataMap}');
+          return GrillaSimple(gradiente: gradiente, dataMap: dataUdist);
         }
       },
     );
