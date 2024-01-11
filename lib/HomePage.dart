@@ -40,9 +40,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<String>? columnNames;
-
+  late double _width, _height;
   @override
   Widget build(BuildContext context) {
+    _width = MediaQuery.of(context).size.width;
+    _height = MediaQuery.of(context).size.height;
+
     if (csvData.isNotEmpty) {
       columnNames = csvData[0][0].toString().split(';');
     }
@@ -223,7 +226,6 @@ class _HomePageState extends State<HomePage> {
                                 mapaRta[outerKey] = innerMapString;
                               }
 
-                              
                               // print('\n\n\n');
                               // print('/////////////////////////// Mapa: ${mapaRta}');
                               // print('\n\n\n');
@@ -231,8 +233,11 @@ class _HomePageState extends State<HomePage> {
                               // print('\n\n\n');
                               setState(() {
                                 //boton = 'La respuesta fue: ${response.body}';
-                                Navigator.pushNamed(context, '/grillas',
-                                    arguments: mapaRta,);
+                                Navigator.pushNamed(
+                                  context,
+                                  '/grillas',
+                                  arguments: mapaRta,
+                                );
                                 cargando = false;
                               });
                             } catch (e) {
@@ -265,24 +270,65 @@ class _HomePageState extends State<HomePage> {
                               builder: (BuildContext context) {
                                 return AlertDialog(
                                   title: const Text('Parametros configurables'),
-                                  content: const SingleChildScrollView(
-                                    child: Column(
-                                      children: [
-                                        TextField(
-                                            decoration: InputDecoration(
-                                                border: OutlineInputBorder(),
-                                                labelText:
-                                                    'Cantidad de filas')),
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-                                        TextField(
-                                            decoration: InputDecoration(
-                                                border: OutlineInputBorder(),
-                                                labelText:
-                                                    'Cantidad de columnas')),
-                                        Text('PENDIENTE'),
-                                      ],
+                                  content: Container(
+                                    width: _width * 0.5,
+                                    height: _height * 0.5,
+                                    child: const SingleChildScrollView(
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: TextField(
+                                                    decoration: InputDecoration(
+                                                        border:
+                                                            OutlineInputBorder(),
+                                                        labelText:
+                                                            'Cantidad de filas')),
+                                              ),
+                                              SizedBox(
+                                                width: 20,
+                                              ),
+                                              Expanded(
+                                                child: TextField(
+                                                  decoration: InputDecoration(
+                                                      border:
+                                                          OutlineInputBorder(),
+                                                      labelText:
+                                                          'Cantidad de columnas'),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 20,
+                                          ),
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: TextField(
+                                                    decoration: InputDecoration(
+                                                        border:
+                                                            OutlineInputBorder(),
+                                                        labelText:
+                                                            'Cantidad de filas')),
+                                              ),
+                                              SizedBox(
+                                                width: 20,
+                                              ),
+                                              Expanded(
+                                                child: TextField(
+                                                  decoration: InputDecoration(
+                                                      border:
+                                                          OutlineInputBorder(),
+                                                      labelText:
+                                                          'Cantidad de columnas'),
+                                                ),
+                                              )
+                                            ],
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
                                   actions: [
