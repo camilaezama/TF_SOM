@@ -26,33 +26,33 @@ class _GrillaSimpleState extends State<GrillaSimple> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        ElevatedButton(onPressed: save, child: Icon(Icons.download)),
-        Container(
-          width: 100.0, // ajusta la altura según tus necesidades
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter, // comienza desde la parte superior
-              end: Alignment.bottomCenter, // termina en la parte inferior
-              colors: [
-                Color.fromARGB(255, 8, 82, 143),
-                Colors.blue,
-                Colors.green,
-                Colors.yellow,
-                Colors.orange,
-                Colors.red,
-              ],
-              stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
+    return RepaintBoundary(
+      key: _widgetKey,
+      child: Row(
+        children: [
+          ElevatedButton(onPressed: save, child: Icon(Icons.download)),
+          Container(
+            width: 100.0, // ajusta la altura según tus necesidades
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter, // comienza desde la parte superior
+                end: Alignment.bottomCenter, // termina en la parte inferior
+                colors: [
+                  Color.fromARGB(255, 8, 82, 143),
+                  Colors.blue,
+                  Colors.green,
+                  Colors.yellow,
+                  Colors.orange,
+                  Colors.red,
+                ],
+                stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
+              ),
             ),
           ),
-        ),
-        // Container(
-        //     height: 50.0,
-        //     decoration: BoxDecoration(gradient: widget.gradiente)),
-        RepaintBoundary(
-          key: _widgetKey,
-          child: InteractiveViewer(
+          // Container(
+          //     height: 50.0,
+          //     decoration: BoxDecoration(gradient: widget.gradiente)),
+          InteractiveViewer(
             child: HexagonOffsetGrid.evenPointy(
               //color: Colors.yellow.shade100,
               padding: const EdgeInsets.only(
@@ -129,8 +129,8 @@ class _GrillaSimpleState extends State<GrillaSimple> {
               // child: Text('$col, $row')),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -145,29 +145,29 @@ class _GrillaSimpleState extends State<GrillaSimple> {
     final blob = html.Blob([pngBytes]);
     final url = html.Url.createObjectUrlFromBlob(blob);
     final anchor = html.AnchorElement(href: url)
-      ..setAttribute('download', "image.png")
+      ..setAttribute('download', "UMatrixSimple.png")
       ..click();
 
     html.Url.revokeObjectUrl(url);
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Imagen generada'),
-          content: Container(
-            child: Image.memory(pngBytes),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Cerrar'),
-            ),
-          ],
-        );
-      },
-    );
+    // showDialog(
+    //   context: context,
+    //   builder: (BuildContext context) {
+    //     return AlertDialog(
+    //       title: Text('Imagen generada'),
+    //       content: Container(
+    //         child: Image.memory(pngBytes),
+    //       ),
+    //       actions: <Widget>[
+    //         TextButton(
+    //           onPressed: () {
+    //             Navigator.of(context).pop();
+    //           },
+    //           child: Text('Cerrar'),
+    //         ),
+    //       ],
+    //     );
+    //   },
+    // );
   }
 }
