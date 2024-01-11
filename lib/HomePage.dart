@@ -180,7 +180,8 @@ class _HomePageState extends State<HomePage> {
                             //print(jsonResult);
 
                             try {
-                              var url = Uri.parse('http://localhost:7777' + '/json');
+                              var url =
+                                  Uri.parse('http://localhost:7777' + '/json');
 
                               setState(() {
                                 //boton = "Cargando...";
@@ -189,7 +190,9 @@ class _HomePageState extends State<HomePage> {
                               // var response = await http.post(url,
                               //     headers: {'Accept': '/*'}, body: jsonResult);
                               var response = await http.post(url,
-                                  headers: {'Accept': '/*'}, body: jsonEncode({"datos":jsonResult, "tipo":"json"}));
+                                  headers: {'Accept': '/*'},
+                                  body: jsonEncode(
+                                      {"datos": jsonResult, "tipo": "json"}));
 
                               // print('Response status: ${response.statusCode}');
                               // print('Response body: ${response.body}');
@@ -220,7 +223,7 @@ class _HomePageState extends State<HomePage> {
                                 mapaRta[outerKey] = innerMapString;
                               }
 
-                              Map<String, String> mapaUdist = mapaRta["Udist"]!;
+                              
                               // print('\n\n\n');
                               // print('/////////////////////////// Mapa: ${mapaRta}');
                               // print('\n\n\n');
@@ -229,8 +232,7 @@ class _HomePageState extends State<HomePage> {
                               setState(() {
                                 //boton = 'La respuesta fue: ${response.body}';
                                 Navigator.pushNamed(context, '/grillas',
-                                    arguments: mapaUdist);
-
+                                    arguments: mapaRta,);
                                 cargando = false;
                               });
                             } catch (e) {
@@ -255,36 +257,48 @@ class _HomePageState extends State<HomePage> {
                                   botonAceptar,
                                   style: TextStyle(fontSize: 16),
                                 )),
-                                ElevatedButton(onPressed: () {
-                    //loadData();
-                    showDialog<void>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('Parametros configurables'),
-                          content: const SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                TextField(decoration: InputDecoration(border: OutlineInputBorder(),labelText: 'Cantidad de filas')),
-                                SizedBox(height: 5,),
-                                TextField(decoration: InputDecoration(border: OutlineInputBorder(),labelText: 'Cantidad de columnas')),
-                                Text( 'PENDIENTE'),
-                              ],
-                            ),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context)
-                                    .pop(); // Cerrar el cuadro de diálogo
+                      ElevatedButton(
+                          onPressed: () {
+                            //loadData();
+                            showDialog<void>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('Parametros configurables'),
+                                  content: const SingleChildScrollView(
+                                    child: Column(
+                                      children: [
+                                        TextField(
+                                            decoration: InputDecoration(
+                                                border: OutlineInputBorder(),
+                                                labelText:
+                                                    'Cantidad de filas')),
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        TextField(
+                                            decoration: InputDecoration(
+                                                border: OutlineInputBorder(),
+                                                labelText:
+                                                    'Cantidad de columnas')),
+                                        Text('PENDIENTE'),
+                                      ],
+                                    ),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context)
+                                            .pop(); // Cerrar el cuadro de diálogo
+                                      },
+                                      child: Text('Cerrar'),
+                                    ),
+                                  ],
+                                );
                               },
-                              child: Text('Cerrar'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  }, child: Text(botonParam))
+                            );
+                          },
+                          child: Text(botonParam))
                     ],
                   ),
                 ),

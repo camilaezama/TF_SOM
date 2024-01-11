@@ -8,7 +8,6 @@ import 'package:hexagon/hexagon.dart';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:ui' as ui;
 import 'dart:html' as html;
 import 'dart:typed_data';
