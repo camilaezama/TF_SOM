@@ -1,16 +1,11 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_application_1/utils.dart';
 import 'package:hexagon/hexagon.dart';
-
 import 'dart:typed_data';
-
-import 'package:flutter/material.dart';
-import 'dart:ui' as ui;
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
-import 'dart:typed_data';
 
 class GrillaSimple extends StatefulWidget {
   final Gradient? gradiente;
@@ -30,7 +25,7 @@ class _GrillaSimpleState extends State<GrillaSimple> {
       key: _widgetKey,
       child: Row(
         children: [
-          ElevatedButton(onPressed: save, child: Icon(Icons.download)),
+          ElevatedButton(onPressed: save, child: const Icon(Icons.download)),
           Container(
             width: 100.0, // ajusta la altura según tus necesidades
             decoration: const BoxDecoration(
@@ -140,7 +135,7 @@ class _GrillaSimpleState extends State<GrillaSimple> {
                           //'123456789',
                           //'$BMU',
                           style: const TextStyle(
-                            color: Colors.black, 
+                            color: Colors.black,
                           ),
                         ));
                   }),
@@ -161,6 +156,7 @@ class _GrillaSimpleState extends State<GrillaSimple> {
 
     final blob = html.Blob([pngBytes]);
     final url = html.Url.createObjectUrlFromBlob(blob);
+    // ignore: unused_local_variable
     final anchor = html.AnchorElement(href: url)
       ..setAttribute('download', "UMatrixSimple.png")
       ..click();
