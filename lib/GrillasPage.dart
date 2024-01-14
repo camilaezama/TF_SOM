@@ -51,7 +51,7 @@ class _GrillasPageState extends State<GrillasPage>
 
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Grillas Page'),
+          title: const Text('Grillas'),
         ),
         body: DefaultTabController(
           length: 3,

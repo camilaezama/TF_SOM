@@ -50,7 +50,7 @@ class _GrillaSimpleState extends State<GrillaSimple> {
           Padding(
             padding: const EdgeInsets.all(40.0),
             child: InteractiveViewer(
-              child: HexagonOffsetGrid.evenPointy(
+              child: HexagonOffsetGrid.oddPointy(
                   //color: Colors.yellow.shade100,
                   // padding: const EdgeInsets.only(
                   //     left: 50.0, top: 50.0, bottom: 10.0, right: 100.0),

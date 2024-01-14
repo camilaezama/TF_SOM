@@ -29,7 +29,23 @@ class _HomePageState extends State<HomePage> {
         csvData = csvTable;
       });
     } else {
-      print('Invalid file type. Please select a CSV file.');
+      showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Archivo Invalido'),
+            content: const Text('Debe seleccionar un archivo CSV.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Cerrar el cuadro de diálogo
+                },
+                child: const Text('Cerrar'),
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 
@@ -55,7 +71,7 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Carga de datos'),
+        title: const Text('Carga de datos'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -95,58 +111,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               (csvData.isNotEmpty)
-                  ? Expanded(
-                      child: Scrollbar(
-                        controller: vertical,
-                        thumbVisibility: true,
-                        trackVisibility: true,
-                        child: Scrollbar(
-                          controller: horizontal,
-                          thumbVisibility: true,
-                          trackVisibility: true,
-                          notificationPredicate: (notif) => notif.depth == 1,
-                          child: SingleChildScrollView(
-                            controller: vertical,
-                            scrollDirection: Axis.vertical,
-                            child: SingleChildScrollView(
-                              controller: horizontal,
-                              scrollDirection: Axis.horizontal,
-                              child: DataTable(
-                                columns: List.generate(
-                                  columnNames!.length,
-                                  (index) => DataColumn(
-                                      label: Text(columnNames![index])),
-                                ),
-                                rows: List.generate(
-                                  csvData.length - 1,
-                                  (rowIndex) => DataRow(
-                                    cells: List.generate(
-                                      columnNames!.length,
-                                      (cellIndex) {
-                                        String filaCompleta =
-                                            csvData[rowIndex + 1].toString();
-                                        String filaSinCorchetes = filaCompleta
-                                            .replaceAll(RegExp(r'\[|\]'), '');
-                                        List<String> lista =
-                                            filaSinCorchetes.split(';');
-                                        if (lista.length <= cellIndex) {
-                                          print(
-                                              'Error: No hay suficientes elementos en la fila $rowIndex');
-                                          return DataCell(Text('Error'));
-                                        }
-                                        return DataCell(
-                                          Text('${lista[cellIndex]}'),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    )
+                  ? mostrarArchivo(vertical, horizontal)
                   : const SizedBox(
                       height: 400.0,
                     ),
@@ -168,10 +133,10 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           child: cargando
-                              ? CircularProgressIndicator()
+                              ? const CircularProgressIndicator()
                               : Text(
                                   botonAceptar,
-                                  style: TextStyle(fontSize: 16),
+                                  style: const TextStyle(fontSize: 16),
                                 )),
                       ElevatedButton(
                           onPressed: () {
@@ -188,7 +153,7 @@ class _HomePageState extends State<HomePage> {
                                         Navigator.of(context)
                                             .pop(); // Cerrar el cuadro de diálogo
                                       },
-                                      child: Text('Cerrar'),
+                                      child: const Text('Cerrar'),
                                     ),
                                   ],
                                 );
@@ -209,7 +174,7 @@ class _HomePageState extends State<HomePage> {
 
 //Esto se podria poner en mas funciones a medida que agreguemos mas parametros.
   Widget _parametrosConfigurables() {
-    return Container(
+    return SizedBox(
       width: _width * 0.5,
       height: _height * 0.5,
       child: const SingleChildScrollView(
@@ -305,88 +270,146 @@ class _HomePageState extends State<HomePage> {
     return result;
   }
 
+  Widget mostrarArchivo(vertical, horizontal) {
+    return Expanded(
+      child: Scrollbar(
+        controller: vertical,
+        thumbVisibility: true,
+        trackVisibility: true,
+        child: Scrollbar(
+          controller: horizontal,
+          thumbVisibility: true,
+          trackVisibility: true,
+          notificationPredicate: (notif) => notif.depth == 1,
+          child: SingleChildScrollView(
+            controller: vertical,
+            scrollDirection: Axis.vertical,
+            child: SingleChildScrollView(
+              controller: horizontal,
+              scrollDirection: Axis.horizontal,
+              child: DataTable(
+                columns: List.generate(
+                  columnNames!.length,
+                  (index) => DataColumn(label: Text(columnNames![index])),
+                ),
+                rows: List.generate(
+                  csvData.length - 1,
+                  (rowIndex) => DataRow(
+                    cells: List.generate(
+                      columnNames!.length,
+                      (cellIndex) {
+                        String filaCompleta = csvData[rowIndex + 1].toString();
+                        String filaSinCorchetes =
+                            filaCompleta.replaceAll(RegExp(r'\[|\]'), '');
+                        List<String> lista = filaSinCorchetes.split(';');
+                        if (lista.length <= cellIndex) {
+                          print(
+                              'Error: No hay suficientes elementos en la fila $rowIndex');
+                          return const DataCell(Text('Error'));
+                        }
+                        return DataCell(
+                          Text('${lista[cellIndex]}'),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   void _llamadaAPI() async {
     //Navigator.pushNamed(context, '/grillas');
+    if (csvData.isNotEmpty) {
+      ByteData byteData = csvToByteData(csvData);
 
-    ByteData byteData = csvToByteData(csvData);
+      String content = String.fromCharCodes(byteData.buffer.asUint8List());
 
-    String content = String.fromCharCodes(byteData.buffer.asUint8List());
+      // Parsear el contenido CSV con el delimitador ';'
+      List<List<dynamic>> rows =
+          const CsvToListConverter(eol: '\n', fieldDelimiter: ';')
+              .convert(content);
+      List<Map<String, String>> result = convertRowsToMap(rows);
 
-    // Parsear el contenido CSV con el delimitador ';'
-    List<List<dynamic>> rows =
-        const CsvToListConverter(eol: '\n', fieldDelimiter: ';')
-            .convert(content);
+      String jsonResult = jsonEncode(result);
 
-    //print(rows);
+      try {
+        var url = Uri.parse('http://localhost:7777' + '/json');
 
-    List<Map<String, String>> result = convertRowsToMap(rows);
-
-    //print(result);
-
-    String jsonResult = jsonEncode(result);
-
-    //print(jsonResult);
-
-    try {
-      var url = Uri.parse('http://localhost:7777' + '/json');
-
-      setState(() {
-        //boton = "Cargando...";
-        cargando = true;
-      });
-      // var response = await http.post(url,
-      //     headers: {'Accept': '/*'}, body: jsonResult);
-      var response = await http.post(url,
-          headers: {'Accept': '/*'},
-          body: jsonEncode({"datos": jsonResult, "tipo": "json"}));
-
-      // print('Response status: ${response.statusCode}');
-      // print('Response body: ${response.body}');
-
-      // Map<String, dynamic> jsonList = json.decode(response.body);
-      // Map<String,Map<String, String>> mapaRta = Map<String,Map<String, String>>.from(jsonList);
-
-      // Decodificar la cadena JSON
-      Map<String, dynamic> decodedJson = json.decode(response.body);
-
-      // Mapa final que deseas obtener
-      Map<String, Map<String, String>> mapaRta = {};
-
-      // Iterar sobre las claves externas del primer nivel
-      for (String outerKey in decodedJson.keys) {
-        // Obtener el valor correspondiente a la clave externa
-        Map<String, dynamic> innerMap = decodedJson[outerKey];
-
-        // Convertir el mapa interno a Map<String, String>
-        Map<String, String> innerMapString = {};
-        innerMap.forEach((key, value) {
-          innerMapString[key] = value.toString();
+        setState(() {
+          //boton = "Cargando...";
+          cargando = true;
         });
+        // var response = await http.post(url,
+        //     headers: {'Accept': '/*'}, body: jsonResult);
+        var response = await http.post(url,
+            headers: {'Accept': '/*'},
+            body: jsonEncode({"datos": jsonResult, "tipo": "json"}));
 
-        // Agregar el par clave-valor al mapa final
-        mapaRta[outerKey] = innerMapString;
+        // print('Response status: ${response.statusCode}');
+        // print('Response body: ${response.body}');
+
+        // Map<String, dynamic> jsonList = json.decode(response.body);
+        // Map<String,Map<String, String>> mapaRta = Map<String,Map<String, String>>.from(jsonList);
+
+        // Decodificar la cadena JSON
+        Map<String, dynamic> decodedJson = json.decode(response.body);
+
+        // Mapa final que deseas obtener
+        Map<String, Map<String, String>> mapaRta = {};
+
+        // Iterar sobre las claves externas del primer nivel
+        for (String outerKey in decodedJson.keys) {
+          // Obtener el valor correspondiente a la clave externa
+          Map<String, dynamic> innerMap = decodedJson[outerKey];
+
+          // Convertir el mapa interno a Map<String, String>
+          Map<String, String> innerMapString = {};
+          innerMap.forEach((key, value) {
+            innerMapString[key] = value.toString();
+          });
+
+          // Agregar el par clave-valor al mapa final
+          mapaRta[outerKey] = innerMapString;
+        }
+        setState(() {
+          //boton = 'La respuesta fue: ${response.body}';
+          Navigator.pushNamed(
+            context,
+            '/grillas',
+            arguments: mapaRta,
+          );
+          cargando = false;
+        });
+      } catch (e) {
+        print('Error: $e');
+        setState(() {
+          cargando = false;
+          botonAceptar = "Aceptar.";
+        });
       }
-
-      // print('\n\n\n');
-      // print('/////////////////////////// Mapa: ${mapaRta}');
-      // print('\n\n\n');
-      // print('/////////////////////////// Mapa Udist: ${mapaUdist}');
-      // print('\n\n\n');
-      setState(() {
-        //boton = 'La respuesta fue: ${response.body}';
-        Navigator.pushNamed(
-          context,
-          '/grillas',
-          arguments: mapaRta,
-        );
-        cargando = false;
-      });
-    } catch (e) {
-      print('Error: $e');
-      setState(() {
-        cargando = false;
-        botonAceptar = "Aceptar.";
-      });
+    } else {
+      showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Error al cargar'),
+            content: const Text('Debe seleccionar un archivo.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Cerrar el cuadro de diálogo
+                },
+                child: const Text('Cerrar'),
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 }

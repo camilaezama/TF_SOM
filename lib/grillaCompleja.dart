@@ -20,7 +20,7 @@ class _GrillaComplejaState extends State<GrillaCompleja> {
             height: 50.0,
             decoration: BoxDecoration(gradient: widget.gradiente)),
         InteractiveViewer(
-          child: HexagonOffsetGrid.evenPointy(
+          child: HexagonOffsetGrid.oddPointy(
             //color: Colors.yellow.shade100,
             padding: const EdgeInsets.only(
                 left: 250.0, top: 20.0, bottom: 10.0, right: 250.0),
@@ -33,7 +33,8 @@ class _GrillaComplejaState extends State<GrillaCompleja> {
                 String valorDistConPunto = valorDist.replaceAll(',', '.');
                 double valor = double.parse(valorDistConPunto);
                 return HexagonWidgetBuilder(
-                  color: getInterpolatedColor(valor, widget.gradiente, widget.dataMap),
+                  color: getInterpolatedColor(
+                      valor, widget.gradiente, widget.dataMap),
                   //color: getColorForValue(valor),
                   //generarColorAleatorioEnEspectro(), //row.isEven ? Colors.yellow : Colors.orangeAccent,
                   elevation: 0.0,
@@ -65,7 +66,7 @@ class _GrillaComplejaState extends State<GrillaCompleja> {
                     builder: (BuildContext context) {
                       int bMU = row * 47 + col + 1;
                       String valorDist = widget.dataMap![bMU.toString()]!;
-          
+
                       return AlertDialog(
                         title: const Text('Información'),
                         content: SingleChildScrollView(
