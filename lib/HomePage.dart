@@ -263,9 +263,9 @@ class _HomePageState extends State<HomePage> {
         // Convertir el valor a String y asignarlo al mapa con el nombre de la columna
         rowMap[columnNames[j]] = rows[i][j].toString();
       }
-
+      
       result.add(rowMap);
-    }
+    } 
 
     return result;
   }
@@ -358,6 +358,9 @@ class _HomePageState extends State<HomePage> {
 
         // Decodificar la cadena JSON
         Map<String, dynamic> decodedJson = json.decode(response.body);
+
+        //Map<String, dynamic> bmuJson = decodedJson["bmu"];
+        //Map<String, dynamic> umatJson = decodedJson["umat"];
 
         // Mapa final que deseas obtener
         Map<String, Map<String, String>> mapaRta = {};

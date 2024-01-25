@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_application_1/grillaHexagonos.dart';
 import 'package:hexagon/hexagon.dart';
 import 'grillaCompleja.dart';
-import 'grillaSimple.dart';
 import 'utils.dart';
 
 import 'buttons/dropdownbutton_componentes.dart';
@@ -169,7 +169,8 @@ class _GrillasPageState extends State<GrillasPage>
           // Construir la interfaz con los datos cargados
           Map<String, String> dataMap = snapshot.data!;
           print('Mapa actual que usamos: ${dataMap}');
-          return GrillaSimple(gradiente: gradiente, dataMap: dataUdist);
+          //return GrillaSimple(gradiente: gradiente, dataMap: dataUdist);
+          return GrillaHexagonos(gradiente: gradiente, dataMap: dataUdist, filas: 14, columnas: 24);
         }
       },
     );
@@ -226,8 +227,11 @@ class _GrillasPageState extends State<GrillasPage>
                   },
                 ),
                 Expanded(
-                    child: GrillaSimple(
-                        gradiente: gradiente, dataMap: dataComponente)),
+                    child: GrillaHexagonos(
+                        gradiente: gradiente, dataMap: dataComponente, filas: 14, columnas: 24)),
+                // Expanded(
+                //     child: GrillaSimple(
+                //         gradiente: gradiente, dataMap: dataComponente)),
               ],
             ));
           }
