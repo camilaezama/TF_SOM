@@ -263,9 +263,9 @@ class _HomePageState extends State<HomePage> {
         // Convertir el valor a String y asignarlo al mapa con el nombre de la columna
         rowMap[columnNames[j]] = rows[i][j].toString();
       }
-      
+
       result.add(rowMap);
-    } 
+    }
 
     return result;
   }
@@ -338,7 +338,7 @@ class _HomePageState extends State<HomePage> {
       String jsonResult = jsonEncode(result);
 
       try {
-        var url = Uri.parse('http://localhost:7777' + '/json');
+        var url = Uri.parse('http://localhost:7777' + '/bmu');
 
         setState(() {
           //boton = "Cargando...";
@@ -359,16 +359,16 @@ class _HomePageState extends State<HomePage> {
         // Decodificar la cadena JSON
         Map<String, dynamic> decodedJson = json.decode(response.body);
 
-        //Map<String, dynamic> bmuJson = decodedJson["bmu"];
+        Map<String, dynamic> NeuronsJSON = decodedJson["Neurons"];
         //Map<String, dynamic> umatJson = decodedJson["umat"];
 
         // Mapa final que deseas obtener
         Map<String, Map<String, String>> mapaRta = {};
 
         // Iterar sobre las claves externas del primer nivel
-        for (String outerKey in decodedJson.keys) {
+        for (String outerKey in NeuronsJSON.keys) {
           // Obtener el valor correspondiente a la clave externa
-          Map<String, dynamic> innerMap = decodedJson[outerKey];
+          Map<String, dynamic> innerMap = NeuronsJSON[outerKey];
 
           // Convertir el mapa interno a Map<String, String>
           Map<String, String> innerMapString = {};

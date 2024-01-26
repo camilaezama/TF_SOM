@@ -12,7 +12,12 @@ class GrillaHexagonos extends StatefulWidget {
   final Map<String, String>? dataMap;
   final int filas;
   final int columnas;
-  const GrillaHexagonos({super.key, this.gradiente, this.dataMap, required this.filas, required this.columnas});
+  const GrillaHexagonos(
+      {super.key,
+      this.gradiente,
+      this.dataMap,
+      required this.filas,
+      required this.columnas});
 
   @override
   State<GrillaHexagonos> createState() => _GrillaHexagonosState();
@@ -144,7 +149,9 @@ class _GrillaHexagonosState extends State<GrillaHexagonos> {
           ),
         ],
       ),
+      
     );
+    
   }
 
   void save() async {
