@@ -373,7 +373,9 @@ class _HomePageState extends State<HomePage> {
           // Convertir el mapa interno a Map<String, String>
           Map<String, String> innerMapString = {};
           innerMap.forEach((key, value) {
-            innerMapString[key] = value.toString();
+            int keyInt = int.parse(key) + 1;
+            String keyy = keyInt.toString();
+            innerMapString[keyy] = value.toString();
           });
 
           // Agregar el par clave-valor al mapa final

@@ -167,8 +167,9 @@ class _GrillasPageState extends State<GrillasPage>
         } else {
           // Construir la interfaz con los datos cargados
           Map<String, String> dataMap = snapshot.data!;
-          print('Mapa actual que usamos: ${dataMap}');
+          // print('Mapa actual que usamos: ${dataMap}');
           //return GrillaSimple(gradiente: gradiente, dataMap: dataUdist);
+          print('Mapa que llega: ${dataUdist}');
           return GrillaHexagonos(gradiente: gradiente, dataMap: dataUdist, filas: 14, columnas: 24);
         }
       },

@@ -1,4 +1,4 @@
-{
+/*{
   "description": "Exception caught by widgets library",
   "type": "_FlutterErrorDetailsNode",
   "allowWrap": false,
@@ -1220,4 +1220,4 @@ dart-sdk/lib/_internal/js_dev_runtime/private/ddc_runtime/operations.dart 574:37
 dart-sdk/lib/_internal/js_dev_runtime/private/ddc_runtime/operations.dart 579:39  dcall
 
 ════════════════════════════════════════════════════════════════════════════════════════════════════"
-}
+}*/
