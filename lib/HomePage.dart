@@ -263,9 +263,9 @@ class _HomePageState extends State<HomePage> {
         // Convertir el valor a String y asignarlo al mapa con el nombre de la columna
         rowMap[columnNames[j]] = rows[i][j].toString();
       }
-      
+
       result.add(rowMap);
-    } 
+    }
 
     return result;
   }
@@ -338,7 +338,10 @@ class _HomePageState extends State<HomePage> {
       String jsonResult = jsonEncode(result);
 
       try {
-        var url = Uri.parse('http://localhost:7777' + '/json');
+
+        String TIPO_LLAMADA = "json";
+
+        var url = Uri.parse('http://localhost:7777' + '/' + TIPO_LLAMADA);
 
         setState(() {
           //boton = "Cargando...";
@@ -348,7 +351,7 @@ class _HomePageState extends State<HomePage> {
         //     headers: {'Accept': '/*'}, body: jsonResult);
         var response = await http.post(url,
             headers: {'Accept': '/*'},
-            body: jsonEncode({"datos": jsonResult, "tipo": "json"}));
+            body: jsonEncode({"datos": jsonResult, "tipo": TIPO_LLAMADA}));
 
         // print('Response status: ${response.statusCode}');
         // print('Response body: ${response.body}');
@@ -359,32 +362,58 @@ class _HomePageState extends State<HomePage> {
         // Decodificar la cadena JSON
         Map<String, dynamic> decodedJson = json.decode(response.body);
 
-        //Map<String, dynamic> bmuJson = decodedJson["bmu"];
+        Map<String, dynamic> NeuronsJSON = decodedJson["Neurons"];
+        List<dynamic> UmatJSON = decodedJson["UMat"];
+        List<List<double>> lista = [];
+        UmatJSON.forEach((element) {
+          List<double> elementt = [];
+          element.forEach((e) {
+            elementt.add(double.parse(e.toString()));
+          });
+          lista.add(elementt);
+        });
+
+        Map<String, String> dataMapUmat = {};
+        lista.forEach((element) {
+          dataMapUmat[element[0].toString()] = element[1].toString();
+        });
         //Map<String, dynamic> umatJson = decodedJson["umat"];
 
         // Mapa final que deseas obtener
+        Map<String, Object> respuesta = {};
+
         Map<String, Map<String, String>> mapaRta = {};
 
         // Iterar sobre las claves externas del primer nivel
-        for (String outerKey in decodedJson.keys) {
+        for (String outerKey in NeuronsJSON.keys) {
           // Obtener el valor correspondiente a la clave externa
-          Map<String, dynamic> innerMap = decodedJson[outerKey];
+          Map<String, dynamic> innerMap = NeuronsJSON[outerKey];
 
           // Convertir el mapa interno a Map<String, String>
           Map<String, String> innerMapString = {};
           innerMap.forEach((key, value) {
-            innerMapString[key] = value.toString();
+            if (TIPO_LLAMADA == "json") {
+              int keyInt = int.parse(key) + 1;
+              String keyy = keyInt.toString();
+              innerMapString[keyy] = value.toString();
+            } else {
+              innerMapString[key] = value.toString();
+            }
+            
           });
 
           // Agregar el par clave-valor al mapa final
           mapaRta[outerKey] = innerMapString;
         }
+
+        respuesta["respuestaBMU"] = mapaRta;
+        respuesta["respuestaUmat"] = dataMapUmat;
         setState(() {
           //boton = 'La respuesta fue: ${response.body}';
           Navigator.pushNamed(
             context,
             '/grillas',
-            arguments: mapaRta,
+            arguments: respuesta,
           );
           cargando = false;
         });

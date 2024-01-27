@@ -12,7 +12,14 @@ class GrillaHexagonos extends StatefulWidget {
   final Map<String, String>? dataMap;
   final int filas;
   final int columnas;
-  const GrillaHexagonos({super.key, this.gradiente, this.dataMap, required this.filas, required this.columnas});
+  double paddingEntreHexagonos;
+  GrillaHexagonos(
+      {super.key,
+      this.gradiente,
+      this.dataMap,
+      required this.filas,
+      required this.columnas,
+      this.paddingEntreHexagonos = 0.6});
 
   @override
   State<GrillaHexagonos> createState() => _GrillaHexagonosState();
@@ -70,7 +77,7 @@ class _GrillaHexagonosState extends State<GrillaHexagonos> {
                         //color: getColorForValue(valor),
                         //generarColorAleatorioEnEspectro(), //row.isEven ? Colors.yellow : Colors.orangeAccent,
                         elevation: 0.0,
-                        padding: 0.6,
+                        padding: widget.paddingEntreHexagonos,
                       );
                     } else {
                       return HexagonWidgetBuilder(
@@ -144,7 +151,9 @@ class _GrillaHexagonosState extends State<GrillaHexagonos> {
           ),
         ],
       ),
+      
     );
+    
   }
 
   void save() async {
