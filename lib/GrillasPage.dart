@@ -21,7 +21,9 @@ class _GrillasPageState extends State<GrillasPage>
 
   late TabController tabController;
   Map<String, String> dataUdist = {};
+  Map<String, Object> respuesta = {};
   Map<String, dynamic> mapaRta = {};
+  Map<String, String> mapaRtaUmat = {};
   Map<String, String> dataComponente = {};
 
   @override
@@ -46,8 +48,18 @@ class _GrillasPageState extends State<GrillasPage>
   String selectedComponente = '';
   @override
   Widget build(BuildContext context) {
-    mapaRta =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
+    
+    // mapaRta =
+    //     ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
+    respuesta =
+         ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
+
+    mapaRta = respuesta["respuestaBMU"] as Map<String, dynamic>;
+
+    mapaRtaUmat = respuesta["respuestaUmat"] as Map<String, String>;
+
     dataUdist = mapaRta["Udist"]!;
     return Scaffold(
         appBar: AppBar(
@@ -127,19 +139,9 @@ class _GrillasPageState extends State<GrillasPage>
       ],
       stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
     );
-    return FutureBuilder<Map<String, String>>(
-      future: loadData(archivoCsv, columnaNumeroNeuronas, columnaValores),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return const Center(child: Text('Error al cargar los datos'));
-        } else {
-          Map<String, String> dataMap = snapshot.data!;
-          return GrillaCompleja(gradiente: gradiente, dataMap: dataMap);
-        }
-      },
-    );
+
+    return GrillaHexagonos(
+        gradiente: gradiente, dataMap: mapaRtaUmat, filas: 27, columnas: 47, paddingEntreHexagonos: 0.2);
   }
 
   Widget _buildWidgetBMUs() {
@@ -157,23 +159,8 @@ class _GrillasPageState extends State<GrillasPage>
       ],
       stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
     );
-    return FutureBuilder<Map<String, String>>(
-      future: loadData(archivoCsv, columnaNumeroNeuronas, columnaValores),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return const Center(child: Text('Error al cargar los datos'));
-        } else {
-          // Construir la interfaz con los datos cargados
-          Map<String, String> dataMap = snapshot.data!;
-          // print('Mapa actual que usamos: ${dataMap}');
-          //return GrillaSimple(gradiente: gradiente, dataMap: dataUdist);
-          print('Mapa que llega: ${dataUdist}');
-          return GrillaHexagonos(gradiente: gradiente, dataMap: dataUdist, filas: 14, columnas: 24);
-        }
-      },
-    );
+    return GrillaHexagonos(
+        gradiente: gradiente, dataMap: dataUdist, filas: 14, columnas: 24);
   }
 
   Widget _buildWidgetGrillaComponentes(Map<String, dynamic> mapaRta) {
@@ -198,43 +185,110 @@ class _GrillasPageState extends State<GrillasPage>
       ],
       stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
     );
-    return FutureBuilder<Map<String, String>>(
-        future: loadData(archivoCsv, columnaNumeroNeuronas, columnaValores),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return const Center(child: Text('Error al cargar los datos'));
-          } else {
-            // Construir la interfaz con los datos cargados
-            Map<String, String> dataMap = snapshot.data!;
-            print('Mapa actual que usamos: ${dataMap}');
-
-            return Center(
-                child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('Elija la componente a mostrar: '),
-                const SizedBox(width: 5),
-                DropdownMenuComponentes(
-                  listaOpciones: options,
-                  onSelected: (String selectedValue) {
-                    // Step 3: Update dataComponente and trigger rebuild
-                    setState(() {
-                      selectedComponente = selectedValue;
-                      dataComponente = mapaRta[selectedValue] ?? {};
-                    });
-                  },
-                ),
-                Expanded(
-                    child: GrillaHexagonos(
-                        gradiente: gradiente, dataMap: dataComponente, filas: 14, columnas: 24)),
-                // Expanded(
-                //     child: GrillaSimple(
-                //         gradiente: gradiente, dataMap: dataComponente)),
-              ],
-            ));
-          }
-        });
+    return Center(
+        child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text('Elija la componente a mostrar: '),
+        const SizedBox(width: 5),
+        DropdownMenuComponentes(
+          listaOpciones: options,
+          onSelected: (String selectedValue) {
+            // Step 3: Update dataComponente and trigger rebuild
+            setState(() {
+              selectedComponente = selectedValue;
+              dataComponente = mapaRta[selectedValue] ?? {};
+            });
+          },
+        ),
+        Expanded(
+            child: GrillaHexagonos(
+                gradiente: gradiente,
+                dataMap: dataComponente,
+                filas: 14,
+                columnas: 24)),
+        // Expanded(
+        //     child: GrillaSimple(
+        //         gradiente: gradiente, dataMap: dataComponente)),
+      ],
+    ));
   }
 }
+
+
+
+    // return FutureBuilder<Map<String, String>>(
+    //   future: loadData(archivoCsv, columnaNumeroNeuronas, columnaValores),
+    //   builder: (context, snapshot) {
+    //     if (snapshot.connectionState == ConnectionState.waiting) {
+    //       return const Center(child: CircularProgressIndicator());
+    //     } else if (snapshot.hasError) {
+    //       return const Center(child: Text('Error al cargar los datos'));
+    //     } else {
+    //       // Construir la interfaz con los datos cargados
+    //       Map<String, String> dataMap = snapshot.data!;
+    //       // print('Mapa actual que usamos: ${dataMap}');
+    //       //return GrillaSimple(gradiente: gradiente, dataMap: dataUdist);
+    //       print('Mapa que llega: ${dataUdist}');
+    //       return GrillaHexagonos(gradiente: gradiente, dataMap: dataUdist, filas: 14, columnas: 24);
+    //     }
+    //   },
+    // );
+
+
+
+
+        // return FutureBuilder<Map<String, String>>(
+    //     future: loadData(archivoCsv, columnaNumeroNeuronas, columnaValores),
+    //     builder: (context, snapshot) {
+    //       if (snapshot.connectionState == ConnectionState.waiting) {
+    //         return const Center(child: CircularProgressIndicator());
+    //       } else if (snapshot.hasError) {
+    //         return const Center(child: Text('Error al cargar los datos'));
+    //       } else {
+    //         // Construir la interfaz con los datos cargados
+    //         Map<String, String> dataMap = snapshot.data!;
+    //         print('Mapa actual que usamos: ${dataMap}');
+
+    //         return Center(
+    //             child: Column(
+    //           mainAxisAlignment: MainAxisAlignment.center,
+    //           children: [
+    //             const Text('Elija la componente a mostrar: '),
+    //             const SizedBox(width: 5),
+    //             DropdownMenuComponentes(
+    //               listaOpciones: options,
+    //               onSelected: (String selectedValue) {
+    //                 // Step 3: Update dataComponente and trigger rebuild
+    //                 setState(() {
+    //                   selectedComponente = selectedValue;
+    //                   dataComponente = mapaRta[selectedValue] ?? {};
+    //                 });
+    //               },
+    //             ),
+    //             Expanded(
+    //                 child: GrillaHexagonos(
+    //                     gradiente: gradiente, dataMap: dataComponente, filas: 14, columnas: 24)),
+    //             // Expanded(
+    //             //     child: GrillaSimple(
+    //             //         gradiente: gradiente, dataMap: dataComponente)),
+    //           ],
+    //         ));
+    //       }
+    //     });
+
+    //return GrillaCompleja(gradiente: gradiente, dataMap: mapaRtaUmat);
+
+    // return FutureBuilder<Map<String, String>>(
+    //   future: loadData(archivoCsv, columnaNumeroNeuronas, columnaValores),
+    //   builder: (context, snapshot) {
+    //     if (snapshot.connectionState == ConnectionState.waiting) {
+    //       return const Center(child: CircularProgressIndicator());
+    //     } else if (snapshot.hasError) {
+    //       return const Center(child: Text('Error al cargar los datos'));
+    //     } else {
+    //       Map<String, String> dataMap = snapshot.data!;
+    //       return GrillaCompleja(gradiente: gradiente, dataMap: dataMap);
+    //     }
+    //   },
+    // );
