@@ -11,9 +11,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  static final filasController = TextEditingController(text: "24" );
+  static final columnasController = TextEditingController(text: "31");
   List<List<dynamic>> csvData = [];
   String botonAceptar = 'Aceptar';
   String botonParam = 'Modificar Parametros';
+
   bool cargando = false;
 
   void _loadCSVData(FilePickerResult result) async {
@@ -146,7 +149,8 @@ class _HomePageState extends State<HomePage> {
                               builder: (BuildContext context) {
                                 return AlertDialog(
                                   title: const Text('Parametros configurables'),
-                                  content: _parametrosConfigurables(),
+                                  content: _parametrosConfigurables(
+                                      filasController, columnasController),
                                   actions: [
                                     TextButton(
                                       onPressed: () {
@@ -173,43 +177,47 @@ class _HomePageState extends State<HomePage> {
   }
 
 //Esto se podria poner en mas funciones a medida que agreguemos mas parametros.
-  Widget _parametrosConfigurables() {
+  Widget _parametrosConfigurables(TextEditingController filasController,
+      TextEditingController columnasController) {
     return SizedBox(
       width: _width * 0.5,
       height: _height * 0.5,
-      child: const SingleChildScrollView(
+      child: SingleChildScrollView(
         child: Column(
           children: [
             Row(
               children: [
                 Expanded(
                   child: TextField(
-                      decoration: InputDecoration(
+                      controller: filasController,
+
+                      decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'Cantidad de filas')),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 20,
                 ),
                 Expanded(
                   child: TextField(
-                    decoration: InputDecoration(
+                    controller: columnasController,
+                    decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Cantidad de columnas'),
                   ),
                 )
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
-            Row(
+            const Row(
               children: [
                 Expanded(
                   child: TextField(
                       decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: 'Cantidad de filas')),
+                          labelText: 'Otro parametro')),
                 ),
                 SizedBox(
                   width: 20,
@@ -218,7 +226,7 @@ class _HomePageState extends State<HomePage> {
                   child: TextField(
                     decoration: InputDecoration(
                         border: OutlineInputBorder(),
-                        labelText: 'Cantidad de columnas'),
+                        labelText: 'Un parametro mas'),
                   ),
                 )
               ],
@@ -338,10 +346,16 @@ class _HomePageState extends State<HomePage> {
       String jsonResult = jsonEncode(result);
 
       try {
-
-        String TIPO_LLAMADA = "json";
-
+        String TIPO_LLAMADA = "bmu";
         var url = Uri.parse('http://localhost:7777' + '/' + TIPO_LLAMADA);
+
+      
+      final parametros = <String, dynamic>{
+        'filas': filasController.text!=""?filasController.text:24, 
+        'columnas': columnasController.text!=""?columnasController.text:31, //TODO IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!
+
+    };
+
 
         setState(() {
           //boton = "Cargando...";
@@ -351,7 +365,7 @@ class _HomePageState extends State<HomePage> {
         //     headers: {'Accept': '/*'}, body: jsonResult);
         var response = await http.post(url,
             headers: {'Accept': '/*'},
-            body: jsonEncode({"datos": jsonResult, "tipo": TIPO_LLAMADA}));
+            body: jsonEncode({"datos": jsonResult, "tipo": TIPO_LLAMADA, "params": parametros}));
 
         // print('Response status: ${response.statusCode}');
         // print('Response body: ${response.body}');
@@ -399,7 +413,6 @@ class _HomePageState extends State<HomePage> {
             } else {
               innerMapString[key] = value.toString();
             }
-            
           });
 
           // Agregar el par clave-valor al mapa final
@@ -421,7 +434,7 @@ class _HomePageState extends State<HomePage> {
         print('Error: $e');
         setState(() {
           cargando = false;
-          botonAceptar = "Aceptar.";
+          botonAceptar = "Aceptar";
         });
       }
     } else {

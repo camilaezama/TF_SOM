@@ -22,7 +22,6 @@ class _DropdownMenuComponentesState extends State<DropdownMenuComponentes> {
     return DropdownMenu<String>(
       initialSelection: widget.listaOpciones.first,
       onSelected: (String? value) {
-        // This is called when the user selects an item.
         widget.onSelected(value!);
         setState(() {
           dropdownValue = value!;

@@ -7,12 +7,12 @@ import 'dart:typed_data';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 
-class GrillaHexagonos extends StatefulWidget {
+class GrillaHexagonos extends StatelessWidget {
   final Gradient? gradiente;
   final Map<String, String>? dataMap;
   final int filas;
   final int columnas;
-  double paddingEntreHexagonos;
+  final double paddingEntreHexagonos; //podria no ser final y luego cambiarse luego de ser generado
   GrillaHexagonos(
       {super.key,
       this.gradiente,
@@ -21,11 +21,6 @@ class GrillaHexagonos extends StatefulWidget {
       required this.columnas,
       this.paddingEntreHexagonos = 0.6});
 
-  @override
-  State<GrillaHexagonos> createState() => _GrillaHexagonosState();
-}
-
-class _GrillaHexagonosState extends State<GrillaHexagonos> {
   final _widgetKey = GlobalKey();
 
   @override
@@ -63,21 +58,21 @@ class _GrillaHexagonosState extends State<GrillaHexagonos> {
                   //color: Colors.yellow.shade100,
                   // padding: const EdgeInsets.only(
                   //     left: 50.0, top: 50.0, bottom: 10.0, right: 100.0),
-                  columns: widget.columnas,
-                  rows: widget.filas,
+                  columns: columnas,
+                  rows: filas,
                   buildTile: (col, row) {
-                    if (widget.dataMap!.isNotEmpty) {
-                      int bmu = row * widget.columnas + col + 1;
-                      String valorDist = widget.dataMap![bmu.toString()]!;
+                    if (dataMap!.isNotEmpty) {
+                      int bmu = row * columnas + col + 1;
+                      String valorDist = dataMap![bmu.toString()]!;
                       String valorDistConPunto = valorDist.replaceAll(',', '.');
                       double valor = double.parse(valorDistConPunto);
                       return HexagonWidgetBuilder(
                         color: getInterpolatedColor(
-                            valor, widget.gradiente, widget.dataMap),
+                            valor, gradiente, dataMap),
                         //color: getColorForValue(valor),
                         //generarColorAleatorioEnEspectro(), //row.isEven ? Colors.yellow : Colors.orangeAccent,
                         elevation: 0.0,
-                        padding: widget.paddingEntreHexagonos,
+                        padding: paddingEntreHexagonos,
                       );
                     } else {
                       return HexagonWidgetBuilder(
@@ -109,9 +104,9 @@ class _GrillaHexagonosState extends State<GrillaHexagonos> {
                           showDialog<void>(
                             context: context,
                             builder: (BuildContext context) {
-                              int bMU = row * widget.columnas + col + 1;
+                              int bMU = row * columnas + col + 1;
                               String valorDist =
-                                  widget.dataMap![bMU.toString()]!;
+                                  dataMap![bMU.toString()]!;
 
                               return AlertDialog(
                                 title: const Text('Información'),
