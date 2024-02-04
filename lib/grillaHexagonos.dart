@@ -15,6 +15,8 @@ class GrillaHexagonos extends StatelessWidget {
   String titulo;
   final double
       paddingEntreHexagonos; //podria no ser final y luego cambiarse luego de ser generado
+  Map<int, int>? hitsMap;
+  bool hits;
   GrillaHexagonos(
       {super.key,
       this.gradiente,
@@ -22,7 +24,9 @@ class GrillaHexagonos extends StatelessWidget {
       required this.filas,
       required this.columnas,
       required this.titulo,
-      this.paddingEntreHexagonos = 0.6});
+      this.paddingEntreHexagonos = 0.6,
+      this.hitsMap,
+      this.hits = false});
 
   final _widgetKey = GlobalKey();
 
@@ -78,6 +82,7 @@ class GrillaHexagonos extends StatelessWidget {
                               }
                             },
                             buildChild: (col, row) {
+                              int bMU_HIT = row * columnas + col + 1;
                               return ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                       textStyle: const TextStyle(
@@ -128,11 +133,12 @@ class GrillaHexagonos extends StatelessWidget {
                                       },
                                     );
                                   },
-                                  child: const Text(
-                                    '',
+                                  child: Text(
+                                    hits ? hits_count(bMU_HIT) : '',
+                                    //'',
                                     //'123456789',
                                     //'$BMU',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       color: Colors.black,
                                     ),
                                   ));
@@ -177,6 +183,16 @@ class GrillaHexagonos extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  String hits_count(int bmu){
+    String cant;
+    if (hitsMap!.keys.contains(bmu)){
+      cant = hitsMap![bmu].toString();
+    } else {
+      cant = "";
+    }
+    return cant;
   }
 
   void save() async {

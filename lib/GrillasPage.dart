@@ -26,12 +26,14 @@ class _GrillasPageState extends State<GrillasPage>
   Map<String, dynamic> parametros = {};
   Map<String, String> mapaRtaUmat = {};
   Map<String, String> dataComponente = {};
+
+  Map<int, int> hitsMap = {};
   String title = "";
   late int filas, columnas;
   @override
   void initState() {
     super.initState();
-    tabController = TabController(initialIndex: 0, length: 3, vsync: this);
+    tabController = TabController(initialIndex: 0, length: 4, vsync: this);
     tabController.addListener(_onTabChange);
   }
 
@@ -61,6 +63,9 @@ class _GrillasPageState extends State<GrillasPage>
     mapaRtaUmat = respuesta["respuestaUmat"] as Map<String, String>;
 
     parametros = respuesta["parametros"] as Map<String, dynamic>;
+
+    hitsMap = respuesta["respuestaHits"] as Map<int, int>;
+
     filas = int.parse(parametros["filas"]);
     columnas = int.parse(parametros["columnas"]);
     dataUdist = mapaRta["Udist"]!;
@@ -69,7 +74,7 @@ class _GrillasPageState extends State<GrillasPage>
           title: const Text('Grillas'),
         ),
         body: DefaultTabController(
-          length: 3,
+          length: 4,
           initialIndex: 0,
           child: Scaffold(
             appBar: AppBar(
@@ -79,6 +84,7 @@ class _GrillasPageState extends State<GrillasPage>
                   Tab(text: 'BMUs'),
                   Tab(text: 'Umat'),
                   Tab(text: 'Componentes'),
+                  Tab(text: 'Hits'),
                 ],
               ),
               toolbarHeight: 0.0,
@@ -90,7 +96,7 @@ class _GrillasPageState extends State<GrillasPage>
                 _buildWidgetBMUs(),
                 _buildWidgetUMat(),
                 _buildWidgetGrillaComponentes(mapaRta),
-
+                _buildWidgetHits(),
                 // _buildWidget2(),
               ],
             ),
@@ -150,6 +156,33 @@ class _GrillasPageState extends State<GrillasPage>
         filas: filas * 2,
         columnas: columnas * 2,
         paddingEntreHexagonos: 0.2);
+  }
+
+  
+
+  Widget _buildWidgetHits() {
+    String archivoCsv = 'assets/archivo.csv';
+    int columnaNumeroNeuronas = 0;
+    int columnaValores = 1;
+    Gradient gradiente = const LinearGradient(
+      colors: [
+        Color.fromARGB(255, 8, 82, 143),
+        Colors.blue,
+        Colors.green,
+        Colors.yellow,
+        Colors.orange,
+        Colors.red,
+      ],
+      stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
+    );
+    return GrillaHexagonos(
+        titulo: "Hits",
+        gradiente: gradiente,
+        dataMap: dataUdist,
+        filas: filas,
+        columnas: columnas,
+        hits: true,
+        hitsMap: hitsMap,);
   }
 
   Widget _buildWidgetBMUs() {

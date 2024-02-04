@@ -370,7 +370,7 @@ class _HomePageState extends State<HomePage> {
             }));
 
         // print('Response status: ${response.statusCode}');
-        // print('Response body: ${response.body}');
+        print('Response body: ${response.body}');
 
         // Map<String, dynamic> jsonList = json.decode(response.body);
         // Map<String,Map<String, String>> mapaRta = Map<String,Map<String, String>>.from(jsonList);
@@ -380,6 +380,16 @@ class _HomePageState extends State<HomePage> {
 
         Map<String, dynamic> NeuronsJSON = decodedJson["Neurons"];
         List<dynamic> UmatJSON = decodedJson["UMat"];
+
+
+
+        /// Procesamiento de datos para Hits
+        Map<String, dynamic> HitsJSON = decodedJson["Hits"];
+        Map<int, int> hitsMap = Map<int, int>.from(HitsJSON.map((key, value) => MapEntry(int.parse(key), value)));
+
+
+
+        /// Procesamiento de datos para UMat
         List<List<double>> lista = [];
         UmatJSON.forEach((element) {
           List<double> elementt = [];
@@ -395,9 +405,14 @@ class _HomePageState extends State<HomePage> {
         });
         //Map<String, dynamic> umatJson = decodedJson["umat"];
 
-        // Mapa final que deseas obtener
+
+
+        
         Map<String, Object> respuesta = {};
 
+
+
+        /// Procesamiento de datos para BMUs
         Map<String, Map<String, String>> mapaRta = {};
 
         // Iterar sobre las claves externas del primer nivel
@@ -424,6 +439,7 @@ class _HomePageState extends State<HomePage> {
         respuesta["respuestaBMU"] = mapaRta;
         respuesta["respuestaUmat"] = dataMapUmat;
         respuesta["parametros"] = parametros;
+        respuesta["respuestaHits"] = hitsMap;
         setState(() {
           //boton = 'La respuesta fue: ${response.body}';
           Navigator.pushNamed(
