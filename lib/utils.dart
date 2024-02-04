@@ -6,11 +6,12 @@ import 'package:flutter/services.dart';
 Color getInterpolatedColor(
     double value, Gradient? gradiente, Map<String, String>? dataMap) {
   Map<String, double> doubleMap = convertToDouble(dataMap!);
-  final double min = doubleMap.values
-      .reduce((value, element) => value < element ? value : element);
-  final double max = doubleMap.values
-      .reduce((value, element) => value > element ? value : element);
-
+  // final double min = doubleMap.values.reduce(
+  //     (value, element) => (value < element && element != -1) ? value : element);
+  // final double max = doubleMap.values
+  //     .reduce((value, element) => (value > element) ? value : element);
+  final double min = 0;
+  final double max = 1;
   // const Gradient gradient = LinearGradient(
   //   colors: [
   //     Colors.blue,
@@ -22,8 +23,9 @@ Color getInterpolatedColor(
   // );
 
   Gradient gradient = gradiente!;
-
-  if (value <= min) {
+  if (value == -1) {
+    return Colors.transparent;
+  } else if (value <= min) {
     return gradient.colors.first;
   } else if (value >= max) {
     return gradient.colors.last;
@@ -75,34 +77,32 @@ Map<String, double> convertToDouble(Map<String, String> inputMap) {
   return result;
 }
 
+Future<Map<String, String>> loadData(
+    String archivoCsv, int columnaNumeroNeuronas, int columnaValores) async {
+  Map<String, String> dataMap = {};
 
+  ByteData data = await rootBundle.load(archivoCsv);
+  String content = String.fromCharCodes(data.buffer.asUint8List());
 
-Future<Map<String, String>> loadData(String archivoCsv, int columnaNumeroNeuronas, int columnaValores) async {    
-    Map<String, String> dataMap = {};
+  // Parsear el contenido CSV con el delimitador ';'
+  List<List<dynamic>> rows =
+      const CsvToListConverter(eol: '\n', fieldDelimiter: ';').convert(content);
 
-    ByteData data = await rootBundle.load(archivoCsv);
-    String content = String.fromCharCodes(data.buffer.asUint8List());
-
-    // Parsear el contenido CSV con el delimitador ';'
-    List<List<dynamic>> rows =
-        const CsvToListConverter(eol: '\n', fieldDelimiter: ';')
-            .convert(content);
-
-    if (rows.isNotEmpty) {
-      rows.removeAt(0);
-    }
-
-    for (var row in rows) {
-      String bmu =
-          row[columnaNumeroNeuronas]?.toString() ?? ''; // Assuming 'BMU' is in the first column
-      String valor =
-          row[columnaValores]?.toString() ?? ''; // Assuming 'Udist' is in the second column
-      dataMap[bmu] = valor;
-    }
-
-    // setState(() {
-    //     //cargo = true;
-    // });
-
-    return dataMap;
+  if (rows.isNotEmpty) {
+    rows.removeAt(0);
   }
+
+  for (var row in rows) {
+    String bmu = row[columnaNumeroNeuronas]?.toString() ??
+        ''; // Assuming 'BMU' is in the first column
+    String valor = row[columnaValores]?.toString() ??
+        ''; // Assuming 'Udist' is in the second column
+    dataMap[bmu] = valor;
+  }
+
+  // setState(() {
+  //     //cargo = true;
+  // });
+
+  return dataMap;
+}

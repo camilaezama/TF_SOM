@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/grillaHexagonos.dart';
 import 'package:hexagon/hexagon.dart';
-import 'grillaCompleja.dart';
+
 import 'utils.dart';
 
 import 'buttons/dropdownbutton_componentes.dart';
@@ -23,9 +23,10 @@ class _GrillasPageState extends State<GrillasPage>
   Map<String, String> dataUdist = {};
   Map<String, Object> respuesta = {};
   Map<String, dynamic> mapaRta = {};
+  Map<String, dynamic> parametros = {};
   Map<String, String> mapaRtaUmat = {};
   Map<String, String> dataComponente = {};
-
+  late int filas, columnas;
   @override
   void initState() {
     super.initState();
@@ -48,18 +49,19 @@ class _GrillasPageState extends State<GrillasPage>
   String selectedComponente = '';
   @override
   Widget build(BuildContext context) {
-
-    
     // mapaRta =
     //     ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
 
     respuesta =
-         ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
+        ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
 
     mapaRta = respuesta["respuestaBMU"] as Map<String, dynamic>;
 
     mapaRtaUmat = respuesta["respuestaUmat"] as Map<String, String>;
 
+    parametros = respuesta["parametros"] as Map<String, dynamic>;
+    filas = int.parse(parametros["filas"]);
+    columnas = int.parse(parametros["columnas"]);
     dataUdist = mapaRta["Udist"]!;
     return Scaffold(
         appBar: AppBar(
@@ -141,7 +143,11 @@ class _GrillasPageState extends State<GrillasPage>
     );
 
     return GrillaHexagonos(
-        gradiente: gradiente, dataMap: mapaRtaUmat, filas: 27, columnas: 47, paddingEntreHexagonos: 0.2);
+        gradiente: gradiente,
+        dataMap: mapaRtaUmat,
+        filas: filas * 2,
+        columnas: columnas * 2,
+        paddingEntreHexagonos: 0.2);
   }
 
   Widget _buildWidgetBMUs() {
@@ -160,7 +166,10 @@ class _GrillasPageState extends State<GrillasPage>
       stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
     );
     return GrillaHexagonos(
-        gradiente: gradiente, dataMap: dataUdist, filas: 14, columnas: 24);
+        gradiente: gradiente,
+        dataMap: dataUdist,
+        filas: filas,
+        columnas: columnas);
   }
 
   Widget _buildWidgetGrillaComponentes(Map<String, dynamic> mapaRta) {
@@ -205,8 +214,8 @@ class _GrillasPageState extends State<GrillasPage>
             child: GrillaHexagonos(
                 gradiente: gradiente,
                 dataMap: dataComponente,
-                filas: 14,
-                columnas: 24)),
+                filas: filas,
+                columnas: columnas)),
         // Expanded(
         //     child: GrillaSimple(
         //         gradiente: gradiente, dataMap: dataComponente)),

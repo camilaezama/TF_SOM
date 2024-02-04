@@ -11,8 +11,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  static final filasController = TextEditingController(text: "24" );
-  static final columnasController = TextEditingController(text: "31");
+  static final filasController = TextEditingController(text: "14");
+  static final columnasController = TextEditingController(text: "24");
   List<List<dynamic>> csvData = [];
   String botonAceptar = 'Aceptar';
   String botonParam = 'Modificar Parametros';
@@ -190,7 +190,6 @@ class _HomePageState extends State<HomePage> {
                 Expanded(
                   child: TextField(
                       controller: filasController,
-
                       decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'Cantidad de filas')),
@@ -349,13 +348,12 @@ class _HomePageState extends State<HomePage> {
         String TIPO_LLAMADA = "bmu";
         var url = Uri.parse('http://localhost:7777' + '/' + TIPO_LLAMADA);
 
-      
-      final parametros = <String, dynamic>{
-        'filas': filasController.text!=""?filasController.text:24, 
-        'columnas': columnasController.text!=""?columnasController.text:31, //TODO IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!
-
-    };
-
+        final parametros = <String, dynamic>{
+          'filas': filasController.text != "" ? filasController.text : 24,
+          'columnas': columnasController.text != ""
+              ? columnasController.text
+              : 31, //TODO IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!
+        };
 
         setState(() {
           //boton = "Cargando...";
@@ -365,7 +363,11 @@ class _HomePageState extends State<HomePage> {
         //     headers: {'Accept': '/*'}, body: jsonResult);
         var response = await http.post(url,
             headers: {'Accept': '/*'},
-            body: jsonEncode({"datos": jsonResult, "tipo": TIPO_LLAMADA, "params": parametros}));
+            body: jsonEncode({
+              "datos": jsonResult,
+              "tipo": TIPO_LLAMADA,
+              "params": parametros
+            }));
 
         // print('Response status: ${response.statusCode}');
         // print('Response body: ${response.body}');
@@ -421,6 +423,7 @@ class _HomePageState extends State<HomePage> {
 
         respuesta["respuestaBMU"] = mapaRta;
         respuesta["respuestaUmat"] = dataMapUmat;
+        respuesta["parametros"] = parametros;
         setState(() {
           //boton = 'La respuesta fue: ${response.body}';
           Navigator.pushNamed(

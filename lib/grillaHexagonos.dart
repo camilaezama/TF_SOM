@@ -12,7 +12,8 @@ class GrillaHexagonos extends StatelessWidget {
   final Map<String, String>? dataMap;
   final int filas;
   final int columnas;
-  final double paddingEntreHexagonos; //podria no ser final y luego cambiarse luego de ser generado
+  final double
+      paddingEntreHexagonos; //podria no ser final y luego cambiarse luego de ser generado
   GrillaHexagonos(
       {super.key,
       this.gradiente,
@@ -25,33 +26,33 @@ class GrillaHexagonos extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RepaintBoundary(
-      key: _widgetKey,
-      child: Row(
-        children: [
-          ElevatedButton(onPressed: save, child: const Icon(Icons.download)),
-          Container(
-            width: 100.0, // ajusta la altura según tus necesidades
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter, // comienza desde la parte superior
-                end: Alignment.bottomCenter, // termina en la parte inferior
-                colors: [
-                  Color.fromARGB(255, 8, 82, 143),
-                  Colors.blue,
-                  Colors.green,
-                  Colors.yellow,
-                  Colors.orange,
-                  Colors.red,
-                ],
-                stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
-              ),
+    return Row(
+      children: [
+        ElevatedButton(onPressed: save, child: const Icon(Icons.download)),
+        Container(
+          width: 100.0, // ajusta la altura según tus necesidades
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter, // comienza desde la parte superior
+              end: Alignment.bottomCenter, // termina en la parte inferior
+              colors: [
+                Color.fromARGB(255, 8, 82, 143),
+                Colors.blue,
+                Colors.green,
+                Colors.yellow,
+                Colors.orange,
+                Colors.red,
+              ],
+              stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
             ),
           ),
-          // Container(
-          //     height: 50.0,
-          //     decoration: BoxDecoration(gradient: widget.gradiente)),
-          Padding(
+        ),
+        // Container(
+        //     height: 50.0,
+        //     decoration: BoxDecoration(gradient: widget.gradiente)),
+        RepaintBoundary(
+          key: _widgetKey,
+          child: Padding(
             padding: const EdgeInsets.all(40.0),
             child: InteractiveViewer(
               child: HexagonOffsetGrid.oddPointy(
@@ -67,8 +68,7 @@ class GrillaHexagonos extends StatelessWidget {
                       String valorDistConPunto = valorDist.replaceAll(',', '.');
                       double valor = double.parse(valorDistConPunto);
                       return HexagonWidgetBuilder(
-                        color: getInterpolatedColor(
-                            valor, gradiente, dataMap),
+                        color: getInterpolatedColor(valor, gradiente, dataMap),
                         //color: getColorForValue(valor),
                         //generarColorAleatorioEnEspectro(), //row.isEven ? Colors.yellow : Colors.orangeAccent,
                         elevation: 0.0,
@@ -105,8 +105,7 @@ class GrillaHexagonos extends StatelessWidget {
                             context: context,
                             builder: (BuildContext context) {
                               int bMU = row * columnas + col + 1;
-                              String valorDist =
-                                  dataMap![bMU.toString()]!;
+                              String valorDist = dataMap![bMU.toString()]!;
 
                               return AlertDialog(
                                 title: const Text('Información'),
@@ -144,11 +143,9 @@ class GrillaHexagonos extends StatelessWidget {
                   }),
             ),
           ),
-        ],
-      ),
-      
+        ),
+      ],
     );
-    
   }
 
   void save() async {
