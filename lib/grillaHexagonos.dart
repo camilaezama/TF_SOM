@@ -158,6 +158,16 @@ class GrillaHexagonos extends StatelessWidget {
                           stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
                         ),
                       ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          for (double stop in [0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
+                            Text(
+                              '${stop}',
+                              style: TextStyle(color: Colors.black),
+                            ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
