@@ -26,6 +26,7 @@ class _GrillasPageState extends State<GrillasPage>
   Map<String, dynamic> parametros = {};
   Map<String, String> mapaRtaUmat = {};
   Map<String, String> dataComponente = {};
+  String title = "";
   late int filas, columnas;
   @override
   void initState() {
@@ -143,6 +144,7 @@ class _GrillasPageState extends State<GrillasPage>
     );
 
     return GrillaHexagonos(
+        titulo: "UMat",
         gradiente: gradiente,
         dataMap: mapaRtaUmat,
         filas: filas * 2,
@@ -166,6 +168,7 @@ class _GrillasPageState extends State<GrillasPage>
       stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
     );
     return GrillaHexagonos(
+        titulo: "BMU",
         gradiente: gradiente,
         dataMap: dataUdist,
         filas: filas,
@@ -207,11 +210,13 @@ class _GrillasPageState extends State<GrillasPage>
             setState(() {
               selectedComponente = selectedValue;
               dataComponente = mapaRta[selectedValue] ?? {};
+              title = selectedValue;
             });
           },
         ),
         Expanded(
             child: GrillaHexagonos(
+                titulo: title,
                 gradiente: gradiente,
                 dataMap: dataComponente,
                 filas: filas,
