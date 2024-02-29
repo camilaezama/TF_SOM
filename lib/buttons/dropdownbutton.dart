@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
-class DropdownMenuComponentes extends StatefulWidget {
+class GenericDropdownMenu extends StatefulWidget {
   final List<String> listaOpciones;
   final Function(String) onSelected;
-  const DropdownMenuComponentes({
+  const GenericDropdownMenu({
     super.key,
     required this.listaOpciones,
     required this.onSelected,
   });
 
   @override
-  State<DropdownMenuComponentes> createState() =>
-      _DropdownMenuComponentesState();
+  State<GenericDropdownMenu> createState() =>
+      _GenericDropdownMenuState();
 }
 
-class _DropdownMenuComponentesState extends State<DropdownMenuComponentes> {
+class _GenericDropdownMenuState extends State<GenericDropdownMenu> {
   String dropdownValue = '';
 
   @override

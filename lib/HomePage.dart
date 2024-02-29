@@ -1,6 +1,7 @@
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/buttons/dropdownbutton.dart';
 import 'dart:convert';
 import 'dart:typed_data'; // Para Uint8List
 import 'package:http/http.dart' as http;
@@ -13,6 +14,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   static final filasController = TextEditingController(text: "14");
   static final columnasController = TextEditingController(text: "24");
+  static final iteracontroller = TextEditingController(text: "100");
+  String funcionVecindad = 'gaussian';
+  String inicializacion = 'random';
   List<List<dynamic>> csvData = [];
   String botonAceptar = 'Aceptar';
   String botonParam = 'Modificar Parametros';
@@ -150,7 +154,7 @@ class _HomePageState extends State<HomePage> {
                                 return AlertDialog(
                                   title: const Text('Parametros configurables'),
                                   content: _parametrosConfigurables(
-                                      filasController, columnasController),
+                                      filasController, columnasController,iteracontroller),
                                   actions: [
                                     TextButton(
                                       onPressed: () {
@@ -178,7 +182,7 @@ class _HomePageState extends State<HomePage> {
 
 //Esto se podria poner en mas funciones a medida que agreguemos mas parametros.
   Widget _parametrosConfigurables(TextEditingController filasController,
-      TextEditingController columnasController) {
+      TextEditingController columnasController, TextEditingController iteracontroller) {
     return SizedBox(
       width: _width * 0.5,
       height: _height * 0.5,
@@ -195,7 +199,7 @@ class _HomePageState extends State<HomePage> {
                           labelText: 'Cantidad de filas')),
                 ),
                 const SizedBox(
-                  width: 20,
+                  width: 25,
                 ),
                 Expanded(
                   child: TextField(
@@ -210,23 +214,62 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(
               height: 20,
             ),
-            const Row(
+            Row(
               children: [
                 Expanded(
-                  child: TextField(
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Otro parametro')),
+                  child: DropdownButtonFormField(
+                    decoration: const InputDecoration(
+                      label: Text("Función de vecindad"),
+                    ),
+                    value: 'gaussian', //valor default
+                    items: const [
+                      DropdownMenuItem(
+                        value: 'gaussian',
+                        child: Text(" Gaussiana"),
+                      ),
+                      DropdownMenuItem(
+                        value: 'bubble',
+                        child: Text(" Burbuja"),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      funcionVecindad = value!;
+                    },
+                  ),
                 ),
-                SizedBox(
-                  width: 20,
+                const SizedBox(
+                  width: 25,
+                ),
+                Expanded(
+                  child: DropdownButtonFormField(
+                    decoration: const InputDecoration(
+                      label: Text("Inicialización"),
+                    ),
+                    value: 'random', //valor default
+                    items: const [
+                      DropdownMenuItem(
+                        value: 'random',
+                        child: Text(" Aleatoria"),
+                      ),
+                      DropdownMenuItem(
+                        value: 'pca',
+                        child: Text(" PCA"),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      inicializacion = value!;
+                    },
+                  ),
+                ),
+                 const SizedBox(
+                  width: 25,
                 ),
                 Expanded(
                   child: TextField(
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Un parametro mas'),
-                  ),
+                      controller: iteracontroller,
+                      decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Cantidad máxima de iteraciones por época')),
                 )
               ],
             )
@@ -352,7 +395,10 @@ class _HomePageState extends State<HomePage> {
           'filas': filasController.text != "" ? filasController.text : 24,
           'columnas': columnasController.text != ""
               ? columnasController.text
-              : 31, //TODO IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!
+              : 31, //TODO IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
+          'vecindad': funcionVecindad,
+          'inicializacion' : inicializacion,
+          'iteraciones': iteracontroller.text != ""? iteracontroller.text : 200, //IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
         };
 
         setState(() {
@@ -381,13 +427,10 @@ class _HomePageState extends State<HomePage> {
         Map<String, dynamic> NeuronsJSON = decodedJson["Neurons"];
         List<dynamic> UmatJSON = decodedJson["UMat"];
 
-
-
         /// Procesamiento de datos para Hits
         Map<String, dynamic> HitsJSON = decodedJson["Hits"];
-        Map<int, int> hitsMap = Map<int, int>.from(HitsJSON.map((key, value) => MapEntry(int.parse(key), value)));
-
-
+        Map<int, int> hitsMap = Map<int, int>.from(
+            HitsJSON.map((key, value) => MapEntry(int.parse(key), value)));
 
         /// Procesamiento de datos para UMat
         List<List<double>> lista = [];
@@ -405,12 +448,7 @@ class _HomePageState extends State<HomePage> {
         });
         //Map<String, dynamic> umatJson = decodedJson["umat"];
 
-
-
-        
         Map<String, Object> respuesta = {};
-
-
 
         /// Procesamiento de datos para BMUs
         Map<String, Map<String, String>> mapaRta = {};
