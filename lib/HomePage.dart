@@ -1,6 +1,7 @@
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/buttons/dropdownbutton.dart';
 import 'dart:convert';
 import 'dart:typed_data'; // Para Uint8List
 import 'package:http/http.dart' as http;
@@ -13,6 +14,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   static final filasController = TextEditingController(text: "14");
   static final columnasController = TextEditingController(text: "24");
+  String funcionVecindad = 'gaussian';
   List<List<dynamic>> csvData = [];
   String botonAceptar = 'Aceptar';
   String botonParam = 'Modificar Parametros';
@@ -210,23 +212,31 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(
               height: 20,
             ),
-            const Row(
+            Row(
               children: [
                 Expanded(
-                  child: TextField(
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Otro parametro')),
-                ),
-                SizedBox(
-                  width: 20,
-                ),
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Un parametro mas'),
+                  child: DropdownButtonFormField(
+                    decoration: const InputDecoration(
+                      label: Text("Función de vecindad"),
+                    ),
+                    value: 'gaussian', //valor default
+                    items: const [
+                      DropdownMenuItem(
+                        value: 'gaussian',
+                        child: Text(" Gaussiana"),
+                      ),
+                      DropdownMenuItem(
+                        value: 'bubble',
+                        child: Text(" Burbuja"),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      funcionVecindad = value!;
+                    },
                   ),
+                ),
+                const SizedBox(
+                  width: 20,
                 )
               ],
             )
@@ -353,6 +363,7 @@ class _HomePageState extends State<HomePage> {
           'columnas': columnasController.text != ""
               ? columnasController.text
               : 31, //TODO IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!
+          'vecindad': funcionVecindad
         };
 
         setState(() {
@@ -381,13 +392,10 @@ class _HomePageState extends State<HomePage> {
         Map<String, dynamic> NeuronsJSON = decodedJson["Neurons"];
         List<dynamic> UmatJSON = decodedJson["UMat"];
 
-
-
         /// Procesamiento de datos para Hits
         Map<String, dynamic> HitsJSON = decodedJson["Hits"];
-        Map<int, int> hitsMap = Map<int, int>.from(HitsJSON.map((key, value) => MapEntry(int.parse(key), value)));
-
-
+        Map<int, int> hitsMap = Map<int, int>.from(
+            HitsJSON.map((key, value) => MapEntry(int.parse(key), value)));
 
         /// Procesamiento de datos para UMat
         List<List<double>> lista = [];
@@ -405,12 +413,7 @@ class _HomePageState extends State<HomePage> {
         });
         //Map<String, dynamic> umatJson = decodedJson["umat"];
 
-
-
-        
         Map<String, Object> respuesta = {};
-
-
 
         /// Procesamiento de datos para BMUs
         Map<String, Map<String, String>> mapaRta = {};

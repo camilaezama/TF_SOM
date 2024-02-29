@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/grillaHexagonos.dart';
 import 'package:hexagon/hexagon.dart';
 
-import 'utils.dart';
-
-import 'buttons/dropdownbutton_componentes.dart';
+import 'buttons/dropdownbutton.dart';
 
 class GrillasPage extends StatefulWidget {
   @override
@@ -119,7 +117,7 @@ class _GrillasPageState extends State<GrillasPage>
       children: [
         const Text('Elija la componente a mostrar: '),
         const SizedBox(width: 5),
-        DropdownMenuComponentes(
+        GenericDropdownMenu(
           listaOpciones: options,
           onSelected: (String selectedValue) {
             // Step 3: Update dataComponente and trigger rebuild
@@ -158,8 +156,6 @@ class _GrillasPageState extends State<GrillasPage>
         paddingEntreHexagonos: 0.2);
   }
 
-  
-
   Widget _buildWidgetHits() {
     String archivoCsv = 'assets/archivo.csv';
     int columnaNumeroNeuronas = 0;
@@ -176,13 +172,14 @@ class _GrillasPageState extends State<GrillasPage>
       stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
     );
     return GrillaHexagonos(
-        titulo: "Hits",
-        gradiente: gradiente,
-        dataMap: dataUdist,
-        filas: filas,
-        columnas: columnas,
-        hits: true,
-        hitsMap: hitsMap,);
+      titulo: "Hits",
+      gradiente: gradiente,
+      dataMap: dataUdist,
+      filas: filas,
+      columnas: columnas,
+      hits: true,
+      hitsMap: hitsMap,
+    );
   }
 
   Widget _buildWidgetBMUs() {
@@ -236,7 +233,7 @@ class _GrillasPageState extends State<GrillasPage>
       children: [
         const Text('Elija la componente a mostrar: '),
         const SizedBox(width: 5),
-        DropdownMenuComponentes(
+        GenericDropdownMenu(
           listaOpciones: options,
           onSelected: (String selectedValue) {
             // Step 3: Update dataComponente and trigger rebuild
