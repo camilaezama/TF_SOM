@@ -58,9 +58,9 @@ class GrillaHexagonos extends StatelessWidget {
                             columns: columnas,
                             rows: filas,
                             buildTile: (col, row) {
+                              int bmu = row * columnas + col + 1;
+                              String valorDist = dataMap![bmu.toString()]!;
                               if (dataMap!.isNotEmpty) {
-                                int bmu = row * columnas + col + 1;
-                                String valorDist = dataMap![bmu.toString()]!;
                                 String valorDistConPunto =
                                     valorDist.replaceAll(',', '.');
                                 double valor = double.parse(valorDistConPunto);
@@ -82,8 +82,9 @@ class GrillaHexagonos extends StatelessWidget {
                               }
                             },
                             buildChild: (col, row) {
-                              int bMU_HIT = row * columnas + col + 1;
-                              return ElevatedButton(
+                              int bMU = row * columnas + col + 1;
+                              String valorDist = dataMap![bMU.toString()]!;
+                              return valorDist=='-1'? const Text(""):ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                       textStyle: const TextStyle(
                                         // Tamaño del texto
@@ -100,14 +101,9 @@ class GrillaHexagonos extends StatelessWidget {
                                       //),
                                       padding: EdgeInsets.all(0.0)),
                                   onPressed: () {
-                                    //loadData();
                                     showDialog<void>(
                                       context: context,
                                       builder: (BuildContext context) {
-                                        int bMU = row * columnas + col + 1;
-                                        String valorDist =
-                                            dataMap![bMU.toString()]!;
-
                                         return AlertDialog(
                                           title: const Text('Información'),
                                           content: SingleChildScrollView(
@@ -134,7 +130,7 @@ class GrillaHexagonos extends StatelessWidget {
                                     );
                                   },
                                   child: Text(
-                                    hits ? hits_count(bMU_HIT) : '',
+                                    hits ? hits_count(bMU) : '',
                                     //'',
                                     //'123456789',
                                     //'$BMU',
@@ -185,9 +181,9 @@ class GrillaHexagonos extends StatelessWidget {
     );
   }
 
-  String hits_count(int bmu){
+  String hits_count(int bmu) {
     String cant;
-    if (hitsMap!.keys.contains(bmu)){
+    if (hitsMap!.keys.contains(bmu)) {
       cant = hitsMap![bmu].toString();
     } else {
       cant = "";
