@@ -443,7 +443,8 @@ class _HomePageState extends State<HomePage> {
           'vecindad': funcionVecindad,
           'inicializacion' : inicializacion,
           'iteraciones': iteracontroller.text != ""? iteracontroller.text : 200, //IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
-          'normalizacion': normalizacion	
+          'normalizacion': normalizacion,
+          'factorEntrenamiento': factorEntrenamientoController.text != ""? factorEntrenamientoController.text : 2 //IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
         };
 
         setState(() {

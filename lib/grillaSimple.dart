@@ -83,6 +83,7 @@ class _GrillaSimpleState extends State<GrillaSimple> {
                     int BMU = row * 24 + col + 1;
                     return ElevatedButton(
                         style: ElevatedButton.styleFrom(
+                            shadowColor: Colors.transparent,
                             textStyle: const TextStyle(
                               // Tamaño del texto
                               color: Colors.black, // Color del texto
