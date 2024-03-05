@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_application_1/grillaCompleja.dart';
+import 'package:flutter_application_1/deprecado/grillaCompleja.dart';
 import 'package:flutter_application_1/grillaSimple.dart';
 import 'package:hexagon/hexagon.dart';
 import 'package:csv/csv.dart';
