@@ -15,8 +15,11 @@ class _HomePageState extends State<HomePage> {
   static final filasController = TextEditingController(text: "14");
   static final columnasController = TextEditingController(text: "24");
   static final iteracontroller = TextEditingController(text: "100");
+  static final factorEntrenamientoController = TextEditingController(text: "2");
   String funcionVecindad = 'gaussian';
   String inicializacion = 'random';
+  String normalizacion = 'var';
+
   List<List<dynamic>> csvData = [];
   String botonAceptar = 'Aceptar';
   String botonParam = 'Modificar Parametros';
@@ -154,7 +157,7 @@ class _HomePageState extends State<HomePage> {
                                 return AlertDialog(
                                   title: const Text('Parametros configurables'),
                                   content: _parametrosConfigurables(
-                                      filasController, columnasController,iteracontroller),
+                                      filasController, columnasController,iteracontroller, factorEntrenamientoController),
                                   actions: [
                                     TextButton(
                                       onPressed: () {
@@ -182,7 +185,7 @@ class _HomePageState extends State<HomePage> {
 
 //Esto se podria poner en mas funciones a medida que agreguemos mas parametros.
   Widget _parametrosConfigurables(TextEditingController filasController,
-      TextEditingController columnasController, TextEditingController iteracontroller) {
+      TextEditingController columnasController, TextEditingController iteracontroller, TextEditingController factorEntrenamientoController ) {
     return SizedBox(
       width: _width * 0.5,
       height: _height * 0.5,
@@ -208,6 +211,30 @@ class _HomePageState extends State<HomePage> {
                         border: OutlineInputBorder(),
                         labelText: 'Cantidad de columnas'),
                   ),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                      controller: iteracontroller,
+                      decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Cantidad máxima de iteraciones por época')),
+                ),
+                const SizedBox(
+                  width: 25,
+                ),
+                Expanded(
+                  child: TextField(
+                      controller: factorEntrenamientoController,
+                      decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Factor de incremento iteraciones del entrenamiento')),
                 )
               ],
             ),
@@ -265,12 +292,29 @@ class _HomePageState extends State<HomePage> {
                   width: 25,
                 ),
                 Expanded(
-                  child: TextField(
-                      controller: iteracontroller,
-                      decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Cantidad máxima de iteraciones por época')),
-                )
+                  child: DropdownButtonFormField(
+                    decoration: const InputDecoration(
+                      label: Text("Normalizacion"),
+                    ),
+                    value: 'var', //valor default
+                    items: const [
+                      DropdownMenuItem(
+                        value: 'var',
+                        child: Text(" Var"),
+                      ),
+                      DropdownMenuItem(
+                        value: 'None',
+                        child: Text(" Ninguna"),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      inicializacion = value!;
+                    },
+                  ),
+                ),
+                 const SizedBox(
+                  width: 25,
+                ),
               ],
             )
           ],
@@ -399,6 +443,7 @@ class _HomePageState extends State<HomePage> {
           'vecindad': funcionVecindad,
           'inicializacion' : inicializacion,
           'iteraciones': iteracontroller.text != ""? iteracontroller.text : 200, //IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
+          'normalizacion': normalizacion	
         };
 
         setState(() {
