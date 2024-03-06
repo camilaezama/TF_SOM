@@ -132,9 +132,6 @@ class _GrillasPageState extends State<GrillasPage>
   }
 
   Widget _buildWidgetUMat() {
-    String archivoCsv = 'assets/salidaColoresOutput1.csv';
-    int columnaNumeroNeuronas = 0;
-    int columnaValores = 1;
     Gradient gradiente = const LinearGradient(
       colors: [
         Color.fromARGB(255, 8, 82, 143),
@@ -157,9 +154,6 @@ class _GrillasPageState extends State<GrillasPage>
   }
 
   Widget _buildWidgetHits() {
-    String archivoCsv = 'assets/archivo.csv';
-    int columnaNumeroNeuronas = 0;
-    int columnaValores = 1;
     Gradient gradiente = const LinearGradient(
       colors: [
         Color.fromARGB(255, 8, 82, 143),
@@ -183,9 +177,6 @@ class _GrillasPageState extends State<GrillasPage>
   }
 
   Widget _buildWidgetBMUs() {
-    String archivoCsv = 'assets/archivo.csv';
-    int columnaNumeroNeuronas = 0;
-    int columnaValores = 1;
     Gradient gradiente = const LinearGradient(
       colors: [
         Color.fromARGB(255, 8, 82, 143),
@@ -206,9 +197,6 @@ class _GrillasPageState extends State<GrillasPage>
   }
 
   Widget _buildWidgetGrillaComponentes(Map<String, dynamic> mapaRta) {
-    String archivoCsv = 'assets/archivo.csv';
-    int columnaNumeroNeuronas = 0;
-    int columnaValores = 1;
     List<String> options = [];
     options.add("Seleccione");
     //Ignora las primeras 6 (i = 7) porque son BMU, Udist, etc etc, me quedo con las que son componentes
