@@ -3,6 +3,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/buttons/dropdownbutton.dart';
 import 'dart:convert';
+import 'package:flutter/services.dart';
 import 'dart:typed_data'; // Para Uint8List
 import 'package:http/http.dart' as http;
 
@@ -157,7 +158,10 @@ class _HomePageState extends State<HomePage> {
                                 return AlertDialog(
                                   title: const Text('Parametros configurables'),
                                   content: _parametrosConfigurables(
-                                      filasController, columnasController,iteracontroller, factorEntrenamientoController),
+                                      filasController,
+                                      columnasController,
+                                      iteracontroller,
+                                      factorEntrenamientoController),
                                   actions: [
                                     TextButton(
                                       onPressed: () {
@@ -184,8 +188,11 @@ class _HomePageState extends State<HomePage> {
   }
 
 //Esto se podria poner en mas funciones a medida que agreguemos mas parametros.
-  Widget _parametrosConfigurables(TextEditingController filasController,
-      TextEditingController columnasController, TextEditingController iteracontroller, TextEditingController factorEntrenamientoController ) {
+  Widget _parametrosConfigurables(
+      TextEditingController filasController,
+      TextEditingController columnasController,
+      TextEditingController iteracontroller,
+      TextEditingController factorEntrenamientoController) {
     return SizedBox(
       width: _width * 0.5,
       height: _height * 0.5,
@@ -197,6 +204,8 @@ class _HomePageState extends State<HomePage> {
                 Expanded(
                   child: TextField(
                       controller: filasController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'Cantidad de filas')),
@@ -207,6 +216,8 @@ class _HomePageState extends State<HomePage> {
                 Expanded(
                   child: TextField(
                     controller: columnasController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Cantidad de columnas'),
@@ -221,20 +232,26 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Expanded(
                   child: TextField(
+                      keyboardType: TextInputType.number,
                       controller: iteracontroller,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       decoration: const InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: 'Cantidad máxima de iteraciones por época')),
+                          labelText:
+                              'Cantidad máxima de iteraciones por época')),
                 ),
                 const SizedBox(
                   width: 25,
                 ),
                 Expanded(
                   child: TextField(
+                      keyboardType: TextInputType.number,
                       controller: factorEntrenamientoController,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       decoration: const InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: 'Factor de incremento iteraciones del entrenamiento')),
+                          labelText:
+                              'Factor de incremento iteraciones del entrenamiento')),
                 )
               ],
             ),
@@ -288,7 +305,7 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                 ),
-                 const SizedBox(
+                const SizedBox(
                   width: 25,
                 ),
                 Expanded(
@@ -312,7 +329,7 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                 ),
-                 const SizedBox(
+                const SizedBox(
                   width: 25,
                 ),
               ],
@@ -441,10 +458,14 @@ class _HomePageState extends State<HomePage> {
               ? columnasController.text
               : 31, //TODO IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
           'vecindad': funcionVecindad,
-          'inicializacion' : inicializacion,
-          'iteraciones': iteracontroller.text != ""? iteracontroller.text : 200, //IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
+          'inicializacion': inicializacion,
+          'iteraciones': iteracontroller.text != ""
+              ? iteracontroller.text
+              : 200, //IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
           'normalizacion': normalizacion,
-          'factorEntrenamiento': factorEntrenamientoController.text != ""? factorEntrenamientoController.text : 2 //IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
+          'factorEntrenamiento': factorEntrenamientoController.text != ""
+              ? factorEntrenamientoController.text
+              : 2 //IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
         };
 
         setState(() {
