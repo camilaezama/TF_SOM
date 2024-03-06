@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/utils.dart';
+import 'package:TF_SOM_UNMdP/utils.dart';
 import 'package:hexagon/hexagon.dart';
 
 class GrillaCompleja extends StatefulWidget {

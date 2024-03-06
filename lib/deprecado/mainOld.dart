@@ -1,8 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_application_1/deprecado/grillaCompleja.dart';
-import 'package:flutter_application_1/deprecado/grillaSimple.dart';
+import 'package:TF_SOM_UNMdP/deprecado/grillaCompleja.dart';
+import 'package:TF_SOM_UNMdP/deprecado/grillaSimple.dart';
 import 'package:hexagon/hexagon.dart';
 import 'package:csv/csv.dart';
 

@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_application_1/utils.dart';
+import 'package:TF_SOM_UNMdP/utils.dart';
 import 'package:hexagon/hexagon.dart';
 import 'dart:typed_data';
 // ignore: avoid_web_libraries_in_flutter
@@ -150,20 +150,20 @@ class GrillaHexagonos extends StatelessWidget {
                           end: Alignment
                               .bottomCenter, // termina en la parte inferior
                           colors: [
-                            Color.fromARGB(255, 8, 82, 143),
-                            Colors.blue,
-                            Colors.green,
-                            Colors.yellow,
-                            Colors.orange,
                             Colors.red,
+                            Colors.orange,
+                            Colors.yellow,
+                            Colors.green,
+                            Colors.blue,
+                            Color.fromARGB(255, 8, 82, 143),
                           ],
                           stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
                         ),
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          for (double stop in [0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
+                        children: [ 
+                          for (double stop in [1.0, 0.8, 0.6, 0.4, 0.2, 0.0])
                             Text(
                               '${stop}',
                               style: TextStyle(color: Colors.black),
