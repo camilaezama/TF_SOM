@@ -146,43 +146,48 @@ class _GrillasPageState extends State<GrillasPage>
       ],
       stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
     );
-    return Column(
-      // mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        // TextField(
-        //     controller: clustersController,
-        //     keyboardType: TextInputType.number,
-        //     // inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-        //     decoration: const InputDecoration(
-        //         border: OutlineInputBorder(),
-        //         labelText: 'Cantidad de clusters')),
-        // const SizedBox(
-        //   width: 25,
-        // ),
-        ElevatedButton(
-            onPressed: _llamadaClustering,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
+    return Center(
+      child: Row(
+        // mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // TextField(
+          //     controller: clustersController,
+          //     keyboardType: TextInputType.number,
+          //     // inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          //     decoration: const InputDecoration(
+          //         border: OutlineInputBorder(),
+          //         labelText: 'Cantidad de clusters')),
+          // const SizedBox(
+          //   width: 25,
+          // ),
+
+          ElevatedButton(
+              onPressed: _llamadaClustering,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
               ),
-            ),
-            child: cargando
-                ? const CircularProgressIndicator()
-                : Text(
-                    botonAceptar,
-                    style: const TextStyle(fontSize: 16),
-                  )),
-        mostarGrilla
-            ? GrillaHexagonos(
-                dataMap: dataUdist,
-                filas: filas,
-                columnas: columnas,
-                titulo: "Clustering")
-            : const CircularProgressIndicator()
-      ],
+              child: cargando
+                  ? const CircularProgressIndicator()
+                  : Text(
+                      botonAceptar,
+                      style: const TextStyle(fontSize: 16),
+                    )),
+
+          mostarGrilla
+              ? GrillaHexagonos(
+                  dataMap: dataUdist,
+                  filas: filas,
+                  clusters: mapaRtaClusters,
+                  columnas: columnas,
+                  titulo: "Clustering")
+              : const CircularProgressIndicator()
+        ],
+      ),
     );
   }
 
