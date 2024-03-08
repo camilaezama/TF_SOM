@@ -225,6 +225,7 @@ class _GrillasPageState extends State<GrillasPage>
         titulo: "BMU",
         gradiente: gradiente,
         dataMap: dataUdist,
+        clusters: null,
         filas: filas,
         columnas: columnas);
   }

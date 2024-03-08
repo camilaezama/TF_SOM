@@ -67,7 +67,7 @@ class GrillaHexagonos extends StatelessWidget {
                                     valorDist.replaceAll(',', '.');
                                 double valor = double.parse(valorDistConPunto);
                                 return HexagonWidgetBuilder(
-                                  color: this.clusters != null
+                                  color: clusters == null
                                       ? getInterpolatedColor(
                                           valor, gradiente, dataMap)
                                       : getClusterColor(col, row, clusters),
