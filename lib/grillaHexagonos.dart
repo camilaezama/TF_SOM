@@ -13,6 +13,7 @@ class GrillaHexagonos extends StatelessWidget {
   final int filas;
   final int columnas;
   String titulo;
+  List<List<int>>? clusters;
   final double
       paddingEntreHexagonos; //podria no ser final y luego cambiarse luego de ser generado
   Map<int, int>? hitsMap;
@@ -24,6 +25,7 @@ class GrillaHexagonos extends StatelessWidget {
       required this.filas,
       required this.columnas,
       required this.titulo,
+      this.clusters,
       this.paddingEntreHexagonos = 0.6,
       this.hitsMap,
       this.hits = false});
@@ -65,8 +67,10 @@ class GrillaHexagonos extends StatelessWidget {
                                     valorDist.replaceAll(',', '.');
                                 double valor = double.parse(valorDistConPunto);
                                 return HexagonWidgetBuilder(
-                                  color: getInterpolatedColor(
-                                      valor, gradiente, dataMap),
+                                  color: this.clusters != null
+                                      ? getInterpolatedColor(
+                                          valor, gradiente, dataMap)
+                                      : getClusterColor(col, row, clusters),
                                   //color: getColorForValue(valor),
                                   //generarColorAleatorioEnEspectro(), //row.isEven ? Colors.yellow : Colors.orangeAccent,
                                   elevation: 0.0,
@@ -84,60 +88,63 @@ class GrillaHexagonos extends StatelessWidget {
                             buildChild: (col, row) {
                               int bMU = row * columnas + col + 1;
                               String valorDist = dataMap![bMU.toString()]!;
-                              return valorDist=='-1'? const Text(""):ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      textStyle: const TextStyle(
-                                        // Tamaño del texto
-                                        color: Colors.black, // Color del texto
-                                      ),
-                                      backgroundColor: Colors
-                                          .transparent, // Fondo transparente
-                                      //onPrimary: Colors.blue, // Color del texto cuando se presiona
-                                      elevation:
-                                          0, // Elimina la sombra del botón
-                                      // shape: RoundedRectangleBorder(
-                                      //   borderRadius: BorderRadius.circular(8.0),
-                                      //side: BorderSide(color: Colors.blue), // Borde del color deseado
-                                      //),
-                                      padding: EdgeInsets.all(0.0)),
-                                  onPressed: () {
-                                    showDialog<void>(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: const Text('Información'),
-                                          content: SingleChildScrollView(
-                                            child: ListBody(
-                                              children: [
-                                                const Text(
-                                                    'Este es un cuadro de diálogo de ejemplo.'),
-                                                Text('BMU = $bMU'),
-                                                Text('Udist = $valorDist'),
-                                              ],
-                                            ),
+                              return valorDist == '-1'
+                                  ? const Text("")
+                                  : ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          textStyle: const TextStyle(
+                                            // Tamaño del texto
+                                            color:
+                                                Colors.black, // Color del texto
                                           ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context)
-                                                    .pop(); // Cerrar el cuadro de diálogo
-                                              },
-                                              child: Text('Cerrar'),
-                                            ),
-                                          ],
+                                          backgroundColor: Colors
+                                              .transparent, // Fondo transparente
+                                          //onPrimary: Colors.blue, // Color del texto cuando se presiona
+                                          elevation:
+                                              0, // Elimina la sombra del botón
+                                          // shape: RoundedRectangleBorder(
+                                          //   borderRadius: BorderRadius.circular(8.0),
+                                          //side: BorderSide(color: Colors.blue), // Borde del color deseado
+                                          //),
+                                          padding: EdgeInsets.all(0.0)),
+                                      onPressed: () {
+                                        showDialog<void>(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text('Información'),
+                                              content: SingleChildScrollView(
+                                                child: ListBody(
+                                                  children: [
+                                                    const Text(
+                                                        'Este es un cuadro de diálogo de ejemplo.'),
+                                                    Text('BMU = $bMU'),
+                                                    Text('Udist = $valorDist'),
+                                                  ],
+                                                ),
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context)
+                                                        .pop(); // Cerrar el cuadro de diálogo
+                                                  },
+                                                  child: Text('Cerrar'),
+                                                ),
+                                              ],
+                                            );
+                                          },
                                         );
                                       },
-                                    );
-                                  },
-                                  child: Text(
-                                    hits ? hits_count(bMU) : '',
-                                    //'',
-                                    //'123456789',
-                                    //'$BMU',
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                    ),
-                                  ));
+                                      child: Text(
+                                        hits ? hits_count(bMU) : '',
+                                        //'',
+                                        //'123456789',
+                                        //'$BMU',
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                        ),
+                                      ));
                             }),
                       ),
                     ),
@@ -162,7 +169,7 @@ class GrillaHexagonos extends StatelessWidget {
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [ 
+                        children: [
                           for (double stop in [1.0, 0.8, 0.6, 0.4, 0.2, 0.0])
                             Text(
                               '${stop}',
@@ -207,25 +214,5 @@ class GrillaHexagonos extends StatelessWidget {
       ..click();
 
     html.Url.revokeObjectUrl(url);
-
-    // showDialog(
-    //   context: context,
-    //   builder: (BuildContext context) {
-    //     return AlertDialog(
-    //       title: Text('Imagen generada'),
-    //       content: Container(
-    //         child: Image.memory(pngBytes),
-    //       ),
-    //       actions: <Widget>[
-    //         TextButton(
-    //           onPressed: () {
-    //             Navigator.of(context).pop();
-    //           },
-    //           child: Text('Cerrar'),
-    //         ),
-    //       ],
-    //     );
-    //   },
-    // );
   }
 }

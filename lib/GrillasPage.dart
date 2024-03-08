@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:TF_SOM_UNMdP/grillaHexagonos.dart';
+import 'package:flutter/services.dart';
 import 'package:hexagon/hexagon.dart';
-
+import 'package:http/http.dart' as http;
 import 'buttons/dropdownbutton.dart';
+import 'dart:convert';
 
 class GrillasPage extends StatefulWidget {
   @override
@@ -11,19 +13,24 @@ class GrillasPage extends StatefulWidget {
 
 class _GrillasPageState extends State<GrillasPage>
     with TickerProviderStateMixin {
+  bool cargando = false;
+  bool mostarGrilla = false;
+  String botonAceptar = 'Aceptar';
   int depth = 1;
   List<int> depths = [0, 1, 2, 3, 4];
   HexagonType type = HexagonType.FLAT;
   bool hasControls = true;
   bool showControls = true;
-
   late TabController tabController;
+  static final clustersController = TextEditingController(text: "10");
   Map<String, String> dataUdist = {};
   Map<String, Object> respuesta = {};
   Map<String, dynamic> mapaRta = {};
   Map<String, dynamic> parametros = {};
   Map<String, String> mapaRtaUmat = {};
+  late List<List<int>> mapaRtaClusters;
   Map<String, String> dataComponente = {};
+  late List<List<double>> codebook;
 
   Map<int, int> hitsMap = {};
   String title = "";
@@ -31,7 +38,7 @@ class _GrillasPageState extends State<GrillasPage>
   @override
   void initState() {
     super.initState();
-    tabController = TabController(initialIndex: 0, length: 4, vsync: this);
+    tabController = TabController(initialIndex: 0, length: 5, vsync: this);
     tabController.addListener(_onTabChange);
   }
 
@@ -64,6 +71,8 @@ class _GrillasPageState extends State<GrillasPage>
 
     hitsMap = respuesta["respuestaHits"] as Map<int, int>;
 
+    codebook = respuesta["codebook"] as List<List<double>>;
+
     filas = int.parse(parametros["filas"]);
     columnas = int.parse(parametros["columnas"]);
     dataUdist = mapaRta["Udist"]!;
@@ -72,7 +81,7 @@ class _GrillasPageState extends State<GrillasPage>
           title: const Text('Grillas'),
         ),
         body: DefaultTabController(
-          length: 4,
+          length: 5,
           initialIndex: 0,
           child: Scaffold(
             appBar: AppBar(
@@ -83,6 +92,7 @@ class _GrillasPageState extends State<GrillasPage>
                   Tab(text: 'Umat'),
                   Tab(text: 'Componentes'),
                   Tab(text: 'Hits'),
+                  Tab(text: 'Clustering'),
                 ],
               ),
               toolbarHeight: 0.0,
@@ -95,40 +105,11 @@ class _GrillasPageState extends State<GrillasPage>
                 _buildWidgetUMat(),
                 _buildWidgetGrillaComponentes(mapaRta),
                 _buildWidgetHits(),
-                // _buildWidget2(),
+                _buildWidgetClusters(),
               ],
             ),
           ),
         ));
-  }
-
-  Widget _buildWidgetComponentes(Map<String, dynamic> mapaRta) {
-    List<String> options = [];
-    //Ignora las primeras 6 (i = 7) porque son BMU, Udist, etc etc, me quedo con las que son componentes
-    List<String> keys = mapaRta.keys.toList();
-    for (var i = 7; i < keys.length; i++) {
-      options.add(keys[i]);
-    }
-
-    //Aca hay que generar la/las grilla(s), meterla en el widget que se hace return
-    return Center(
-        child: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text('Elija la componente a mostrar: '),
-        const SizedBox(width: 5),
-        GenericDropdownMenu(
-          listaOpciones: options,
-          onSelected: (String selectedValue) {
-            // Step 3: Update dataComponente and trigger rebuild
-            setState(() {
-              selectedComponente = selectedValue;
-              dataComponente = mapaRta[selectedValue] ?? {};
-            });
-          },
-        )
-      ],
-    ));
   }
 
   Widget _buildWidgetUMat() {
@@ -151,6 +132,58 @@ class _GrillasPageState extends State<GrillasPage>
         filas: filas * 2,
         columnas: columnas * 2,
         paddingEntreHexagonos: 0.2);
+  }
+
+  Widget _buildWidgetClusters() {
+    Gradient gradiente = const LinearGradient(
+      colors: [
+        Color.fromARGB(255, 8, 82, 143),
+        Colors.blue,
+        Colors.green,
+        Colors.yellow,
+        Colors.orange,
+        Colors.red,
+      ],
+      stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
+    );
+    return Column(
+      // mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // TextField(
+        //     controller: clustersController,
+        //     keyboardType: TextInputType.number,
+        //     // inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        //     decoration: const InputDecoration(
+        //         border: OutlineInputBorder(),
+        //         labelText: 'Cantidad de clusters')),
+        // const SizedBox(
+        //   width: 25,
+        // ),
+        ElevatedButton(
+            onPressed: _llamadaClustering,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+            ),
+            child: cargando
+                ? const CircularProgressIndicator()
+                : Text(
+                    botonAceptar,
+                    style: const TextStyle(fontSize: 16),
+                  )),
+        mostarGrilla
+            ? GrillaHexagonos(
+                dataMap: dataUdist,
+                filas: filas,
+                columnas: columnas,
+                titulo: "Clustering")
+            : const CircularProgressIndicator()
+      ],
+    );
   }
 
   Widget _buildWidgetHits() {
@@ -239,88 +272,43 @@ class _GrillasPageState extends State<GrillasPage>
                 dataMap: dataComponente,
                 filas: filas,
                 columnas: columnas)),
-        // Expanded(
-        //     child: GrillaSimple(
-        //         gradiente: gradiente, dataMap: dataComponente)),
       ],
     ));
   }
+
+  void _llamadaClustering() async {
+    try {
+      String TIPO_LLAMADA = "clusters";
+      var url = Uri.parse('http://localhost:7777' + '/' + TIPO_LLAMADA);
+
+      final parametros = <String, dynamic>{
+        'filas': filas != "" ? filas : 24,
+        'columnas': columnas != "" ? columnas : 31,
+        'cantidadClusters': 10
+      };
+
+      var response = await http.post(url,
+          headers: {'Accept': '/*'},
+          body: jsonEncode(
+              {"datos": codebook, "tipo": TIPO_LLAMADA, "params": parametros}));
+      List<dynamic> decodedJson = json.decode(response.body);
+      List<List<int>> rtaClusters = decodedJson.map((dynamic item) {
+        if (item is List<dynamic>) {
+          return item.map((dynamic subItem) => subItem as int).toList();
+        } else {
+          throw Exception('Invalid item in list');
+        }
+      }).toList();
+      setState(() {
+        mapaRtaClusters = rtaClusters;
+        mostarGrilla = true;
+        cargando = false;
+      });
+    } catch (e) {
+      setState(() {
+        cargando = false;
+        botonAceptar = "Aceptar";
+      });
+    }
+  }
 }
-
-
-
-    // return FutureBuilder<Map<String, String>>(
-    //   future: loadData(archivoCsv, columnaNumeroNeuronas, columnaValores),
-    //   builder: (context, snapshot) {
-    //     if (snapshot.connectionState == ConnectionState.waiting) {
-    //       return const Center(child: CircularProgressIndicator());
-    //     } else if (snapshot.hasError) {
-    //       return const Center(child: Text('Error al cargar los datos'));
-    //     } else {
-    //       // Construir la interfaz con los datos cargados
-    //       Map<String, String> dataMap = snapshot.data!;
-    //       // print('Mapa actual que usamos: ${dataMap}');
-    //       //return GrillaSimple(gradiente: gradiente, dataMap: dataUdist);
-    //       print('Mapa que llega: ${dataUdist}');
-    //       return GrillaHexagonos(gradiente: gradiente, dataMap: dataUdist, filas: 14, columnas: 24);
-    //     }
-    //   },
-    // );
-
-
-
-
-        // return FutureBuilder<Map<String, String>>(
-    //     future: loadData(archivoCsv, columnaNumeroNeuronas, columnaValores),
-    //     builder: (context, snapshot) {
-    //       if (snapshot.connectionState == ConnectionState.waiting) {
-    //         return const Center(child: CircularProgressIndicator());
-    //       } else if (snapshot.hasError) {
-    //         return const Center(child: Text('Error al cargar los datos'));
-    //       } else {
-    //         // Construir la interfaz con los datos cargados
-    //         Map<String, String> dataMap = snapshot.data!;
-    //         print('Mapa actual que usamos: ${dataMap}');
-
-    //         return Center(
-    //             child: Column(
-    //           mainAxisAlignment: MainAxisAlignment.center,
-    //           children: [
-    //             const Text('Elija la componente a mostrar: '),
-    //             const SizedBox(width: 5),
-    //             DropdownMenuComponentes(
-    //               listaOpciones: options,
-    //               onSelected: (String selectedValue) {
-    //                 // Step 3: Update dataComponente and trigger rebuild
-    //                 setState(() {
-    //                   selectedComponente = selectedValue;
-    //                   dataComponente = mapaRta[selectedValue] ?? {};
-    //                 });
-    //               },
-    //             ),
-    //             Expanded(
-    //                 child: GrillaHexagonos(
-    //                     gradiente: gradiente, dataMap: dataComponente, filas: 14, columnas: 24)),
-    //             // Expanded(
-    //             //     child: GrillaSimple(
-    //             //         gradiente: gradiente, dataMap: dataComponente)),
-    //           ],
-    //         ));
-    //       }
-    //     });
-
-    //return GrillaCompleja(gradiente: gradiente, dataMap: mapaRtaUmat);
-
-    // return FutureBuilder<Map<String, String>>(
-    //   future: loadData(archivoCsv, columnaNumeroNeuronas, columnaValores),
-    //   builder: (context, snapshot) {
-    //     if (snapshot.connectionState == ConnectionState.waiting) {
-    //       return const Center(child: CircularProgressIndicator());
-    //     } else if (snapshot.hasError) {
-    //       return const Center(child: Text('Error al cargar los datos'));
-    //     } else {
-    //       Map<String, String> dataMap = snapshot.data!;
-    //       return GrillaCompleja(gradiente: gradiente, dataMap: dataMap);
-    //     }
-    //   },
-    // );
