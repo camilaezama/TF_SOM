@@ -17,6 +17,7 @@ class GrillaHexagonos extends StatelessWidget {
       paddingEntreHexagonos; //podria no ser final y luego cambiarse luego de ser generado
   Map<int, int>? hitsMap;
   bool hits;
+  bool mostrarGradiente;
   GrillaHexagonos(
       {super.key,
       this.gradiente,
@@ -26,7 +27,8 @@ class GrillaHexagonos extends StatelessWidget {
       required this.titulo,
       this.paddingEntreHexagonos = 0.6,
       this.hitsMap,
-      this.hits = false});
+      this.hits = false,
+      this.mostrarGradiente = true});
 
   final _widgetKey = GlobalKey();
 
@@ -84,93 +86,97 @@ class GrillaHexagonos extends StatelessWidget {
                             buildChild: (col, row) {
                               int bMU = row * columnas + col + 1;
                               String valorDist = dataMap![bMU.toString()]!;
-                              return valorDist=='-1'? const Text(""):ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      textStyle: const TextStyle(
-                                        // Tamaño del texto
-                                        color: Colors.black, // Color del texto
-                                      ),
-                                      backgroundColor: Colors
-                                          .transparent, // Fondo transparente
-                                      //onPrimary: Colors.blue, // Color del texto cuando se presiona
-                                      elevation:
-                                          0, // Elimina la sombra del botón
-                                      // shape: RoundedRectangleBorder(
-                                      //   borderRadius: BorderRadius.circular(8.0),
-                                      //side: BorderSide(color: Colors.blue), // Borde del color deseado
-                                      //),
-                                      padding: EdgeInsets.all(0.0)),
-                                  onPressed: () {
-                                    showDialog<void>(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: const Text('Información'),
-                                          content: SingleChildScrollView(
-                                            child: ListBody(
-                                              children: [
-                                                const Text(
-                                                    'Este es un cuadro de diálogo de ejemplo.'),
-                                                Text('BMU = $bMU'),
-                                                Text('Udist = $valorDist'),
-                                              ],
-                                            ),
+                              return valorDist == '-1'
+                                  ? const Text("")
+                                  : ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          textStyle: const TextStyle(
+                                            // Tamaño del texto
+                                            color:
+                                                Colors.black, // Color del texto
                                           ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context)
-                                                    .pop(); // Cerrar el cuadro de diálogo
-                                              },
-                                              child: Text('Cerrar'),
-                                            ),
-                                          ],
+                                          backgroundColor: Colors
+                                              .transparent, // Fondo transparente
+                                          //onPrimary: Colors.blue, // Color del texto cuando se presiona
+                                          elevation:
+                                              0, // Elimina la sombra del botón
+                                          // shape: RoundedRectangleBorder(
+                                          //   borderRadius: BorderRadius.circular(8.0),
+                                          //side: BorderSide(color: Colors.blue), // Borde del color deseado
+                                          //),
+                                          padding: EdgeInsets.all(0.0)),
+                                      onPressed: () {
+                                        showDialog<void>(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text('Información'),
+                                              content: SingleChildScrollView(
+                                                child: ListBody(
+                                                  children: [
+                                                    const Text(
+                                                        'Este es un cuadro de diálogo de ejemplo.'),
+                                                    Text('BMU = $bMU'),
+                                                    Text('Udist = $valorDist'),
+                                                  ],
+                                                ),
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context)
+                                                        .pop(); // Cerrar el cuadro de diálogo
+                                                  },
+                                                  child: Text('Cerrar'),
+                                                ),
+                                              ],
+                                            );
+                                          },
                                         );
                                       },
-                                    );
-                                  },
-                                  child: Text(
-                                    hits ? hits_count(bMU) : '',
-                                    //'',
-                                    //'123456789',
-                                    //'$BMU',
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                    ),
-                                  ));
+                                      child: Text(
+                                        hits ? hits_count(bMU) : '',
+                                        //'',
+                                        //'123456789',
+                                        //'$BMU',
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                        ),
+                                      ));
                             }),
                       ),
                     ),
-                    Container(
-                      width: 100.0, // ajusta la altura según tus necesidades
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment
-                              .topCenter, // comienza desde la parte superior
-                          end: Alignment
-                              .bottomCenter, // termina en la parte inferior
-                          colors: [
-                            Colors.red,
-                            Colors.orange,
-                            Colors.yellow,
-                            Colors.green,
-                            Colors.blue,
-                            Color.fromARGB(255, 8, 82, 143),
+                    if (mostrarGradiente)
+                      Container(
+                        width: 100.0, // ajusta la altura según tus necesidades
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment
+                                .topCenter, // comienza desde la parte superior
+                            end: Alignment
+                                .bottomCenter, // termina en la parte inferior
+                            colors: [
+                              Colors.red,
+                              Colors.orange,
+                              Colors.yellow,
+                              Colors.green,
+                              Colors.blue,
+                              Color.fromARGB(255, 8, 82, 143),
+                            ],
+                            stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
+                          ),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            for (double stop in [1.0, 0.8, 0.6, 0.4, 0.2, 0.0])
+                              Text(
+                                '${stop}',
+                                style: TextStyle(color: Colors.black),
+                              ),
                           ],
-                          stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
                         ),
                       ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [ 
-                          for (double stop in [1.0, 0.8, 0.6, 0.4, 0.2, 0.0])
-                            Text(
-                              '${stop}',
-                              style: TextStyle(color: Colors.black),
-                            ),
-                        ],
-                      ),
-                    ),
                   ],
                 ),
               ),
