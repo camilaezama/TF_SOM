@@ -150,17 +150,16 @@ class _GrillasPageState extends State<GrillasPage>
       child: Row(
         // mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // TextField(
-          //     controller: clustersController,
-          //     keyboardType: TextInputType.number,
-          //     // inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          //     decoration: const InputDecoration(
-          //         border: OutlineInputBorder(),
-          //         labelText: 'Cantidad de clusters')),
-          // const SizedBox(
-          //   width: 25,
-          // ),
-
+          //   TextField(
+          //       controller: clustersController,
+          //       keyboardType: TextInputType.number,
+          //       // inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          //       decoration: const InputDecoration(
+          //           border: OutlineInputBorder(),
+          //           labelText: 'Cantidad de clusters')),
+          //   const SizedBox(
+          //     width: 25,
+          //   ),
           ElevatedButton(
               onPressed: _llamadaClustering,
               style: ElevatedButton.styleFrom(
@@ -177,15 +176,16 @@ class _GrillasPageState extends State<GrillasPage>
                       botonAceptar,
                       style: const TextStyle(fontSize: 16),
                     )),
-
           mostarGrilla
-              ? GrillaHexagonos(
-                  dataMap: dataUdist,
-                  filas: filas,
-                  clusters: mapaRtaClusters,
-                  columnas: columnas,
-                  titulo: "Clustering")
-              : const CircularProgressIndicator()
+              ? Expanded(
+                  child: GrillaHexagonos(
+                      dataMap: dataUdist,
+                      filas: filas,
+                      clusters: mapaRtaClusters,
+                      columnas: columnas,
+                      titulo: "Clustering"),
+                )
+              : const Text("")
         ],
       ),
     );

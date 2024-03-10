@@ -113,7 +113,7 @@ Color getClusterColor(int col, int row, List<List<int>>? clusters) {
       Color(0xFF009BFF),
       Color(0xFFE85EBE)
     ];
-    int nroClusters = clusters[col][row];
+    int nroClusters = clusters[row][col];
     return colores[nroClusters];
   }
 
