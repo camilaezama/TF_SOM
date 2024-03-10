@@ -1,3 +1,4 @@
+import 'package:TF_SOM_UNMdP/ComponentesPage.dart';
 import 'package:flutter/material.dart';
 import 'package:TF_SOM_UNMdP/grillaHexagonos.dart';
 import 'package:flutter/services.dart';
@@ -103,7 +104,8 @@ class _GrillasPageState extends State<GrillasPage>
               children: [
                 _buildWidgetBMUs(),
                 _buildWidgetUMat(),
-                _buildWidgetGrillaComponentes(mapaRta),
+                //_buildWidgetGrillaComponentes(mapaRta),
+                ComponentesPage(mapaRta: mapaRta, filas: filas, columnas: columnas,),
                 _buildWidgetHits(),
                 _buildWidgetClusters(),
               ],

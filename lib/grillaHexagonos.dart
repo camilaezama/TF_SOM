@@ -18,6 +18,7 @@ class GrillaHexagonos extends StatelessWidget {
       paddingEntreHexagonos; //podria no ser final y luego cambiarse luego de ser generado
   Map<int, int>? hitsMap;
   bool hits;
+  bool mostrarGradiente;
   GrillaHexagonos(
       {super.key,
       this.gradiente,
@@ -28,7 +29,8 @@ class GrillaHexagonos extends StatelessWidget {
       this.clusters,
       this.paddingEntreHexagonos = 0.6,
       this.hitsMap,
-      this.hits = false});
+      this.hits = false,
+      this.mostrarGradiente = true});
 
   final _widgetKey = GlobalKey();
 
@@ -148,36 +150,37 @@ class GrillaHexagonos extends StatelessWidget {
                             }),
                       ),
                     ),
-                    Container(
-                      width: 100.0, // ajusta la altura según tus necesidades
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment
-                              .topCenter, // comienza desde la parte superior
-                          end: Alignment
-                              .bottomCenter, // termina en la parte inferior
-                          colors: [
-                            Colors.red,
-                            Colors.orange,
-                            Colors.yellow,
-                            Colors.green,
-                            Colors.blue,
-                            Color.fromARGB(255, 8, 82, 143),
+                    if (mostrarGradiente)
+                      Container(
+                        width: 100.0, // ajusta la altura según tus necesidades
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment
+                                .topCenter, // comienza desde la parte superior
+                            end: Alignment
+                                .bottomCenter, // termina en la parte inferior
+                            colors: [
+                              Colors.red,
+                              Colors.orange,
+                              Colors.yellow,
+                              Colors.green,
+                              Colors.blue,
+                              Color.fromARGB(255, 8, 82, 143),
+                            ],
+                            stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
+                          ),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            for (double stop in [1.0, 0.8, 0.6, 0.4, 0.2, 0.0])
+                              Text(
+                                '${stop}',
+                                style: TextStyle(color: Colors.black),
+                              ),
                           ],
-                          stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
                         ),
                       ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          for (double stop in [1.0, 0.8, 0.6, 0.4, 0.2, 0.0])
-                            Text(
-                              '${stop}',
-                              style: TextStyle(color: Colors.black),
-                            ),
-                        ],
-                      ),
-                    ),
                   ],
                 ),
               ),
