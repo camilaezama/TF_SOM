@@ -509,6 +509,7 @@ class _HomePageState extends State<HomePage> {
         Map<String, dynamic> decodedJson = json.decode(response.body);
 
         Map<String, dynamic> NeuronsJSON = decodedJson["Neurons"];
+        List<dynamic> Codebook = decodedJson["Codebook"];
         List<dynamic> UmatJSON = decodedJson["UMat"];
 
         /// Procesamiento de datos para Hits
@@ -531,6 +532,15 @@ class _HomePageState extends State<HomePage> {
           dataMapUmat[element[0].toString()] = element[1].toString();
         });
         //Map<String, dynamic> umatJson = decodedJson["umat"];
+        /// Procesamiento de datos para UMat
+        lista = [];
+        Codebook.forEach((element) {
+          List<double> elementt = [];
+          element.forEach((e) {
+            elementt.add(double.parse(e.toString()));
+          });
+          lista.add(elementt);
+        });
 
         Map<String, Object> respuesta = {};
 
@@ -562,6 +572,8 @@ class _HomePageState extends State<HomePage> {
         respuesta["respuestaUmat"] = dataMapUmat;
         respuesta["parametros"] = parametros;
         respuesta["respuestaHits"] = hitsMap;
+        respuesta["codebook"] = lista;
+        //respuesta["codebook"] =
         setState(() {
           //boton = 'La respuesta fue: ${response.body}';
           Navigator.pushNamed(

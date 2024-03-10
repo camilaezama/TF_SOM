@@ -13,6 +13,7 @@ class GrillaHexagonos extends StatelessWidget {
   final int filas;
   final int columnas;
   String titulo;
+  List<List<int>>? clusters;
   final double
       paddingEntreHexagonos; //podria no ser final y luego cambiarse luego de ser generado
   Map<int, int>? hitsMap;
@@ -25,6 +26,7 @@ class GrillaHexagonos extends StatelessWidget {
       required this.filas,
       required this.columnas,
       required this.titulo,
+      this.clusters,
       this.paddingEntreHexagonos = 0.6,
       this.hitsMap,
       this.hits = false,
@@ -67,8 +69,10 @@ class GrillaHexagonos extends StatelessWidget {
                                     valorDist.replaceAll(',', '.');
                                 double valor = double.parse(valorDistConPunto);
                                 return HexagonWidgetBuilder(
-                                  color: getInterpolatedColor(
-                                      valor, gradiente, dataMap),
+                                  color: clusters == null
+                                      ? getInterpolatedColor(
+                                          valor, gradiente, dataMap)
+                                      : getClusterColor(col, row, clusters),
                                   //color: getColorForValue(valor),
                                   //generarColorAleatorioEnEspectro(), //row.isEven ? Colors.yellow : Colors.orangeAccent,
                                   elevation: 0.0,
@@ -213,25 +217,5 @@ class GrillaHexagonos extends StatelessWidget {
       ..click();
 
     html.Url.revokeObjectUrl(url);
-
-    // showDialog(
-    //   context: context,
-    //   builder: (BuildContext context) {
-    //     return AlertDialog(
-    //       title: Text('Imagen generada'),
-    //       content: Container(
-    //         child: Image.memory(pngBytes),
-    //       ),
-    //       actions: <Widget>[
-    //         TextButton(
-    //           onPressed: () {
-    //             Navigator.of(context).pop();
-    //           },
-    //           child: Text('Cerrar'),
-    //         ),
-    //       ],
-    //     );
-    //   },
-    // );
   }
 }

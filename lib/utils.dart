@@ -46,6 +46,80 @@ Color getInterpolatedColor(
   }
 }
 
+Color getClusterColor(int col, int row, List<List<int>>? clusters) {
+  if (clusters != null) {
+    const List<Color> colores = [
+      Color(0xFF00FF00),
+      Color(0xFF0000FF),
+      Color(0xFFFF0000),
+      Color(0xFF01FFFE),
+      Color(0xFFFFA6FE),
+      Color(0xFFFFDB66),
+      Color(0xFF006401),
+      Color(0xFF010067),
+      Color(0xFF95003A),
+      Color(0xFF007DB5),
+      Color(0xFFFF00F6),
+      Color(0xFFFFEEE8),
+      Color(0xFF774D00),
+      Color(0xFF90FB92),
+      Color(0xFF0076FF),
+      Color(0xFFD5FF00),
+      Color(0xFFFF937E),
+      Color(0xFF6A826C),
+      Color(0xFFFF029D),
+      Color(0xFFFE8900),
+      Color(0xFF7A4782),
+      Color(0xFF7E2DD2),
+      Color(0xFF85A900),
+      Color(0xFFFF0056),
+      Color(0xFFA42400),
+      Color(0xFF00AE7E),
+      Color(0xFF683D3B),
+      Color(0xFFBDC6FF),
+      Color(0xFF263400),
+      Color(0xFFBDD393),
+      Color(0xFF00B917),
+      Color(0xFF9E008E),
+      Color(0xFF001544),
+      Color(0xFFC28C9F),
+      Color(0xFFFF74A3),
+      Color(0xFF01D0FF),
+      Color(0xFF004754),
+      Color(0xFFE56FFE),
+      Color(0xFF788231),
+      Color(0xFF0E4CA1),
+      Color(0xFF91D0CB),
+      Color(0xFFBE9970),
+      Color(0xFF968AE8),
+      Color(0xFFBB8800),
+      Color(0xFF43002C),
+      Color(0xFFDEFF74),
+      Color(0xFF00FFC6),
+      Color(0xFFFFE502),
+      Color(0xFF620E00),
+      Color(0xFF008F9C),
+      Color(0xFF98FF52),
+      Color(0xFF7544B1),
+      Color(0xFFB500FF),
+      Color(0xFF00FF78),
+      Color(0xFFFF6E41),
+      Color(0xFF005F39),
+      Color(0xFF6B6882),
+      Color(0xFF5FAD4E),
+      Color(0xFFA75740),
+      Color(0xFFA5FFD2),
+      Color(0xFFFFB167),
+      Color(0xFF009BFF),
+      Color(0xFFE85EBE)
+    ];
+    int nroClusters = clusters[row][col];
+    return colores[nroClusters];
+  }
+
+  return Color.fromARGB(0, 0, 0, 0);
+}
+
 Color getColorYaNorm(
     double value, Gradient? gradiente, Map<String, String>? dataMap) {
   Gradient gradient = gradiente!;
