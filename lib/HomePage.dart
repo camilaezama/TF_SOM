@@ -500,7 +500,7 @@ class _HomePageState extends State<HomePage> {
             }));
 
         // print('Response status: ${response.statusCode}');
-        print('Response body: ${response.body}');
+        //print('Response body: ${response.body}');
 
         // Map<String, dynamic> jsonList = json.decode(response.body);
         // Map<String,Map<String, String>> mapaRta = Map<String,Map<String, String>>.from(jsonList);
@@ -511,6 +511,8 @@ class _HomePageState extends State<HomePage> {
         Map<String, dynamic> NeuronsJSON = decodedJson["Neurons"];
         List<dynamic> Codebook = decodedJson["Codebook"];
         List<dynamic> UmatJSON = decodedJson["UMat"];
+
+        print(Codebook);
 
         /// Procesamiento de datos para Hits
         Map<String, dynamic> HitsJSON = decodedJson["Hits"];
@@ -573,6 +575,14 @@ class _HomePageState extends State<HomePage> {
         respuesta["parametros"] = parametros;
         respuesta["respuestaHits"] = hitsMap;
         respuesta["codebook"] = lista;
+
+        List<String> nombresColumnas = [];
+        List<String> keys = mapaRta.keys.toList();
+        for (var i = 7; i < keys.length; i++) {
+          nombresColumnas.add(keys[i]);
+        }
+        respuesta["nombrescolumnas"] = nombresColumnas;
+        
         //respuesta["codebook"] =
         setState(() {
           //boton = 'La respuesta fue: ${response.body}';
@@ -665,7 +675,7 @@ class _HomePageState extends State<HomePage> {
           }));
 
       // print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      //print('Response body: ${response.body}');
 
       // Map<String, dynamic> jsonList = json.decode(response.body);
       // Map<String,Map<String, String>> mapaRta = Map<String,Map<String, String>>.from(jsonList);

@@ -24,7 +24,7 @@ class _GenericDropdownMenuState extends State<GenericDropdownMenu> {
       onSelected: (String? value) {
         widget.onSelected(value!);
         setState(() {
-          dropdownValue = value!;
+          dropdownValue = value;
         });
       },
       dropdownMenuEntries:

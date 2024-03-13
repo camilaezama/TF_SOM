@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 
 Color getInterpolatedColor(
     double value, Gradient? gradiente, Map<String, String>? dataMap) {
-  Map<String, double> doubleMap = convertToDouble(dataMap!);
   // final double min = doubleMap.values.reduce(
   //     (value, element) => (value < element && element != -1) ? value : element);
   // final double max = doubleMap.values

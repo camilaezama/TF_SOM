@@ -7,13 +7,37 @@ import 'dart:typed_data';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 
+List<TableRow> crearTablaDatos(List<String> etiquetas, List<dynamic> codebook) {
+  List<TableRow> listaTablita = [];
+  TableRow filita;
+
+  for (var j = 0; j < etiquetas.length; j++) {
+    String etiquetactual = etiquetas[j];
+    filita = TableRow(children: [
+      Column(children: [
+        Text(etiquetactual, style: const TextStyle(fontSize: 20.0))
+      ]), //etiqueta
+      Column(children: [
+        Text(codebook[j].toString(), style: const TextStyle(fontSize: 20.0))
+      ]), //valor
+    ]);
+    listaTablita.add(filita);
+  }
+
+  return listaTablita;
+}
+
+
+
 class GrillaHexagonos extends StatelessWidget {
   final Gradient? gradiente;
   final Map<String, String>? dataMap;
+  final List<dynamic> codebook;
   final int filas;
   final int columnas;
   String titulo;
   List<List<int>>? clusters;
+  List<String> nombreColumnas;
   final double
       paddingEntreHexagonos; //podria no ser final y luego cambiarse luego de ser generado
   Map<int, int>? hitsMap;
@@ -26,6 +50,8 @@ class GrillaHexagonos extends StatelessWidget {
       required this.filas,
       required this.columnas,
       required this.titulo,
+      required this.codebook,
+      required this.nombreColumnas,
       this.clusters,
       this.paddingEntreHexagonos = 0.6,
       this.hitsMap,
@@ -122,6 +148,25 @@ class GrillaHexagonos extends StatelessWidget {
                                                         'Este es un cuadro de diálogo de ejemplo.'),
                                                     Text('BMU = $bMU'),
                                                     Text('Udist = $valorDist'),
+                                                    const Text(
+                                                      "Codebook",
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                          color: Color.fromARGB(
+                                                              255, 52, 56, 253),
+                                                          fontSize: 30.0),
+                                                    ),
+                                                    Table( 
+                                                      border: TableBorder.all(
+                                                          color: Colors.black,
+                                                          style:
+                                                              BorderStyle.solid,
+                                                          width: 1),
+                                                      children: crearTablaDatos(
+                                                          nombreColumnas,
+                                                          (codebook[bMU-1])),
+                                                    ),
                                                   ],
                                                 ),
                                               ),
@@ -131,7 +176,7 @@ class GrillaHexagonos extends StatelessWidget {
                                                     Navigator.of(context)
                                                         .pop(); // Cerrar el cuadro de diálogo
                                                   },
-                                                  child: Text('Cerrar'),
+                                                  child: const Text('Cerrar'),
                                                 ),
                                               ],
                                             );
@@ -219,3 +264,4 @@ class GrillaHexagonos extends StatelessWidget {
     html.Url.revokeObjectUrl(url);
   }
 }
+

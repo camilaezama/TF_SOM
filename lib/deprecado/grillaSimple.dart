@@ -80,7 +80,6 @@ class _GrillaSimpleState extends State<GrillaSimple> {
                     }
                   },
                   buildChild: (col, row) {
-                    int BMU = row * 24 + col + 1;
                     return ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             textStyle: const TextStyle(

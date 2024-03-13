@@ -4,12 +4,16 @@ import 'package:flutter/material.dart';
 
 class ComponentesPage extends StatefulWidget {
   final Map<String, dynamic> mapaRta;
+  final List<List<double>> codebook;
   final int filas;
   final int columnas;
+  final List<String> nombrecolumnas;
   const ComponentesPage(
       {super.key,
       required this.mapaRta,
+      required this.codebook,
       required this.filas,
+      required this.nombrecolumnas,
       required this.columnas});
 
   @override
@@ -43,9 +47,8 @@ class _ComponentesPageState extends State<ComponentesPage> {
     );
 
     //Ignora las primeras 6 (i = 7) porque son BMU, Udist, etc etc, me quedo con las que son componentes
-    List<String> keys = widget.mapaRta.keys.toList();
-    for (var i = 7; i < keys.length; i++) {
-      opciones.add(keys[i]);
+
+    for (var i = 0; i < widget.nombrecolumnas.length; i++) {
       seleccionadas.add(false);
     }
 
@@ -55,10 +58,10 @@ class _ComponentesPageState extends State<ComponentesPage> {
 
   @override
   Widget build(BuildContext context) {
-    print((opciones.length / 2).ceil());
+    print((widget.nombrecolumnas.length / 2).ceil());
     double sizeWidth = MediaQuery.of(context).size.width;
     double sizeHeight = MediaQuery.of(context).size.height;
-    
+
     return Column(
       children: [
         Row(
@@ -91,7 +94,7 @@ class _ComponentesPageState extends State<ComponentesPage> {
                   context: context,
                   builder: (BuildContext context) {
                     return DialogOpciones(
-                      opciones: opciones,
+                      opciones: widget.nombrecolumnas,
                       seleccionadas: seleccionadas,
                       actualizarOpciones: actualizarOpciones,
                     );
@@ -102,17 +105,20 @@ class _ComponentesPageState extends State<ComponentesPage> {
             ),
             SizedBox(width: 20),
             IconButton(
-            icon: _mostrarGradiente ? Icon(Icons.visibility) : Icon(Icons.visibility_off),
-            onPressed: () {
-              setState(() {
-                _mostrarGradiente = !_mostrarGradiente;
-              });
-            },
-          ),
+              icon: _mostrarGradiente
+                  ? Icon(Icons.visibility)
+                  : Icon(Icons.visibility_off),
+              onPressed: () {
+                setState(() {
+                  _mostrarGradiente = !_mostrarGradiente;
+                });
+              },
+            ),
           ],
         ),
-        opcionGrillasPorFila == 2 ? grillas2(sizeWidth, sizeHeight) : grillas(sizeWidth, sizeHeight, opcionGrillasPorFila)
-        
+        opcionGrillasPorFila == 2
+            ? grillas2(sizeWidth, sizeHeight)
+            : grillas(sizeWidth, sizeHeight, opcionGrillasPorFila)
       ],
     );
   }
@@ -128,12 +134,15 @@ class _ComponentesPageState extends State<ComponentesPage> {
                 width: sizeWidth / 2,
                 height: sizeHeight / 2,
                 child: GrillaHexagonos(
-                    titulo: opcionesSeleccionadas[index * 2],
-                    gradiente: gradiente,
-                    dataMap: widget.mapaRta[opcionesSeleccionadas[index * 2]],
-                    filas: widget.filas,
-                    columnas: widget.columnas,
-                    mostrarGradiente: _mostrarGradiente,),
+                  titulo: opcionesSeleccionadas[index * 2],
+                  gradiente: gradiente,
+                  codebook: widget.codebook,
+                  nombreColumnas: widget.nombrecolumnas,
+                  dataMap: widget.mapaRta[opcionesSeleccionadas[index * 2]],
+                  filas: widget.filas,
+                  columnas: widget.columnas,
+                  mostrarGradiente: _mostrarGradiente,
+                ),
                 //child: Text(opciones[index * 2]),
               ),
               (index * 2 + 1 < opcionesSeleccionadas.length)
@@ -143,6 +152,8 @@ class _ComponentesPageState extends State<ComponentesPage> {
                       child: GrillaHexagonos(
                           titulo: opcionesSeleccionadas[index * 2 + 1],
                           gradiente: gradiente,
+                          codebook: widget.codebook,
+                          nombreColumnas: widget.nombrecolumnas,
                           dataMap: widget
                               .mapaRta[opcionesSeleccionadas[index * 2 + 1]],
                           filas: widget.filas,
@@ -183,6 +194,8 @@ class _ComponentesPageState extends State<ComponentesPage> {
                 child: GrillaHexagonos(
                     titulo: option,
                     gradiente: gradiente,
+                    nombreColumnas: widget.nombrecolumnas,
+                    codebook: widget.codebook,
                     dataMap: widget.mapaRta[option],
                     filas: widget.filas,
                     columnas: widget.columnas,
@@ -200,9 +213,9 @@ class _ComponentesPageState extends State<ComponentesPage> {
 
     List<String> seleccionadasList = [];
 
-    for (int i = 0; i < opciones.length; i++) {
+    for (int i = 0; i < widget.nombrecolumnas.length; i++) {
       if (seleccionadas[i]) {
-        seleccionadasList.add(opciones[i]);
+        seleccionadasList.add(widget.nombrecolumnas[i]);
       }
     }
     setState(() {
