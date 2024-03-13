@@ -213,7 +213,7 @@ class GrillaHexagonos extends StatelessWidget {
     final url = html.Url.createObjectUrlFromBlob(blob);
     // ignore: unused_local_variable
     final anchor = html.AnchorElement(href: url)
-      ..setAttribute('download', "UMatrixSimple.png")
+      ..setAttribute('download', "$titulo.png")
       ..click();
 
     html.Url.revokeObjectUrl(url);

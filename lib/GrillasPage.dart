@@ -105,7 +105,11 @@ class _GrillasPageState extends State<GrillasPage>
                 _buildWidgetBMUs(),
                 _buildWidgetUMat(),
                 //_buildWidgetGrillaComponentes(mapaRta),
-                ComponentesPage(mapaRta: mapaRta, filas: filas, columnas: columnas,),
+                ComponentesPage(
+                  mapaRta: mapaRta,
+                  filas: filas,
+                  columnas: columnas,
+                ),
                 _buildWidgetHits(),
                 _buildWidgetClusters(),
               ],
@@ -149,19 +153,26 @@ class _GrillasPageState extends State<GrillasPage>
       stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
     );
     return Center(
-      child: Row(
-        // mainAxisAlignment: MainAxisAlignment.center,
+      child: Column(
         children: [
-          //   TextField(
-          //       controller: clustersController,
-          //       keyboardType: TextInputType.number,
-          //       // inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          //       decoration: const InputDecoration(
-          //           border: OutlineInputBorder(),
-          //           labelText: 'Cantidad de clusters')),
-          //   const SizedBox(
-          //     width: 25,
-          //   ),
+          const SizedBox(
+            height: 25,
+          ),
+          SizedBox(
+            width: 250, // Set the desired width here
+            child: TextField(
+              controller: clustersController,
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Cantidad de clusters',
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 25,
+          ),
           ElevatedButton(
               onPressed: _llamadaClustering,
               style: ElevatedButton.styleFrom(
@@ -292,7 +303,8 @@ class _GrillasPageState extends State<GrillasPage>
       final parametros = <String, dynamic>{
         'filas': filas != "" ? filas : 24,
         'columnas': columnas != "" ? columnas : 31,
-        'cantidadClusters': 10
+        'cantidadClusters':
+            clustersController.text != "" ? clustersController.text : 10
       };
 
       var response = await http.post(url,
