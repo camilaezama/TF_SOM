@@ -4,7 +4,6 @@ import 'package:TF_SOM_UNMdP/grillaHexagonos.dart';
 import 'package:flutter/services.dart';
 import 'package:hexagon/hexagon.dart';
 import 'package:http/http.dart' as http;
-import 'buttons/dropdownbutton.dart';
 import 'dart:convert';
 
 class GrillasPage extends StatefulWidget {
@@ -31,6 +30,7 @@ class _GrillasPageState extends State<GrillasPage>
   Map<String, String> mapaRtaUmat = {};
   late List<List<int>> mapaRtaClusters;
   Map<String, String> dataComponente = {};
+  late List<String> nombresColumnas = [];
   late List<List<double>> codebook;
 
   Map<int, int> hitsMap = {};
@@ -74,6 +74,8 @@ class _GrillasPageState extends State<GrillasPage>
 
     codebook = respuesta["codebook"] as List<List<double>>;
 
+    nombresColumnas = respuesta["nombrescolumnas"] as List<String>;
+
     filas = int.parse(parametros["filas"]);
     columnas = int.parse(parametros["columnas"]);
     dataUdist = mapaRta["Udist"]!;
@@ -105,7 +107,13 @@ class _GrillasPageState extends State<GrillasPage>
                 _buildWidgetBMUs(),
                 _buildWidgetUMat(),
                 //_buildWidgetGrillaComponentes(mapaRta),
-                ComponentesPage(mapaRta: mapaRta, filas: filas, columnas: columnas,),
+                ComponentesPage(
+                  mapaRta: mapaRta,
+                  codebook: codebook,
+                  nombrecolumnas: nombresColumnas,
+                  filas: filas,
+                  columnas: columnas,
+                ),
                 _buildWidgetHits(),
                 _buildWidgetClusters(),
               ],
@@ -131,37 +139,35 @@ class _GrillasPageState extends State<GrillasPage>
         titulo: "UMat",
         gradiente: gradiente,
         dataMap: mapaRtaUmat,
+        nombreColumnas: nombresColumnas,
+        codebook: codebook,
         filas: filas * 2,
         columnas: columnas * 2,
         paddingEntreHexagonos: 0.2);
   }
 
   Widget _buildWidgetClusters() {
-    Gradient gradiente = const LinearGradient(
-      colors: [
-        Color.fromARGB(255, 8, 82, 143),
-        Colors.blue,
-        Colors.green,
-        Colors.yellow,
-        Colors.orange,
-        Colors.red,
-      ],
-      stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
-    );
     return Center(
-      child: Row(
-        // mainAxisAlignment: MainAxisAlignment.center,
+      child: Column(
         children: [
-          //   TextField(
-          //       controller: clustersController,
-          //       keyboardType: TextInputType.number,
-          //       // inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          //       decoration: const InputDecoration(
-          //           border: OutlineInputBorder(),
-          //           labelText: 'Cantidad de clusters')),
-          //   const SizedBox(
-          //     width: 25,
-          //   ),
+          const SizedBox(
+            height: 25,
+          ),
+          SizedBox(
+            width: 250, // Set the desired width here
+            child: TextField(
+              controller: clustersController,
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Cantidad de clusters',
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 25,
+          ),
           ElevatedButton(
               onPressed: _llamadaClustering,
               style: ElevatedButton.styleFrom(
@@ -183,7 +189,9 @@ class _GrillasPageState extends State<GrillasPage>
                   child: GrillaHexagonos(
                       dataMap: dataUdist,
                       filas: filas,
+                      nombreColumnas: nombresColumnas,
                       clusters: mapaRtaClusters,
+                      codebook: codebook,
                       columnas: columnas,
                       titulo: "Clustering"),
                 )
@@ -208,6 +216,8 @@ class _GrillasPageState extends State<GrillasPage>
     return GrillaHexagonos(
       titulo: "Hits",
       gradiente: gradiente,
+      codebook: codebook,
+      nombreColumnas: nombresColumnas,
       dataMap: dataUdist,
       filas: filas,
       columnas: columnas,
@@ -232,11 +242,14 @@ class _GrillasPageState extends State<GrillasPage>
         titulo: "BMU",
         gradiente: gradiente,
         dataMap: dataUdist,
+        nombreColumnas: nombresColumnas,
+        codebook: codebook,
         clusters: null,
         filas: filas,
         columnas: columnas);
   }
 
+/*
   Widget _buildWidgetGrillaComponentes(Map<String, dynamic> mapaRta) {
     List<String> options = [];
     options.add("Seleccione");
@@ -283,7 +296,7 @@ class _GrillasPageState extends State<GrillasPage>
       ],
     ));
   }
-
+*/
   void _llamadaClustering() async {
     try {
       String TIPO_LLAMADA = "clusters";
@@ -292,7 +305,8 @@ class _GrillasPageState extends State<GrillasPage>
       final parametros = <String, dynamic>{
         'filas': filas != "" ? filas : 24,
         'columnas': columnas != "" ? columnas : 31,
-        'cantidadClusters': 10
+        'cantidadClusters':
+            clustersController.text != "" ? clustersController.text : 10
       };
 
       var response = await http.post(url,
