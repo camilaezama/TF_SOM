@@ -672,7 +672,7 @@ class _HomePageState extends State<HomePage> {
           nombresColumnas.add(keys[i]);
         }
         respuesta["nombrescolumnas"] = nombresColumnas;
-        
+
         //respuesta["codebook"] =
         setState(() {
           //boton = 'La respuesta fue: ${response.body}';
@@ -689,7 +689,8 @@ class _HomePageState extends State<HomePage> {
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text('Error'),
-              content: const Text('Error en la  llamada de servicio'),
+              content:
+                  Text('Error en la  llamada de servicio: ' + e.toString()),
               actions: [
                 TextButton(
                   onPressed: () {
