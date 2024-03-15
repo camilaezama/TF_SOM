@@ -19,6 +19,7 @@ class GrillaHexagonos extends StatelessWidget {
   Map<int, int>? hitsMap;
   bool hits;
   bool mostrarGradiente;
+  bool mostrarBotonImprimir;
   GrillaHexagonos(
       {super.key,
       this.gradiente,
@@ -30,7 +31,8 @@ class GrillaHexagonos extends StatelessWidget {
       this.paddingEntreHexagonos = 0.6,
       this.hitsMap,
       this.hits = false,
-      this.mostrarGradiente = true});
+      this.mostrarGradiente = true,
+      this.mostrarBotonImprimir = true});
 
   final _widgetKey = GlobalKey();
 
@@ -42,8 +44,9 @@ class GrillaHexagonos extends StatelessWidget {
         Expanded(
           child: Row(
             children: [
-              ElevatedButton(
-                  onPressed: save, child: const Icon(Icons.download)),
+              if (mostrarBotonImprimir)
+                ElevatedButton(
+                    onPressed: save, child: const Icon(Icons.download)),
 
               // Container(
               //     height: 50.0,

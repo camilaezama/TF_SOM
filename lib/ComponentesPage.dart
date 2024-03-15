@@ -24,6 +24,7 @@ class _ComponentesPageState extends State<ComponentesPage> {
   late List<int> opcionesGrillasPorFila;
   late int opcionGrillasPorFila;
   bool _mostrarGradiente = true;
+  bool _mostrarBotonImprimir = false;
 
   @override
   void initState() {
@@ -102,6 +103,7 @@ class _ComponentesPageState extends State<ComponentesPage> {
             ),
             SizedBox(width: 20),
             IconButton(
+              tooltip: "Mostrar gradiente",
             icon: _mostrarGradiente ? Icon(Icons.visibility) : Icon(Icons.visibility_off),
             onPressed: () {
               setState(() {
@@ -133,7 +135,8 @@ class _ComponentesPageState extends State<ComponentesPage> {
                     dataMap: widget.mapaRta[opcionesSeleccionadas[index * 2]],
                     filas: widget.filas,
                     columnas: widget.columnas,
-                    mostrarGradiente: _mostrarGradiente,),
+                    mostrarGradiente: _mostrarGradiente,
+                    mostrarBotonImprimir: _mostrarBotonImprimir,),
                 //child: Text(opciones[index * 2]),
               ),
               (index * 2 + 1 < opcionesSeleccionadas.length)
@@ -147,7 +150,8 @@ class _ComponentesPageState extends State<ComponentesPage> {
                               .mapaRta[opcionesSeleccionadas[index * 2 + 1]],
                           filas: widget.filas,
                           columnas: widget.columnas,
-                          mostrarGradiente: _mostrarGradiente),
+                          mostrarGradiente: _mostrarGradiente,
+                          mostrarBotonImprimir: _mostrarBotonImprimir),
                       //child: Text(opciones[index * 2]),
                     )
                   : Text(""),
@@ -186,7 +190,8 @@ class _ComponentesPageState extends State<ComponentesPage> {
                     dataMap: widget.mapaRta[option],
                     filas: widget.filas,
                     columnas: widget.columnas,
-                    mostrarGradiente: _mostrarGradiente),
+                    mostrarGradiente: _mostrarGradiente,
+                    mostrarBotonImprimir: _mostrarBotonImprimir),
               );
             }).toList(),
           );

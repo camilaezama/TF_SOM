@@ -1,3 +1,4 @@
+import 'package:TF_SOM_UNMdP/DialogOpciones.dart';
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -22,10 +23,19 @@ class _HomePageState extends State<HomePage> {
   String normalizacion = 'var';
 
   List<List<dynamic>> csvData = [];
+  List<List<dynamic>> csvData_original = [];
   String botonAceptar = 'Aceptar';
   String botonParam = 'Modificar Parametros';
 
   bool cargando = false;
+
+  List<String> opciones = [];
+  List<bool> seleccionadas = [];
+  List<String> opcionesSeleccionadas = [];
+
+  List<String>? columnNames;
+  List<String>? columnNames_original;
+  late double _width, _height;
 
   void _loadCSVData(FilePickerResult result) async {
     Uint8List? fileBytes = result.files.first.bytes;
@@ -37,7 +47,13 @@ class _HomePageState extends State<HomePage> {
           const CsvToListConverter().convert(fileContent);
 
       setState(() {
+        csvData_original = csvTable;
         csvData = csvTable;
+        columnNames_original = csvData[0][0].toString().split(';');
+        columnNames = csvData[0][0].toString().split(';');
+        columnNames!.forEach((element) {
+          seleccionadas.add(true);
+        });
       });
     } else {
       showDialog<void>(
@@ -66,16 +82,14 @@ class _HomePageState extends State<HomePage> {
     _loadCSVData(result!);
   }
 
-  List<String>? columnNames;
-  late double _width, _height;
   @override
   Widget build(BuildContext context) {
     _width = MediaQuery.of(context).size.width;
     _height = MediaQuery.of(context).size.height;
 
-    if (csvData.isNotEmpty) {
-      columnNames = csvData[0][0].toString().split(';');
-    }
+    // if (csvData.isNotEmpty) {
+    //   columnNames = csvData[0][0].toString().split(';');
+    // }
 
     final ScrollController horizontal = ScrollController(),
         vertical = ScrollController();
@@ -121,6 +135,25 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
+              (csvData.isNotEmpty)
+                  ? IconButton(
+                      icon: Icon(Icons.list),
+                      onPressed: () {
+                        opciones = columnNames_original!;
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return DialogOpciones(
+                              opciones: opciones,
+                              seleccionadas: seleccionadas,
+                              actualizarOpciones: actualizarOpciones,
+                            );
+                          },
+                        );
+                      },
+                      //onPressed: () => {_mostrarListaOpciones(context)},
+                    )
+                  : SizedBox.shrink(),
               (csvData.isNotEmpty)
                   ? mostrarArchivo(vertical, horizontal)
                   : const SizedBox(
@@ -202,6 +235,63 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  void actualizarOpciones(List<bool> opcionesSeleccionadasBool) {
+    seleccionadas = opcionesSeleccionadasBool;
+
+    List<List<dynamic>> filteredData = [];
+
+    List<dynamic> headerRow = [];
+
+    for (int i = 0; i < columnNames_original!.length; i++) {
+      if (seleccionadas[i]) {
+        headerRow.add(columnNames_original![i]);
+      }
+    }
+
+    for (List<dynamic> fila in csvData_original) {
+      List<String> columnas = fila[0].split(';');
+      List<String> filaFiltrada = [];
+
+      for (int i = 0; i < columnas.length; i++) {
+        if (seleccionadas[i]) {
+          filaFiltrada.add(columnas[i]);
+        }
+      }
+
+      List<dynamic> lista = [filaFiltrada.join(';')];
+      filteredData.add(lista);
+    }
+
+    // filteredData.add(headerRow);
+
+    // for (int rowIndex = 1; rowIndex < csvData_original.length; rowIndex++) {
+    //   List<dynamic> filteredRow = [];
+    //   for (int cellIndex = 0;
+    //       cellIndex < csvData_original[rowIndex].length;
+    //       cellIndex++) {
+    //     if (seleccionadas[cellIndex]) {
+    //       filteredRow.add(csvData_original[rowIndex][cellIndex]);
+    //     }
+    //   }
+    //   filteredData.add(filteredRow);
+    // }
+
+    seleccionadas = opcionesSeleccionadasBool;
+
+    List<String> seleccionadasList = [];
+
+    for (int i = 0; i < opciones.length; i++) {
+      if (seleccionadas[i]) {
+        seleccionadasList.add(opciones[i]);
+      }
+    }
+    setState(() {
+      opcionesSeleccionadas = seleccionadasList;
+      csvData = filteredData;
+      columnNames = opcionesSeleccionadas;
+    });
   }
 
 //Esto se podria poner en mas funciones a medida que agreguemos mas parametros.
@@ -612,134 +702,133 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _llamadaAPIRapida() async {
-
     String jsonResult = jsonEncode("datos");
 
     try {
-        String TIPO_LLAMADA = "rapida";
-        var url = Uri.parse('http://localhost:7777' + '/' + TIPO_LLAMADA);
+      String TIPO_LLAMADA = "rapida";
+      var url = Uri.parse('http://localhost:7777' + '/' + TIPO_LLAMADA);
 
-        final parametros = <String, dynamic>{
-          'filas': filasController.text != "" ? filasController.text : 24,
-          'columnas': columnasController.text != ""
-              ? columnasController.text
-              : 31, //TODO IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
-          'vecindad': funcionVecindad,
-          'inicializacion': inicializacion,
-          'iteraciones': iteracontroller.text != ""
-              ? iteracontroller.text
-              : 200, //IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
-          'normalizacion': normalizacion,
-          'factorEntrenamiento': factorEntrenamientoController.text != ""
-              ? factorEntrenamientoController.text
-              : 2 //IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
-        };
+      final parametros = <String, dynamic>{
+        'filas': filasController.text != "" ? filasController.text : 24,
+        'columnas': columnasController.text != ""
+            ? columnasController.text
+            : 31, //TODO IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
+        'vecindad': funcionVecindad,
+        'inicializacion': inicializacion,
+        'iteraciones': iteracontroller.text != ""
+            ? iteracontroller.text
+            : 200, //IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
+        'normalizacion': normalizacion,
+        'factorEntrenamiento': factorEntrenamientoController.text != ""
+            ? factorEntrenamientoController.text
+            : 2 //IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
+      };
 
-        setState(() {
-          //boton = "Cargando...";
-          cargando = true;
+      setState(() {
+        //boton = "Cargando...";
+        cargando = true;
+      });
+      // var response = await http.post(url,
+      //     headers: {'Accept': '/*'}, body: jsonResult);
+      var response = await http.post(url,
+          headers: {'Accept': '/*'},
+          body: jsonEncode({
+            "datos": jsonResult,
+            "tipo": TIPO_LLAMADA,
+            "params": parametros
+          }));
+
+      // print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      // Map<String, dynamic> jsonList = json.decode(response.body);
+      // Map<String,Map<String, String>> mapaRta = Map<String,Map<String, String>>.from(jsonList);
+
+      // Decodificar la cadena JSON
+      Map<String, dynamic> decodedJson = json.decode(response.body);
+
+      Map<String, dynamic> NeuronsJSON = decodedJson["Neurons"];
+      List<dynamic> Codebook = decodedJson["Codebook"];
+      List<dynamic> UmatJSON = decodedJson["UMat"];
+
+      /// Procesamiento de datos para Hits
+      Map<String, dynamic> HitsJSON = decodedJson["Hits"];
+      Map<int, int> hitsMap = Map<int, int>.from(
+          HitsJSON.map((key, value) => MapEntry(int.parse(key), value)));
+
+      /// Procesamiento de datos para UMat
+      List<List<double>> lista = [];
+      UmatJSON.forEach((element) {
+        List<double> elementt = [];
+        element.forEach((e) {
+          elementt.add(double.parse(e.toString()));
         });
-        // var response = await http.post(url,
-        //     headers: {'Accept': '/*'}, body: jsonResult);
-        var response = await http.post(url,
-            headers: {'Accept': '/*'},
-            body: jsonEncode({
-              "datos": jsonResult,
-              "tipo": TIPO_LLAMADA,
-              "params": parametros
-            }));
+        lista.add(elementt);
+      });
 
-        // print('Response status: ${response.statusCode}');
-        print('Response body: ${response.body}');
+      Map<String, String> dataMapUmat = {};
+      lista.forEach((element) {
+        dataMapUmat[element[0].toString()] = element[1].toString();
+      });
+      //Map<String, dynamic> umatJson = decodedJson["umat"];
+      /// Procesamiento de datos para UMat
+      lista = [];
+      Codebook.forEach((element) {
+        List<double> elementt = [];
+        element.forEach((e) {
+          elementt.add(double.parse(e.toString()));
+        });
+        lista.add(elementt);
+      });
 
-        // Map<String, dynamic> jsonList = json.decode(response.body);
-        // Map<String,Map<String, String>> mapaRta = Map<String,Map<String, String>>.from(jsonList);
+      Map<String, Object> respuesta = {};
 
-        // Decodificar la cadena JSON
-        Map<String, dynamic> decodedJson = json.decode(response.body);
+      /// Procesamiento de datos para BMUs
+      Map<String, Map<String, String>> mapaRta = {};
 
-        Map<String, dynamic> NeuronsJSON = decodedJson["Neurons"];
-        List<dynamic> Codebook = decodedJson["Codebook"];
-        List<dynamic> UmatJSON = decodedJson["UMat"];
+      // Iterar sobre las claves externas del primer nivel
+      for (String outerKey in NeuronsJSON.keys) {
+        // Obtener el valor correspondiente a la clave externa
+        Map<String, dynamic> innerMap = NeuronsJSON[outerKey];
 
-        /// Procesamiento de datos para Hits
-        Map<String, dynamic> HitsJSON = decodedJson["Hits"];
-        Map<int, int> hitsMap = Map<int, int>.from(
-            HitsJSON.map((key, value) => MapEntry(int.parse(key), value)));
-
-        /// Procesamiento de datos para UMat
-        List<List<double>> lista = [];
-        UmatJSON.forEach((element) {
-          List<double> elementt = [];
-          element.forEach((e) {
-            elementt.add(double.parse(e.toString()));
-          });
-          lista.add(elementt);
+        // Convertir el mapa interno a Map<String, String>
+        Map<String, String> innerMapString = {};
+        innerMap.forEach((key, value) {
+          if (TIPO_LLAMADA == "json") {
+            int keyInt = int.parse(key) + 1;
+            String keyy = keyInt.toString();
+            innerMapString[keyy] = value.toString();
+          } else {
+            innerMapString[key] = value.toString();
+          }
         });
 
-        Map<String, String> dataMapUmat = {};
-        lista.forEach((element) {
-          dataMapUmat[element[0].toString()] = element[1].toString();
-        });
-        //Map<String, dynamic> umatJson = decodedJson["umat"];
-        /// Procesamiento de datos para UMat
-        lista = [];
-        Codebook.forEach((element) {
-          List<double> elementt = [];
-          element.forEach((e) {
-            elementt.add(double.parse(e.toString()));
-          });
-          lista.add(elementt);
-        });
-
-        Map<String, Object> respuesta = {};
-
-        /// Procesamiento de datos para BMUs
-        Map<String, Map<String, String>> mapaRta = {};
-
-        // Iterar sobre las claves externas del primer nivel
-        for (String outerKey in NeuronsJSON.keys) {
-          // Obtener el valor correspondiente a la clave externa
-          Map<String, dynamic> innerMap = NeuronsJSON[outerKey];
-
-          // Convertir el mapa interno a Map<String, String>
-          Map<String, String> innerMapString = {};
-          innerMap.forEach((key, value) {
-            if (TIPO_LLAMADA == "json") {
-              int keyInt = int.parse(key) + 1;
-              String keyy = keyInt.toString();
-              innerMapString[keyy] = value.toString();
-            } else {
-              innerMapString[key] = value.toString();
-            }
-          });
-
-          // Agregar el par clave-valor al mapa final
-          mapaRta[outerKey] = innerMapString;
-        }
-
-        respuesta["respuestaBMU"] = mapaRta;
-        respuesta["respuestaUmat"] = dataMapUmat;
-        respuesta["parametros"] = parametros;
-        respuesta["respuestaHits"] = hitsMap;
-        respuesta["codebook"] = lista;
-        //respuesta["codebook"] =
-        setState(() {
-          //boton = 'La respuesta fue: ${response.body}';
-          Navigator.pushNamed(
-            context,
-            '/grillas',
-            arguments: respuesta,
-          );
-          cargando = false;
-        });
-      } catch (e) {
-        print('Error: $e');
-        setState(() {
-          cargando = false;
-          botonAceptar = "Aceptar";
-        });
+        // Agregar el par clave-valor al mapa final
+        mapaRta[outerKey] = innerMapString;
       }
+
+      respuesta["respuestaBMU"] = mapaRta;
+      respuesta["respuestaUmat"] = dataMapUmat;
+      respuesta["parametros"] = parametros;
+      respuesta["respuestaHits"] = hitsMap;
+      respuesta["codebook"] = lista;
+      //respuesta["codebook"] =
+      setState(() {
+        //boton = 'La respuesta fue: ${response.body}';
+        Navigator.pushNamed(
+          context,
+          '/grillas',
+          arguments: respuesta,
+        );
+        cargando = false;
+      });
+    } catch (e) {
+      print('Error: $e');
+      setState(() {
+        cargando = false;
+        botonAceptar = "Aceptar";
+      });
+    }
 
     // try {
     //   String TIPO_LLAMADA = "rapida";
