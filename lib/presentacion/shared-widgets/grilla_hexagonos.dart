@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:TF_SOM_UNMdP/utils.dart';
+import 'package:TF_SOM_UNMdP/utils/utils.dart';
 import 'package:hexagon/hexagon.dart';
 import 'dart:typed_data';
 // ignore: avoid_web_libraries_in_flutter
@@ -35,15 +35,15 @@ class GrillaHexagonos extends StatelessWidget {
   final List<dynamic> codebook;
   final int filas;
   final int columnas;
-  String titulo;
-  List<List<int>>? clusters;
-  List<String> nombreColumnas;
+  final String titulo;
+  final List<List<int>>? clusters;
+  final List<String> nombreColumnas;
   final double
       paddingEntreHexagonos; //podria no ser final y luego cambiarse luego de ser generado
-  Map<int, int>? hitsMap;
-  bool hits;
-  bool mostrarGradiente;
-  bool mostrarBotonImprimir;
+  final Map<int, int>? hitsMap;
+  final bool hits;
+  final bool mostrarGradiente;
+  final bool mostrarBotonImprimir;
   GrillaHexagonos(
       {super.key,
       this.gradiente,

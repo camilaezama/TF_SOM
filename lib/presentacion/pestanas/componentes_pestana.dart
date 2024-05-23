@@ -1,14 +1,14 @@
-import 'package:TF_SOM_UNMdP/DialogOpciones.dart';
-import 'package:TF_SOM_UNMdP/grillaHexagonos.dart';
+import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/dialogs/seleccionar_opciones_dialog.dart';
+import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/grilla_hexagonos.dart';
 import 'package:flutter/material.dart';
 
-class ComponentesPage extends StatefulWidget {
+class ComponentesPestana extends StatefulWidget {
   final Map<String, dynamic> mapaRta;
   final List<List<double>> codebook;
   final int filas;
   final int columnas;
   final List<String> nombrecolumnas;
-  const ComponentesPage(
+  const ComponentesPestana(
       {super.key,
       required this.mapaRta,
       required this.codebook,
@@ -17,10 +17,10 @@ class ComponentesPage extends StatefulWidget {
       required this.columnas});
 
   @override
-  State<ComponentesPage> createState() => _ComponentesPageState();
+  State<ComponentesPestana> createState() => _ComponentesPestanaState();
 }
 
-class _ComponentesPageState extends State<ComponentesPage> {
+class _ComponentesPestanaState extends State<ComponentesPestana> {
   List<String> opciones = [];
   List<bool> seleccionadas = [];
   List<String> opcionesSeleccionadas = [];

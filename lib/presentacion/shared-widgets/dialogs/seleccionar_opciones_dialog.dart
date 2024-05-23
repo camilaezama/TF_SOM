@@ -16,7 +16,6 @@ class _DialogOpcionesState extends State<DialogOpciones> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     opciones = widget.opciones;
     seleccionadas = widget.seleccionadas;
@@ -25,7 +24,7 @@ class _DialogOpcionesState extends State<DialogOpciones> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-          title: Text("Seleccionar Opciones"),
+          title: const Text("Seleccionar Opciones"),
           content: SingleChildScrollView(
             child: Column(
               children: opciones.asMap().entries.map((entry) {
@@ -45,13 +44,13 @@ class _DialogOpcionesState extends State<DialogOpciones> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text("Cerrar"),
+              child: const Text("Cerrar"),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text("Guardar"),
+              child: const Text("Guardar"),
               onPressed: () {
                 _mostrarSeleccionadas();
                 widget.actualizarOpciones(seleccionadas);

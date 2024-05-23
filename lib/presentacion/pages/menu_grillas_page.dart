@@ -1,6 +1,10 @@
-import 'package:TF_SOM_UNMdP/ComponentesPage.dart';
+import 'package:TF_SOM_UNMdP/presentacion/pestanas/bmu_pestana.dart';
+import 'package:TF_SOM_UNMdP/presentacion/pestanas/clusters_pestana.dart';
+import 'package:TF_SOM_UNMdP/presentacion/pestanas/componentes_pestana.dart';
+import 'package:TF_SOM_UNMdP/presentacion/pestanas/hits_pestana.dart';
+import 'package:TF_SOM_UNMdP/presentacion/pestanas/umat_pestana.dart';
 import 'package:flutter/material.dart';
-import 'package:TF_SOM_UNMdP/grillaHexagonos.dart';
+import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/grilla_hexagonos.dart';
 import 'package:flutter/services.dart';
 import 'package:hexagon/hexagon.dart';
 import 'package:http/http.dart' as http;
@@ -55,6 +59,18 @@ class _GrillasPageState extends State<GrillasPage>
     }
   }
 
+  Gradient gradiente = const LinearGradient(
+      colors: [
+        Color.fromARGB(255, 8, 82, 143),
+        Colors.blue,
+        Colors.green,
+        Colors.yellow,
+        Colors.orange,
+        Colors.red,
+      ],
+      stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
+  );
+
   String selectedComponente = '';
   @override
   Widget build(BuildContext context) {
@@ -104,47 +120,49 @@ class _GrillasPageState extends State<GrillasPage>
               controller: tabController,
               physics: const NeverScrollableScrollPhysics(),
               children: [
-                _buildWidgetBMUs(),
-                _buildWidgetUMat(),
+                BmuPestana(gradiente: gradiente,),
+                //_buildWidgetBMUs(),
+                UmatPestana(gradiente: gradiente),
                 //_buildWidgetGrillaComponentes(mapaRta),
-                ComponentesPage(
+                ComponentesPestana(
                   mapaRta: mapaRta,
                   codebook: codebook,
                   nombrecolumnas: nombresColumnas,
                   filas: filas,
                   columnas: columnas,
                 ),
-                _buildWidgetHits(),
-                _buildWidgetClusters(),
+                HitsPestana(gradiente: gradiente),
+                ClustersPestana()
+                //_buildWidgetClusters(),
               ],
             ),
           ),
         ));
   }
 
-  Widget _buildWidgetUMat() {
-    Gradient gradiente = const LinearGradient(
-      colors: [
-        Color.fromARGB(255, 8, 82, 143),
-        Colors.blue,
-        Colors.green,
-        Colors.yellow,
-        Colors.orange,
-        Colors.red,
-      ],
-      stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
-    );
+  // Widget _buildWidgetUMat() {
+  //   Gradient gradiente = const LinearGradient(
+  //     colors: [
+  //       Color.fromARGB(255, 8, 82, 143),
+  //       Colors.blue,
+  //       Colors.green,
+  //       Colors.yellow,
+  //       Colors.orange,
+  //       Colors.red,
+  //     ],
+  //     stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
+  //   );
 
-    return GrillaHexagonos(
-        titulo: "UMat",
-        gradiente: gradiente,
-        dataMap: mapaRtaUmat,
-        nombreColumnas: nombresColumnas,
-        codebook: codebook,
-        filas: filas * 2,
-        columnas: columnas * 2,
-        paddingEntreHexagonos: 0.2);
-  }
+  //   return GrillaHexagonos(
+  //       titulo: "UMat",
+  //       gradiente: gradiente,
+  //       dataMap: mapaRtaUmat,
+  //       nombreColumnas: nombresColumnas,
+  //       codebook: codebook,
+  //       filas: filas * 2,
+  //       columnas: columnas * 2,
+  //       paddingEntreHexagonos: 0.2);
+  // }
 
   Widget _buildWidgetClusters() {
     return Center(
@@ -201,53 +219,53 @@ class _GrillasPageState extends State<GrillasPage>
     );
   }
 
-  Widget _buildWidgetHits() {
-    Gradient gradiente = const LinearGradient(
-      colors: [
-        Color.fromARGB(255, 8, 82, 143),
-        Colors.blue,
-        Colors.green,
-        Colors.yellow,
-        Colors.orange,
-        Colors.red,
-      ],
-      stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
-    );
-    return GrillaHexagonos(
-      titulo: "Hits",
-      gradiente: gradiente,
-      codebook: codebook,
-      nombreColumnas: nombresColumnas,
-      dataMap: dataUdist,
-      filas: filas,
-      columnas: columnas,
-      hits: true,
-      hitsMap: hitsMap,
-    );
-  }
+  // Widget _buildWidgetHits() {
+  //   Gradient gradiente = const LinearGradient(
+  //     colors: [
+  //       Color.fromARGB(255, 8, 82, 143),
+  //       Colors.blue,
+  //       Colors.green,
+  //       Colors.yellow,
+  //       Colors.orange,
+  //       Colors.red,
+  //     ],
+  //     stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
+  //   );
+  //   return GrillaHexagonos(
+  //     titulo: "Hits",
+  //     gradiente: gradiente,
+  //     codebook: codebook,
+  //     nombreColumnas: nombresColumnas,
+  //     dataMap: dataUdist,
+  //     filas: filas,
+  //     columnas: columnas,
+  //     hits: true,
+  //     hitsMap: hitsMap,
+  //   );
+  // }
 
-  Widget _buildWidgetBMUs() {
-    Gradient gradiente = const LinearGradient(
-      colors: [
-        Color.fromARGB(255, 8, 82, 143),
-        Colors.blue,
-        Colors.green,
-        Colors.yellow,
-        Colors.orange,
-        Colors.red,
-      ],
-      stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
-    );
-    return GrillaHexagonos(
-        titulo: "BMU",
-        gradiente: gradiente,
-        dataMap: dataUdist,
-        nombreColumnas: nombresColumnas,
-        codebook: codebook,
-        clusters: null,
-        filas: filas,
-        columnas: columnas);
-  }
+  // Widget _buildWidgetBMUs() {
+  //   Gradient gradiente = const LinearGradient(
+  //     colors: [
+  //       Color.fromARGB(255, 8, 82, 143),
+  //       Colors.blue,
+  //       Colors.green,
+  //       Colors.yellow,
+  //       Colors.orange,
+  //       Colors.red,
+  //     ],
+  //     stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
+  //   );
+  //   return GrillaHexagonos(
+  //       titulo: "BMU",
+  //       gradiente: gradiente,
+  //       dataMap: dataUdist,
+  //       nombreColumnas: nombresColumnas,
+  //       codebook: codebook,
+  //       clusters: null,
+  //       filas: filas,
+  //       columnas: columnas);
+  // }
 
 /*
   Widget _buildWidgetGrillaComponentes(Map<String, dynamic> mapaRta) {

@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:TF_SOM_UNMdP/utils.dart';
+import 'package:TF_SOM_UNMdP/utils/utils.dart';
 import 'package:hexagon/hexagon.dart';
 import 'dart:typed_data';
 // ignore: avoid_web_libraries_in_flutter
