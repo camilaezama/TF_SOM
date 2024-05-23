@@ -16,11 +16,11 @@ class UmatPestana extends StatelessWidget {
     return GrillaHexagonos(
         titulo: "UMat",
         gradiente: gradiente,
-        dataMap: datosProvider.mapaRtaUmat,
-        nombreColumnas: datosProvider.nombresColumnas,
-        codebook: datosProvider.codebook,
-        filas: datosProvider.filas * 2,
-        columnas: datosProvider.columnas * 2,
+        dataMap: datosProvider.resultadoEntrenamiento.mapaRtaUmat,
+        nombreColumnas: datosProvider.resultadoEntrenamiento.nombresColumnas,
+        codebook: datosProvider.resultadoEntrenamiento.codebook,
+        filas: datosProvider.resultadoEntrenamiento.filas * 2,
+        columnas: datosProvider.resultadoEntrenamiento.columnas * 2,
         paddingEntreHexagonos: 0.2);
   }
 }

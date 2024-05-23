@@ -9,6 +9,8 @@ class ParametrosProvider extends ChangeNotifier {
   String inicializacion = 'random';
   String normalizacion = 'var';
 
+
+
   // Método para actualizar los parámetros
   void updateParametros({
     required String filas,
@@ -28,4 +30,25 @@ class ParametrosProvider extends ChangeNotifier {
     this.normalizacion = normalizacion;
     //notifyListeners(); // No es necesario notificar cambios todavia
   }
+
+  Map<String, dynamic> mapaParametros(){
+    final parametros = <String, dynamic>{
+          'filas': filas != "" ? filas : 24,
+          'columnas': columnas != ""
+              ? columnas
+              : 31, //TODO IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
+          'vecindad': funcionVecindad,
+          'inicializacion': inicializacion,
+          'iteraciones': itera != ""
+              ? itera
+              : 200, //IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
+          'normalizacion': normalizacion,
+          'factorEntrenamiento': factorEntrenamiento != ""
+              ? factorEntrenamiento
+              : 2 //IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
+    };
+    return parametros;
+  }
+
+
 }

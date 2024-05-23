@@ -19,11 +19,11 @@ class BmuPestana extends StatelessWidget {
     return GrillaHexagonos(
         titulo: "BMU",
         gradiente: gradiente,
-        dataMap: datosProvider.dataUdist,
-        nombreColumnas: datosProvider.nombresColumnas,
-        codebook: datosProvider.codebook,
+        dataMap: datosProvider.resultadoEntrenamiento.dataUdist,
+        nombreColumnas: datosProvider.resultadoEntrenamiento.nombresColumnas,
+        codebook: datosProvider.resultadoEntrenamiento.codebook,
         clusters: null,
-        filas: datosProvider.filas,
-        columnas: datosProvider.columnas);
+        filas: datosProvider.resultadoEntrenamiento.filas,
+        columnas: datosProvider.resultadoEntrenamiento.columnas);
   }
 }

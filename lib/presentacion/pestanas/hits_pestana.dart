@@ -17,13 +17,13 @@ class HitsPestana extends StatelessWidget {
     return GrillaHexagonos(
       titulo: "Hits",
       gradiente: gradiente,
-      codebook: datosProvider.codebook,
-      nombreColumnas: datosProvider.nombresColumnas,
-      dataMap: datosProvider.dataUdist,
-      filas: datosProvider.filas,
-      columnas: datosProvider.columnas,
+      codebook: datosProvider.resultadoEntrenamiento.codebook,
+      nombreColumnas: datosProvider.resultadoEntrenamiento.nombresColumnas,
+      dataMap: datosProvider.resultadoEntrenamiento.dataUdist,
+      filas: datosProvider.resultadoEntrenamiento.filas,
+      columnas: datosProvider.resultadoEntrenamiento.columnas,
       hits: true,
-      hitsMap: datosProvider.hitsMap,
+      hitsMap: datosProvider.resultadoEntrenamiento.hitsMap,
     );
   }
 }

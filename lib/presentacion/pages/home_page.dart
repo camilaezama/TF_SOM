@@ -1,32 +1,34 @@
 import 'package:TF_SOM_UNMdP/config/tema.dart';
+import 'package:TF_SOM_UNMdP/models/resultado_entrenamiento_model.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/dialogs/configurar_parametros_dialog.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/dialogs/seleccionar_opciones_dialog.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/tabla_datos.dart';
 import 'package:TF_SOM_UNMdP/providers/datos_provider.dart';
 import 'package:TF_SOM_UNMdP/providers/parametros_provider.dart';
+import 'package:TF_SOM_UNMdP/utils/csv_to_data.dart';
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import 'dart:convert';
 import 'package:flutter/services.dart';
-import 'dart:typed_data'; // Para Uint8List
-import 'package:http/http.dart' as http;
+//import 'dart:typed_data'; // Para Uint8List
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
-  _HomePageState createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-
   // String funcionVecindad = 'gaussian';
   // String inicializacion = 'random';
   // String normalizacion = 'var';
 
   List<List<dynamic>> csvData = [];
-  List<List<dynamic>> csvData_original = [];
+  List<List<dynamic>> csvDataOriginal = [];
   String botonAceptar = 'Aceptar';
   String botonParam = 'Modificar Parametros';
 
@@ -37,7 +39,7 @@ class _HomePageState extends State<HomePage> {
   List<String> opcionesSeleccionadas = [];
 
   List<String>? columnNames;
-  List<String>? columnNames_original;
+  List<String>? columnNamesOriginal;
   late double _width, _height;
 
   void _loadCSVData(FilePickerResult result) async {
@@ -50,9 +52,9 @@ class _HomePageState extends State<HomePage> {
           const CsvToListConverter().convert(fileContent);
 
       setState(() {
-        csvData_original = csvTable;
+        csvDataOriginal = csvTable;
         csvData = csvTable;
-        columnNames_original = csvData[0][0].toString().split(';');
+        columnNamesOriginal = csvData[0][0].toString().split(';');
         columnNames = csvData[0][0].toString().split(';');
         columnNames!.forEach((element) {
           seleccionadas.add(true);
@@ -89,8 +91,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     _width = MediaQuery.of(context).size.width;
     _height = MediaQuery.of(context).size.height;
-
-
 
     return Scaffold(
       appBar: AppBar(
@@ -132,7 +132,7 @@ class _HomePageState extends State<HomePage> {
                     ? IconButton(
                         icon: const Icon(Icons.list),
                         onPressed: () {
-                          opciones = columnNames_original!;
+                          opciones = columnNamesOriginal!;
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -189,7 +189,10 @@ class _HomePageState extends State<HomePage> {
                               showDialog<void>(
                                 context: context,
                                 builder: (BuildContext context) {
-                                  return ConfigurarParametrosDialog(widthPantalla: _width, heightPantalla: _height,);
+                                  return ConfigurarParametrosDialog(
+                                    widthPantalla: _width,
+                                    heightPantalla: _height,
+                                  );
                                 },
                               );
                             },
@@ -213,13 +216,13 @@ class _HomePageState extends State<HomePage> {
 
     List<dynamic> headerRow = [];
 
-    for (int i = 0; i < columnNames_original!.length; i++) {
+    for (int i = 0; i < columnNamesOriginal!.length; i++) {
       if (seleccionadas[i]) {
-        headerRow.add(columnNames_original![i]);
+        headerRow.add(columnNamesOriginal![i]);
       }
     }
 
-    for (List<dynamic> fila in csvData_original) {
+    for (List<dynamic> fila in csvDataOriginal) {
       List<String> columnas = fila[0].split(';');
       List<String> filaFiltrada = [];
 
@@ -249,223 +252,31 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-
-
-  ByteData csvToByteData(List<List<dynamic>> csvTable) {
-    // Supongamos que tienes una función que convierte tu tabla CSV a una lista de bytes
-    List<int> byteList = convertCsvTableToBytes(csvTable);
-
-    // Convertir la lista de bytes a Uint8List
-    Uint8List uint8List = Uint8List.fromList(byteList);
-
-    // Crear ByteData a partir de Uint8List
-    ByteData byteData = uint8List.buffer.asByteData();
-
-    return byteData;
-  }
-
-  List<int> convertCsvTableToBytes(List<List<dynamic>> csvTable) {
-    // Aquí debes implementar la lógica para convertir tu tabla CSV a una lista de bytes
-    // Puedes usar 'utf8.encode' si tu CSV está en formato de texto
-    // Por ejemplo, puedes hacer algo como:
-    String csvString = const ListToCsvConverter().convert(csvTable);
-    List<int> byteList = utf8.encode(csvString);
-
-    return byteList;
-  }
-
-  List<Map<String, String>> convertRowsToMap(List<List<dynamic>> rows) {
-    List<String> columnNames = List.from(rows[0]);
-    List<Map<String, String>> result = [];
-
-    for (int i = 1; i < rows.length; i++) {
-      Map<String, String> rowMap = {};
-
-      for (int j = 0; j < columnNames.length; j++) {
-        // Convertir el valor a String y asignarlo al mapa con el nombre de la columna
-        rowMap[columnNames[j]] = rows[i][j].toString();
-      }
-
-      result.add(rowMap);
-    }
-
-    return result;
-  }
-
-
   void _llamadaAPI() async {
-    //Navigator.pushNamed(context, '/grillas');
-
     final parametrosProvider = context.read<ParametrosProvider>();
-
     final datosProvider = context.read<DatosProvider>();
 
     if (csvData.isNotEmpty) {
-      ByteData byteData = csvToByteData(csvData);
+      List<Map<String, String>> data = csvToData(csvData);
 
-      String content = String.fromCharCodes(byteData.buffer.asUint8List());
-
-      // Parsear el contenido CSV con el delimitador ';'
-      List<List<dynamic>> rows =
-          const CsvToListConverter(eol: '\n', fieldDelimiter: ';')
-              .convert(content);
-      List<Map<String, String>> result = convertRowsToMap(rows);
-
-      String jsonResult = jsonEncode(result);
+      String jsonResult = jsonEncode(data);
 
       try {
-        String TIPO_LLAMADA = "bmu";
-        var url = Uri.parse('http://localhost:7777' + '/' + TIPO_LLAMADA);
-
-        final parametros = <String, dynamic>{
-          'filas': parametrosProvider.filas != "" ? parametrosProvider.filas : 24,
-          'columnas': parametrosProvider.columnas != ""
-              ? parametrosProvider.columnas
-              : 31, //TODO IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
-          'vecindad': parametrosProvider.funcionVecindad,
-          'inicializacion': parametrosProvider.inicializacion,
-          'iteraciones': parametrosProvider.itera != ""
-              ? parametrosProvider.itera
-              : 200, //IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
-          'normalizacion': parametrosProvider.normalizacion,
-          'factorEntrenamiento': parametrosProvider.factorEntrenamiento != ""
-              ? parametrosProvider.factorEntrenamiento
-              : 2 //IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
-        };
-
-        // final parametros = <String, dynamic>{
-        //   'filas': filasController.text != "" ? filasController.text : 24,
-        //   'columnas': columnasController.text != ""
-        //       ? columnasController.text
-        //       : 31, //TODO IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
-        //   'vecindad': funcionVecindad,
-        //   'inicializacion': inicializacion,
-        //   'iteraciones': iteracontroller.text != ""
-        //       ? iteracontroller.text
-        //       : 200, //IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
-        //   'normalizacion': normalizacion,
-        //   'factorEntrenamiento': factorEntrenamientoController.text != ""
-        //       ? factorEntrenamientoController.text
-        //       : 2 //IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
-        // };
+        String tipoLlamada = "bmu";
+        final parametros = parametrosProvider.mapaParametros();
 
         setState(() {
-          //boton = "Cargando...";
           cargando = true;
         });
-        // var response = await http.post(url,
-        //     headers: {'Accept': '/*'}, body: jsonResult);
-        var response = await http.post(url,
-            headers: {'Accept': '/*'},
-            body: jsonEncode({
-              "datos": jsonResult,
-              "tipo": TIPO_LLAMADA,
-              "params": parametros
-            }));
 
-        // print('Response status: ${response.statusCode}');
-        //print('Response body: ${response.body}');
+        ResultadoEntrenamientoModel resultadoEntrenamiento = await datosProvider
+            .entrenamiento(tipoLlamada, parametros, jsonResult);
 
-        // Map<String, dynamic> jsonList = json.decode(response.body);
-        // Map<String,Map<String, String>> mapaRta = Map<String,Map<String, String>>.from(jsonList);
-
-        // Decodificar la cadena JSON
-        Map<String, dynamic> decodedJson = json.decode(response.body);
-
-        Map<String, dynamic> NeuronsJSON = decodedJson["Neurons"];
-        List<dynamic> Codebook = decodedJson["Codebook"];
-        List<dynamic> UmatJSON = decodedJson["UMat"];
-
-        print(Codebook);
-
-        /// Procesamiento de datos para Hits
-        Map<String, dynamic> HitsJSON = decodedJson["Hits"];
-        Map<int, int> hitsMap = Map<int, int>.from(
-            HitsJSON.map((key, value) => MapEntry(int.parse(key), value)));
-
-        /// Procesamiento de datos para UMat
-        List<List<double>> lista = [];
-        UmatJSON.forEach((element) {
-          List<double> elementt = [];
-          element.forEach((e) {
-            elementt.add(double.parse(e.toString()));
-          });
-          lista.add(elementt);
-        });
-
-        Map<String, String> dataMapUmat = {};
-        lista.forEach((element) {
-          dataMapUmat[element[0].toString()] = element[1].toString();
-        });
-        //Map<String, dynamic> umatJson = decodedJson["umat"];
-        /// Procesamiento de datos para UMat
-        lista = [];
-        Codebook.forEach((element) {
-          List<double> elementt = [];
-          element.forEach((e) {
-            elementt.add(double.parse(e.toString()));
-          });
-          lista.add(elementt);
-        });
-
-        Map<String, Object> respuesta = {};
-
-        /// Procesamiento de datos para BMUs
-        Map<String, Map<String, String>> mapaRta = {};
-
-        // Iterar sobre las claves externas del primer nivel
-        for (String outerKey in NeuronsJSON.keys) {
-          // Obtener el valor correspondiente a la clave externa
-          Map<String, dynamic> innerMap = NeuronsJSON[outerKey];
-
-          // Convertir el mapa interno a Map<String, String>
-          Map<String, String> innerMapString = {};
-          innerMap.forEach((key, value) {
-            if (TIPO_LLAMADA == "json") {
-              int keyInt = int.parse(key) + 1;
-              String keyy = keyInt.toString();
-              innerMapString[keyy] = value.toString();
-            } else {
-              innerMapString[key] = value.toString();
-            }
-          });
-
-          // Agregar el par clave-valor al mapa final
-          mapaRta[outerKey] = innerMapString;
-        }
-
-
-
-        respuesta["respuestaBMU"] = mapaRta;
-        respuesta["respuestaUmat"] = dataMapUmat;
-        respuesta["parametros"] = parametros;
-        respuesta["respuestaHits"] = hitsMap;
-        respuesta["codebook"] = lista;
-
-        List<String> nombresColumnas = [];
-        List<String> keys = mapaRta.keys.toList();
-        for (var i = 7; i < keys.length; i++) {
-          nombresColumnas.add(keys[i]);
-        }
-        respuesta["nombrescolumnas"] = nombresColumnas;
-
-        datosProvider.updateDatos(
-          dataUdist: mapaRta["Udist"],
-          mapaRtaUmat: dataMapUmat,
-          codebook: lista,
-          filas: int.parse(parametros["filas"]),
-          columnas: int.parse(parametros["columnas"]),
-          nombresColumnas: nombresColumnas,
-          hitsMap: hitsMap
-        );
-
-        //respuesta["codebook"] =
         setState(() {
-          //boton = 'La respuesta fue: ${response.body}';
           Navigator.pushNamed(
             context,
             '/grillas',
-            arguments: respuesta,
+            arguments: resultadoEntrenamiento,
           );
           cargando = false;
         });
@@ -515,144 +326,28 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _llamadaAPIRapida() async {
-    String jsonResult = jsonEncode("datos");
-
     final parametrosProvider = context.read<ParametrosProvider>();
-
     final datosProvider = context.read<DatosProvider>();
 
     try {
-      String TIPO_LLAMADA = "rapida";
-      var url = Uri.parse('http://localhost:7777' + '/' + TIPO_LLAMADA);
+      String tipoLlamada = "rapida";
 
-        final parametros = <String, dynamic>{
-          'filas': parametrosProvider.filas != "" ? parametrosProvider.filas : 24,
-          'columnas': parametrosProvider.columnas != ""
-              ? parametrosProvider.columnas
-              : 31, //TODO IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
-          'vecindad': parametrosProvider.funcionVecindad,
-          'inicializacion': parametrosProvider.inicializacion,
-          'iteraciones': parametrosProvider.itera != ""
-              ? parametrosProvider.itera
-              : 200, //IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
-          'normalizacion': parametrosProvider.normalizacion,
-          'factorEntrenamiento': parametrosProvider.factorEntrenamiento != ""
-              ? parametrosProvider.factorEntrenamiento
-              : 2 //IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
-        };
+      String jsonResult = "";
+
+      final parametros = parametrosProvider.mapaParametros();
 
       setState(() {
-        //boton = "Cargando...";
         cargando = true;
       });
-      // var response = await http.post(url,
-      //     headers: {'Accept': '/*'}, body: jsonResult);
-      var response = await http.post(url,
-          headers: {'Accept': '/*'},
-          body: jsonEncode({
-            "datos": jsonResult,
-            "tipo": TIPO_LLAMADA,
-            "params": parametros
-          }));
 
-      // print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      ResultadoEntrenamientoModel resultadoEntrenamiento = await datosProvider
+          .entrenamiento(tipoLlamada, parametros, jsonResult);
 
-      // Map<String, dynamic> jsonList = json.decode(response.body);
-      // Map<String,Map<String, String>> mapaRta = Map<String,Map<String, String>>.from(jsonList);
-
-      // Decodificar la cadena JSON
-      Map<String, dynamic> decodedJson = json.decode(response.body);
-
-      Map<String, dynamic> NeuronsJSON = decodedJson["Neurons"];
-      List<dynamic> Codebook = decodedJson["Codebook"];
-      List<dynamic> UmatJSON = decodedJson["UMat"];
-
-      /// Procesamiento de datos para Hits
-      Map<String, dynamic> HitsJSON = decodedJson["Hits"];
-      Map<int, int> hitsMap = Map<int, int>.from(
-          HitsJSON.map((key, value) => MapEntry(int.parse(key), value)));
-
-      /// Procesamiento de datos para UMat
-      List<List<double>> lista = [];
-      UmatJSON.forEach((element) {
-        List<double> elementt = [];
-        element.forEach((e) {
-          elementt.add(double.parse(e.toString()));
-        });
-        lista.add(elementt);
-      });
-
-      Map<String, String> dataMapUmat = {};
-      lista.forEach((element) {
-        dataMapUmat[element[0].toString()] = element[1].toString();
-      });
-      //Map<String, dynamic> umatJson = decodedJson["umat"];
-      /// Procesamiento de datos para UMat
-      lista = [];
-      Codebook.forEach((element) {
-        List<double> elementt = [];
-        element.forEach((e) {
-          elementt.add(double.parse(e.toString()));
-        });
-        lista.add(elementt);
-      });
-
-      Map<String, Object> respuesta = {};
-
-      /// Procesamiento de datos para BMUs
-      Map<String, Map<String, String>> mapaRta = {};
-
-      // Iterar sobre las claves externas del primer nivel
-      for (String outerKey in NeuronsJSON.keys) {
-        // Obtener el valor correspondiente a la clave externa
-        Map<String, dynamic> innerMap = NeuronsJSON[outerKey];
-
-        // Convertir el mapa interno a Map<String, String>
-        Map<String, String> innerMapString = {};
-        innerMap.forEach((key, value) {
-          if (TIPO_LLAMADA == "json") {
-            int keyInt = int.parse(key) + 1;
-            String keyy = keyInt.toString();
-            innerMapString[keyy] = value.toString();
-          } else {
-            innerMapString[key] = value.toString();
-          }
-        });
-
-        // Agregar el par clave-valor al mapa final
-        mapaRta[outerKey] = innerMapString;
-      }
-
-      respuesta["respuestaBMU"] = mapaRta;
-      respuesta["respuestaUmat"] = dataMapUmat;
-      respuesta["parametros"] = parametros;
-      respuesta["respuestaHits"] = hitsMap;
-      respuesta["codebook"] = lista;
-
-      List<String> nombresColumnas = [];
-      List<String> keys = mapaRta.keys.toList();
-      for (var i = 7; i < keys.length; i++) {
-        nombresColumnas.add(keys[i]);
-      }
-      respuesta["nombrescolumnas"] = nombresColumnas;
-
-        datosProvider.updateDatos(
-          dataUdist: mapaRta["Udist"],
-          mapaRtaUmat: dataMapUmat,
-          codebook: lista,
-          filas: int.parse(parametros["filas"]),
-          columnas: int.parse(parametros["columnas"]),
-          nombresColumnas: nombresColumnas,
-          hitsMap: hitsMap
-        );
-      //respuesta["codebook"] =
       setState(() {
-        //boton = 'La respuesta fue: ${response.body}';
         Navigator.pushNamed(
           context,
           '/grillas',
-          arguments: respuesta,
+          arguments: resultadoEntrenamiento,
         );
         cargando = false;
       });

@@ -3,14 +3,16 @@ import 'package:TF_SOM_UNMdP/presentacion/pestanas/clusters_pestana.dart';
 import 'package:TF_SOM_UNMdP/presentacion/pestanas/componentes_pestana.dart';
 import 'package:TF_SOM_UNMdP/presentacion/pestanas/hits_pestana.dart';
 import 'package:TF_SOM_UNMdP/presentacion/pestanas/umat_pestana.dart';
+import 'package:TF_SOM_UNMdP/providers/datos_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/grilla_hexagonos.dart';
 import 'package:flutter/services.dart';
 import 'package:hexagon/hexagon.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+
+import 'package:provider/provider.dart';
 
 class GrillasPage extends StatefulWidget {
+  const GrillasPage({super.key});
+
   @override
   State<GrillasPage> createState() => _GrillasPageState();
 }
@@ -26,16 +28,16 @@ class _GrillasPageState extends State<GrillasPage>
   bool hasControls = true;
   bool showControls = true;
   late TabController tabController;
-  static final clustersController = TextEditingController(text: "10");
-  Map<String, String> dataUdist = {};
-  Map<String, Object> respuesta = {};
-  Map<String, dynamic> mapaRta = {};
-  Map<String, dynamic> parametros = {};
-  Map<String, String> mapaRtaUmat = {};
-  late List<List<int>> mapaRtaClusters;
-  Map<String, String> dataComponente = {};
-  late List<String> nombresColumnas = [];
-  late List<List<double>> codebook;
+  //static final clustersController = TextEditingController(text: "10");
+  // Map<String, String> dataUdist = {};
+  // Map<String, Object> respuesta = {};
+  // Map<String, dynamic> mapaRta = {};
+  // Map<String, dynamic> parametros = {};
+  // Map<String, String> mapaRtaUmat = {};
+  // late List<List<int>> mapaRtaClusters;
+  // Map<String, String> dataComponente = {};
+  // late List<String> nombresColumnas = [];
+  // late List<List<double>> codebook;
 
   Map<int, int> hitsMap = {};
   String title = "";
@@ -77,24 +79,27 @@ class _GrillasPageState extends State<GrillasPage>
     // mapaRta =
     //     ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
 
-    respuesta =
-        ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
+    // respuesta =
+    //     ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
 
-    mapaRta = respuesta["respuestaBMU"] as Map<String, dynamic>;
+    // mapaRta = respuesta["respuestaBMU"] as Map<String, dynamic>;
 
-    mapaRtaUmat = respuesta["respuestaUmat"] as Map<String, String>;
+    // mapaRtaUmat = respuesta["respuestaUmat"] as Map<String, String>;
 
-    parametros = respuesta["parametros"] as Map<String, dynamic>;
+    // parametros = respuesta["parametros"] as Map<String, dynamic>;
 
-    hitsMap = respuesta["respuestaHits"] as Map<int, int>;
+    // hitsMap = respuesta["respuestaHits"] as Map<int, int>;
 
-    codebook = respuesta["codebook"] as List<List<double>>;
+    // codebook = respuesta["codebook"] as List<List<double>>;
 
-    nombresColumnas = respuesta["nombrescolumnas"] as List<String>;
+    // nombresColumnas = respuesta["nombrescolumnas"] as List<String>;
 
-    filas = int.parse(parametros["filas"]);
-    columnas = int.parse(parametros["columnas"]);
-    dataUdist = mapaRta["Udist"]!;
+    // filas = int.parse(parametros["filas"]);
+    // columnas = int.parse(parametros["columnas"]);
+    // dataUdist = mapaRta["Udist"]!;
+
+    final datosProvider = context.read<DatosProvider>();
+    
     return Scaffold(
         appBar: AppBar(
           title: const Text('Grillas'),
@@ -121,234 +126,19 @@ class _GrillasPageState extends State<GrillasPage>
               physics: const NeverScrollableScrollPhysics(),
               children: [
                 BmuPestana(gradiente: gradiente,),
-                //_buildWidgetBMUs(),
                 UmatPestana(gradiente: gradiente),
-                //_buildWidgetGrillaComponentes(mapaRta),
                 ComponentesPestana(
-                  mapaRta: mapaRta,
-                  codebook: codebook,
-                  nombrecolumnas: nombresColumnas,
-                  filas: filas,
-                  columnas: columnas,
+                  mapaRta: datosProvider.resultadoEntrenamiento.mapaRta,
+                  codebook: datosProvider.resultadoEntrenamiento.codebook,
+                  nombrecolumnas: datosProvider.resultadoEntrenamiento.nombresColumnas,
+                  filas: datosProvider.resultadoEntrenamiento.filas,
+                  columnas: datosProvider.resultadoEntrenamiento.columnas,
                 ),
                 HitsPestana(gradiente: gradiente),
-                ClustersPestana()
-                //_buildWidgetClusters(),
+                const ClustersPestana()
               ],
             ),
           ),
         ));
   }
-
-  // Widget _buildWidgetUMat() {
-  //   Gradient gradiente = const LinearGradient(
-  //     colors: [
-  //       Color.fromARGB(255, 8, 82, 143),
-  //       Colors.blue,
-  //       Colors.green,
-  //       Colors.yellow,
-  //       Colors.orange,
-  //       Colors.red,
-  //     ],
-  //     stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
-  //   );
-
-  //   return GrillaHexagonos(
-  //       titulo: "UMat",
-  //       gradiente: gradiente,
-  //       dataMap: mapaRtaUmat,
-  //       nombreColumnas: nombresColumnas,
-  //       codebook: codebook,
-  //       filas: filas * 2,
-  //       columnas: columnas * 2,
-  //       paddingEntreHexagonos: 0.2);
-  // }
-
-  Widget _buildWidgetClusters() {
-    return Center(
-      child: Column(
-        children: [
-          const SizedBox(
-            height: 25,
-          ),
-          SizedBox(
-            width: 250, // Set the desired width here
-            child: TextField(
-              controller: clustersController,
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Cantidad de clusters',
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 25,
-          ),
-          ElevatedButton(
-              onPressed: _llamadaClustering,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
-              child: cargando
-                  ? const CircularProgressIndicator()
-                  : Text(
-                      botonAceptar,
-                      style: const TextStyle(fontSize: 16),
-                    )),
-          mostarGrilla
-              ? Expanded(
-                  child: GrillaHexagonos(
-                      dataMap: dataUdist,
-                      filas: filas,
-                      nombreColumnas: nombresColumnas,
-                      clusters: mapaRtaClusters,
-                      codebook: codebook,
-                      columnas: columnas,
-                      titulo: "Clustering"),
-                )
-              : const Text("")
-        ],
-      ),
-    );
-  }
-
-  // Widget _buildWidgetHits() {
-  //   Gradient gradiente = const LinearGradient(
-  //     colors: [
-  //       Color.fromARGB(255, 8, 82, 143),
-  //       Colors.blue,
-  //       Colors.green,
-  //       Colors.yellow,
-  //       Colors.orange,
-  //       Colors.red,
-  //     ],
-  //     stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
-  //   );
-  //   return GrillaHexagonos(
-  //     titulo: "Hits",
-  //     gradiente: gradiente,
-  //     codebook: codebook,
-  //     nombreColumnas: nombresColumnas,
-  //     dataMap: dataUdist,
-  //     filas: filas,
-  //     columnas: columnas,
-  //     hits: true,
-  //     hitsMap: hitsMap,
-  //   );
-  // }
-
-  // Widget _buildWidgetBMUs() {
-  //   Gradient gradiente = const LinearGradient(
-  //     colors: [
-  //       Color.fromARGB(255, 8, 82, 143),
-  //       Colors.blue,
-  //       Colors.green,
-  //       Colors.yellow,
-  //       Colors.orange,
-  //       Colors.red,
-  //     ],
-  //     stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
-  //   );
-  //   return GrillaHexagonos(
-  //       titulo: "BMU",
-  //       gradiente: gradiente,
-  //       dataMap: dataUdist,
-  //       nombreColumnas: nombresColumnas,
-  //       codebook: codebook,
-  //       clusters: null,
-  //       filas: filas,
-  //       columnas: columnas);
-  // }
-
-/*
-  Widget _buildWidgetGrillaComponentes(Map<String, dynamic> mapaRta) {
-    List<String> options = [];
-    options.add("Seleccione");
-    //Ignora las primeras 6 (i = 7) porque son BMU, Udist, etc etc, me quedo con las que son componentes
-    List<String> keys = mapaRta.keys.toList();
-    for (var i = 7; i < keys.length; i++) {
-      options.add(keys[i]);
-    }
-    Gradient gradiente = const LinearGradient(
-      colors: [
-        Color.fromARGB(255, 8, 82, 143),
-        Colors.blue,
-        Colors.green,
-        Colors.yellow,
-        Colors.orange,
-        Colors.red,
-      ],
-      stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
-    );
-    return Center(
-        child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text('Elija la componente a mostrar: '),
-        const SizedBox(width: 5),
-        GenericDropdownMenu(
-          listaOpciones: options,
-          onSelected: (String selectedValue) {
-            // Step 3: Update dataComponente and trigger rebuild
-            setState(() {
-              selectedComponente = selectedValue;
-              dataComponente = mapaRta[selectedValue] ?? {};
-              title = selectedValue;
-            });
-          },
-        ),
-        Expanded(
-            child: GrillaHexagonos(
-                titulo: title,
-                gradiente: gradiente,
-                dataMap: dataComponente,
-                filas: filas,
-                columnas: columnas)),
-      ],
-    ));
-  }
-*/
-  void _llamadaClustering() async {
-    try {
-      String TIPO_LLAMADA = "clusters";
-      var url = Uri.parse('http://localhost:7777' + '/' + TIPO_LLAMADA);
-
-      final parametros = <String, dynamic>{
-        'filas': filas != "" ? filas : 24,
-        'columnas': columnas != "" ? columnas : 31,
-        'cantidadClusters':
-            clustersController.text != "" ? clustersController.text : 10
-      };
-
-      var response = await http.post(url,
-          headers: {'Accept': '/*'},
-          body: jsonEncode(
-              {"datos": codebook, "tipo": TIPO_LLAMADA, "params": parametros}));
-      List<dynamic> decodedJson = json.decode(response.body);
-      List<List<int>> rtaClusters = decodedJson.map((dynamic item) {
-        if (item is List<dynamic>) {
-          return item.map((dynamic subItem) => subItem as int).toList();
-        } else {
-          throw Exception('Invalid item in list');
-        }
-      }).toList();
-      setState(() {
-        mapaRtaClusters = rtaClusters;
-        mostarGrilla = true;
-        cargando = false;
-      });
-    } catch (e) {
-      setState(() {
-        cargando = false;
-        botonAceptar = "Aceptar";
-      });
-    }
-  }
-}
+ }

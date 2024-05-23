@@ -30,11 +30,11 @@ class ClustersProvider extends ChangeNotifier {
       var url = Uri.parse('http://localhost:7777' + '/' + TIPO_LLAMADA);
 
     final parametros = <String, dynamic>{
-      'filas': datosProvider.filas.toString() != ""
-          ? datosProvider.filas
+      'filas': datosProvider.resultadoEntrenamiento.filas.toString() != ""
+          ? datosProvider.resultadoEntrenamiento.filas
           : 24,
-      'columnas': datosProvider.columnas.toString() != ""
-          ? datosProvider.columnas
+      'columnas': datosProvider.resultadoEntrenamiento.columnas.toString() != ""
+          ? datosProvider.resultadoEntrenamiento.columnas
           : 31,
       'cantidadClusters': cantidadClusters != "" ? cantidadClusters : 10
     };
@@ -42,7 +42,7 @@ class ClustersProvider extends ChangeNotifier {
     var response = await http.post(url,
         headers: {'Accept': '/*'},
         body: jsonEncode({
-          "datos": datosProvider.codebook,
+          "datos": datosProvider.resultadoEntrenamiento.codebook,
           "tipo": TIPO_LLAMADA,
           "params": parametros
         }));

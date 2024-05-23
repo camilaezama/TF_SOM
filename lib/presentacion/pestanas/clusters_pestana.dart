@@ -2,7 +2,6 @@ import 'package:TF_SOM_UNMdP/config/tema.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/grilla_hexagonos.dart';
 import 'package:TF_SOM_UNMdP/providers/clusters_provider.dart';
 import 'package:TF_SOM_UNMdP/providers/datos_provider.dart';
-import 'package:TF_SOM_UNMdP/providers/parametros_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -64,12 +63,12 @@ class _ClustersPestanaState extends State<ClustersPestana> {
           clustersProvider.mostarGrilla
               ? Expanded(
                   child: GrillaHexagonos(
-                      dataMap: datosProvider.dataUdist,
-                      filas: datosProvider.filas,
-                      nombreColumnas: datosProvider.nombresColumnas,
+                      dataMap: datosProvider.resultadoEntrenamiento.dataUdist,
+                      filas: datosProvider.resultadoEntrenamiento.filas,
+                      nombreColumnas: datosProvider.resultadoEntrenamiento.nombresColumnas,
                       clusters: clustersProvider.mapaRtaClusters,
-                      codebook: datosProvider.codebook,
-                      columnas: datosProvider.columnas,
+                      codebook: datosProvider.resultadoEntrenamiento.codebook,
+                      columnas: datosProvider.resultadoEntrenamiento.columnas,
                       titulo: "Clustering"),
                 )
               : const Text("")

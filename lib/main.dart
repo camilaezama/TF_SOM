@@ -36,8 +36,8 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: AppTheme().getTheme(),
         routes: {
-          '/': (context) => HomePage(),
-          '/grillas': (context) => GrillasPage(),
+          '/': (context) => const HomePage(),
+          '/grillas': (context) => const GrillasPage(),
         },
       ),
     );
