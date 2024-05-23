@@ -6,6 +6,7 @@ import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/tabla_datos.dart';
 import 'package:TF_SOM_UNMdP/providers/datos_provider.dart';
 import 'package:TF_SOM_UNMdP/providers/parametros_provider.dart';
 import 'package:TF_SOM_UNMdP/utils/csv_to_data.dart';
+import 'package:TF_SOM_UNMdP/utils/mostrar_dialog_texto.dart';
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -61,23 +62,7 @@ class _HomePageState extends State<HomePage> {
         });
       });
     } else {
-      showDialog<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Archivo Invalido'),
-            content: const Text('Debe seleccionar un archivo CSV.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // Cerrar el cuadro de diálogo
-                },
-                child: const Text('Cerrar'),
-              ),
-            ],
-          );
-        },
-      );
+      mostrarDialogTexto(context, 'Archivo Invalido', 'Debe seleccionar un archivo CSV.');
     }
   }
 
@@ -281,47 +266,16 @@ class _HomePageState extends State<HomePage> {
           cargando = false;
         });
       } catch (e) {
-        showDialog<void>(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Error'),
-              content:
-                  Text('Error en la  llamada de servicio: ' + e.toString()),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(); // Cerrar el cuadro de diálogo
-                  },
-                  child: const Text('Cerrar'),
-                ),
-              ],
-            );
-          },
-        );
+        mostrarDialogTexto(context, 'Error',
+            'Error en la  llamada de servicio: $e');
         setState(() {
           cargando = false;
           botonAceptar = "Aceptar";
         });
       }
     } else {
-      showDialog<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Error al cargar'),
-            content: const Text('Debe seleccionar un archivo.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // Cerrar el cuadro de diálogo
-                },
-                child: const Text('Cerrar'),
-              ),
-            ],
-          );
-        },
-      );
+      mostrarDialogTexto(
+          context, 'Error al cargar', 'Debe seleccionar un archivo.');
     }
   }
 
