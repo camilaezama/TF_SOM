@@ -62,7 +62,8 @@ class _HomePageState extends State<HomePage> {
         });
       });
     } else {
-      mostrarDialogTexto(context, 'Archivo Invalido', 'Debe seleccionar un archivo CSV.');
+      mostrarDialogTexto(
+          context, 'Archivo Invalido', 'Debe seleccionar un archivo CSV.');
     }
   }
 
@@ -266,11 +267,11 @@ class _HomePageState extends State<HomePage> {
           cargando = false;
         });
       } catch (e) {
-        mostrarDialogTexto(context, 'Error',
-            'Error en la  llamada de servicio: $e');
+        mostrarDialogTexto(
+            context, 'Error', 'Error en la  llamada de servicio: $e');
         setState(() {
           cargando = false;
-          botonAceptar = "Aceptar";
+          botonAceptar = "Entrenar";
         });
       }
     } else {
@@ -309,7 +310,7 @@ class _HomePageState extends State<HomePage> {
       print('Error: $e');
       setState(() {
         cargando = false;
-        botonAceptar = "Aceptar";
+        botonAceptar = "Entrenar";
       });
     }
   }

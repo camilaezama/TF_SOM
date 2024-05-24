@@ -27,8 +27,6 @@ List<TableRow> crearTablaDatos(List<String> etiquetas, List<dynamic> codebook) {
   return listaTablita;
 }
 
-
-
 class GrillaHexagonos extends StatelessWidget {
   final Gradient? gradiente;
   final Map<String, String>? dataMap;
@@ -44,6 +42,7 @@ class GrillaHexagonos extends StatelessWidget {
   final bool hits;
   final bool mostrarGradiente;
   final bool mostrarBotonImprimir;
+  final double? min, max;
   GrillaHexagonos(
       {super.key,
       this.gradiente,
@@ -58,7 +57,9 @@ class GrillaHexagonos extends StatelessWidget {
       this.hitsMap,
       this.hits = false,
       this.mostrarGradiente = true,
-      this.mostrarBotonImprimir = true});
+      this.mostrarBotonImprimir = true,
+      required this.min,
+      required this.max});
 
   final _widgetKey = GlobalKey();
 
@@ -100,7 +101,7 @@ class GrillaHexagonos extends StatelessWidget {
                                 return HexagonWidgetBuilder(
                                   color: clusters == null
                                       ? getInterpolatedColor(
-                                          valor, gradiente, dataMap)
+                                          valor, gradiente, min!, max!)
                                       : getClusterColor(col, row, clusters),
                                   //color: getColorForValue(valor),
                                   //generarColorAleatorioEnEspectro(), //row.isEven ? Colors.yellow : Colors.orangeAccent,
@@ -160,7 +161,7 @@ class GrillaHexagonos extends StatelessWidget {
                                                               255, 52, 56, 253),
                                                           fontSize: 30.0),
                                                     ),
-                                                    Table( 
+                                                    Table(
                                                       border: TableBorder.all(
                                                           color: Colors.black,
                                                           style:
@@ -168,7 +169,7 @@ class GrillaHexagonos extends StatelessWidget {
                                                           width: 1),
                                                       children: crearTablaDatos(
                                                           nombreColumnas,
-                                                          (codebook[bMU-1])),
+                                                          (codebook[bMU - 1])),
                                                     ),
                                                   ],
                                                 ),
@@ -221,7 +222,30 @@ class GrillaHexagonos extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            for (double stop in [1.0, 0.8, 0.6, 0.4, 0.2, 0.0])
+                            for (double stop in [
+                              double.parse(max!.toStringAsFixed(1)),
+                              double.parse((min! +
+                                      4 *
+                                          double.parse(
+                                              (max! / 5).toStringAsFixed(1)))
+                                  .toStringAsFixed(1)),
+                              double.parse((min! +
+                                      3 *
+                                          double.parse(
+                                              (max! / 5).toStringAsFixed(1)))
+                                  .toStringAsFixed(1)),
+                              double.parse((min! +
+                                      2 *
+                                          double.parse(
+                                              (max! / 5).toStringAsFixed(1)))
+                                  .toStringAsFixed(1)),
+                              double.parse((min! +
+                                      1 *
+                                          double.parse(
+                                              (max! / 5).toStringAsFixed(1)))
+                                  .toStringAsFixed(1)),
+                              min!
+                            ])
                               Text(
                                 '${stop}',
                                 style: TextStyle(color: Colors.black),
@@ -267,4 +291,3 @@ class GrillaHexagonos extends StatelessWidget {
     html.Url.revokeObjectUrl(url);
   }
 }
-

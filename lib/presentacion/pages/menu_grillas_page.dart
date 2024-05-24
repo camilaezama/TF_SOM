@@ -61,16 +61,16 @@ class _GrillasPageState extends State<GrillasPage>
     }
   }
 
-  Gradient gradiente = const LinearGradient(
-      colors: [
-        Color.fromARGB(255, 8, 82, 143),
-        Colors.blue,
-        Colors.green,
-        Colors.yellow,
-        Colors.orange,
-        Colors.red,
-      ],
-      stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
+  Gradient gradiente = LinearGradient(
+    colors: [
+      Color.fromARGB(255, 8, 82, 143),
+      Colors.blue,
+      Colors.green,
+      Colors.yellow,
+      Colors.orange,
+      Colors.red,
+    ],
+    stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
   );
 
   String selectedComponente = '';
@@ -99,7 +99,7 @@ class _GrillasPageState extends State<GrillasPage>
     // dataUdist = mapaRta["Udist"]!;
 
     final datosProvider = context.read<DatosProvider>();
-    
+
     return Scaffold(
         appBar: AppBar(
           title: const Text('Grillas'),
@@ -125,12 +125,15 @@ class _GrillasPageState extends State<GrillasPage>
               controller: tabController,
               physics: const NeverScrollableScrollPhysics(),
               children: [
-                BmuPestana(gradiente: gradiente,),
+                BmuPestana(
+                  gradiente: gradiente,
+                ),
                 UmatPestana(gradiente: gradiente),
                 ComponentesPestana(
                   mapaRta: datosProvider.resultadoEntrenamiento.mapaRta,
                   codebook: datosProvider.resultadoEntrenamiento.codebook,
-                  nombrecolumnas: datosProvider.resultadoEntrenamiento.nombresColumnas,
+                  nombrecolumnas:
+                      datosProvider.resultadoEntrenamiento.nombresColumnas,
                   filas: datosProvider.resultadoEntrenamiento.filas,
                   columnas: datosProvider.resultadoEntrenamiento.columnas,
                 ),
@@ -141,4 +144,4 @@ class _GrillasPageState extends State<GrillasPage>
           ),
         ));
   }
- }
+}

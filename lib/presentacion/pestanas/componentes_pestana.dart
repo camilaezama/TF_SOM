@@ -107,13 +107,15 @@ class _ComponentesPestanaState extends State<ComponentesPestana> {
             SizedBox(width: 20),
             IconButton(
               tooltip: "Mostrar gradiente",
-            icon: _mostrarGradiente ? Icon(Icons.visibility) : Icon(Icons.visibility_off),
-            onPressed: () {
-              setState(() {
-                _mostrarGradiente = !_mostrarGradiente;
-              });
-            },
-          ),
+              icon: _mostrarGradiente
+                  ? Icon(Icons.visibility)
+                  : Icon(Icons.visibility_off),
+              onPressed: () {
+                setState(() {
+                  _mostrarGradiente = !_mostrarGradiente;
+                });
+              },
+            ),
           ],
         ),
         opcionGrillasPorFila == 2
@@ -128,6 +130,15 @@ class _ComponentesPestanaState extends State<ComponentesPestana> {
       child: ListView.builder(
         itemCount: (opcionesSeleccionadas.length / 2).ceil(),
         itemBuilder: (context, index) {
+          var dataMap = widget.mapaRta[opcionesSeleccionadas[index * 2]];
+          List<double> doubleValues = dataMap.values
+              .map((value) => double.tryParse(value))
+              .where((value) => value != null && value != -1)
+              .toList()
+              .cast<double>();
+
+          double minValue = doubleValues.reduce((a, b) => a < b ? a : b);
+          double maxValue = doubleValues.reduce((a, b) => a > b ? a : b);
           return Row(
             children: [
               Container(
@@ -142,8 +153,10 @@ class _ComponentesPestanaState extends State<ComponentesPestana> {
                   filas: widget.filas,
                   columnas: widget.columnas,
                   mostrarGradiente: _mostrarGradiente,
-                
-                    mostrarBotonImprimir: _mostrarBotonImprimir,),
+                  mostrarBotonImprimir: _mostrarBotonImprimir,
+                  min: minValue,
+                  max: maxValue,
+                ),
                 //child: Text(opciones[index * 2]),
               ),
               (index * 2 + 1 < opcionesSeleccionadas.length)
@@ -151,16 +164,19 @@ class _ComponentesPestanaState extends State<ComponentesPestana> {
                       width: sizeWidth / 2,
                       height: sizeHeight / 2,
                       child: GrillaHexagonos(
-                          titulo: opcionesSeleccionadas[index * 2 + 1],
-                          gradiente: gradiente,
-                          codebook: widget.codebook,
-                          nombreColumnas: widget.nombrecolumnas,
-                          dataMap: widget
-                              .mapaRta[opcionesSeleccionadas[index * 2 + 1]],
-                          filas: widget.filas,
-                          columnas: widget.columnas,
-                          mostrarGradiente: _mostrarGradiente,
-                          mostrarBotonImprimir: _mostrarBotonImprimir),
+                        titulo: opcionesSeleccionadas[index * 2 + 1],
+                        gradiente: gradiente,
+                        codebook: widget.codebook,
+                        nombreColumnas: widget.nombrecolumnas,
+                        dataMap: widget
+                            .mapaRta[opcionesSeleccionadas[index * 2 + 1]],
+                        filas: widget.filas,
+                        columnas: widget.columnas,
+                        mostrarGradiente: _mostrarGradiente,
+                        mostrarBotonImprimir: _mostrarBotonImprimir,
+                        min: 0,
+                        max: 1,
+                      ),
                       //child: Text(opciones[index * 2]),
                     )
                   : Text(""),
@@ -190,19 +206,31 @@ class _ComponentesPestanaState extends State<ComponentesPestana> {
               opcionesSeleccionadas.sublist(startIndex, endIndex);
           return Row(
             children: currentOptions.map((option) {
+              var dataMap = widget.mapaRta[option];
+              List<double> doubleValues = dataMap.values
+                  .map((value) => double.tryParse(value))
+                  .where((value) => value != null && value != -1)
+                  .toList()
+                  .cast<double>();
+
+              double minValue = doubleValues.reduce((a, b) => a < b ? a : b);
+              double maxValue = doubleValues.reduce((a, b) => a > b ? a : b);
               return Container(
                 width: sizeWidth / grillasPorFila,
                 height: sizeHeight / grillasPorFila,
                 child: GrillaHexagonos(
-                    titulo: option,
-                    gradiente: gradiente,
-                    nombreColumnas: widget.nombrecolumnas,
-                    codebook: widget.codebook,
-                    dataMap: widget.mapaRta[option],
-                    filas: widget.filas,
-                    columnas: widget.columnas,
-                    mostrarGradiente: _mostrarGradiente,
-                    mostrarBotonImprimir: _mostrarBotonImprimir),
+                  titulo: option,
+                  gradiente: gradiente,
+                  nombreColumnas: widget.nombrecolumnas,
+                  codebook: widget.codebook,
+                  dataMap: widget.mapaRta[option],
+                  filas: widget.filas,
+                  columnas: widget.columnas,
+                  mostrarGradiente: _mostrarGradiente,
+                  mostrarBotonImprimir: _mostrarBotonImprimir,
+                  min: minValue,
+                  max: maxValue,
+                ),
               );
             }).toList(),
           );
