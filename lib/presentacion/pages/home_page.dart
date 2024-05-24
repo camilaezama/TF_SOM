@@ -20,14 +20,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   // String funcionVecindad = 'gaussian';
   // String inicializacion = 'random';
   // String normalizacion = 'var';
 
   List<List<dynamic>> csvData = [];
   List<List<dynamic>> csvData_original = [];
-  String botonAceptar = 'Aceptar';
+  String botonAceptar = 'Entrenar';
   String botonParam = 'Modificar Parametros';
 
   bool cargando = false;
@@ -89,8 +88,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     _width = MediaQuery.of(context).size.width;
     _height = MediaQuery.of(context).size.height;
-
-
 
     return Scaffold(
       appBar: AppBar(
@@ -189,7 +186,10 @@ class _HomePageState extends State<HomePage> {
                               showDialog<void>(
                                 context: context,
                                 builder: (BuildContext context) {
-                                  return ConfigurarParametrosDialog(widthPantalla: _width, heightPantalla: _height,);
+                                  return ConfigurarParametrosDialog(
+                                    widthPantalla: _width,
+                                    heightPantalla: _height,
+                                  );
                                 },
                               );
                             },
@@ -249,8 +249,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-
-
   ByteData csvToByteData(List<List<dynamic>> csvTable) {
     // Supongamos que tienes una función que convierte tu tabla CSV a una lista de bytes
     List<int> byteList = convertCsvTableToBytes(csvTable);
@@ -292,7 +290,6 @@ class _HomePageState extends State<HomePage> {
     return result;
   }
 
-
   void _llamadaAPI() async {
     //Navigator.pushNamed(context, '/grillas');
 
@@ -318,7 +315,8 @@ class _HomePageState extends State<HomePage> {
         var url = Uri.parse('http://localhost:7777' + '/' + TIPO_LLAMADA);
 
         final parametros = <String, dynamic>{
-          'filas': parametrosProvider.filas != "" ? parametrosProvider.filas : 24,
+          'filas':
+              parametrosProvider.filas != "" ? parametrosProvider.filas : 24,
           'columnas': parametrosProvider.columnas != ""
               ? parametrosProvider.columnas
               : 31, //TODO IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
@@ -434,8 +432,6 @@ class _HomePageState extends State<HomePage> {
           mapaRta[outerKey] = innerMapString;
         }
 
-
-
         respuesta["respuestaBMU"] = mapaRta;
         respuesta["respuestaUmat"] = dataMapUmat;
         respuesta["parametros"] = parametros;
@@ -450,14 +446,13 @@ class _HomePageState extends State<HomePage> {
         respuesta["nombrescolumnas"] = nombresColumnas;
 
         datosProvider.updateDatos(
-          dataUdist: mapaRta["Udist"],
-          mapaRtaUmat: dataMapUmat,
-          codebook: lista,
-          filas: int.parse(parametros["filas"]),
-          columnas: int.parse(parametros["columnas"]),
-          nombresColumnas: nombresColumnas,
-          hitsMap: hitsMap
-        );
+            dataUdist: mapaRta["Udist"],
+            mapaRtaUmat: dataMapUmat,
+            codebook: lista,
+            filas: int.parse(parametros["filas"]),
+            columnas: int.parse(parametros["columnas"]),
+            nombresColumnas: nombresColumnas,
+            hitsMap: hitsMap);
 
         //respuesta["codebook"] =
         setState(() {
@@ -490,7 +485,7 @@ class _HomePageState extends State<HomePage> {
         );
         setState(() {
           cargando = false;
-          botonAceptar = "Aceptar";
+          botonAceptar = "Entrenar";
         });
       }
     } else {
@@ -525,21 +520,21 @@ class _HomePageState extends State<HomePage> {
       String TIPO_LLAMADA = "rapida";
       var url = Uri.parse('http://localhost:7777' + '/' + TIPO_LLAMADA);
 
-        final parametros = <String, dynamic>{
-          'filas': parametrosProvider.filas != "" ? parametrosProvider.filas : 24,
-          'columnas': parametrosProvider.columnas != ""
-              ? parametrosProvider.columnas
-              : 31, //TODO IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
-          'vecindad': parametrosProvider.funcionVecindad,
-          'inicializacion': parametrosProvider.inicializacion,
-          'iteraciones': parametrosProvider.itera != ""
-              ? parametrosProvider.itera
-              : 200, //IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
-          'normalizacion': parametrosProvider.normalizacion,
-          'factorEntrenamiento': parametrosProvider.factorEntrenamiento != ""
-              ? parametrosProvider.factorEntrenamiento
-              : 2 //IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
-        };
+      final parametros = <String, dynamic>{
+        'filas': parametrosProvider.filas != "" ? parametrosProvider.filas : 24,
+        'columnas': parametrosProvider.columnas != ""
+            ? parametrosProvider.columnas
+            : 31, //TODO IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
+        'vecindad': parametrosProvider.funcionVecindad,
+        'inicializacion': parametrosProvider.inicializacion,
+        'iteraciones': parametrosProvider.itera != ""
+            ? parametrosProvider.itera
+            : 200, //IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
+        'normalizacion': parametrosProvider.normalizacion,
+        'factorEntrenamiento': parametrosProvider.factorEntrenamiento != ""
+            ? parametrosProvider.factorEntrenamiento
+            : 2 //IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
+      };
 
       setState(() {
         //boton = "Cargando...";
@@ -637,15 +632,14 @@ class _HomePageState extends State<HomePage> {
       }
       respuesta["nombrescolumnas"] = nombresColumnas;
 
-        datosProvider.updateDatos(
+      datosProvider.updateDatos(
           dataUdist: mapaRta["Udist"],
           mapaRtaUmat: dataMapUmat,
           codebook: lista,
           filas: int.parse(parametros["filas"]),
           columnas: int.parse(parametros["columnas"]),
           nombresColumnas: nombresColumnas,
-          hitsMap: hitsMap
-        );
+          hitsMap: hitsMap);
       //respuesta["codebook"] =
       setState(() {
         //boton = 'La respuesta fue: ${response.body}';
@@ -660,7 +654,7 @@ class _HomePageState extends State<HomePage> {
       print('Error: $e');
       setState(() {
         cargando = false;
-        botonAceptar = "Aceptar";
+        botonAceptar = "Entrenar";
       });
     }
   }

@@ -59,16 +59,16 @@ class _GrillasPageState extends State<GrillasPage>
     }
   }
 
-  Gradient gradiente = const LinearGradient(
-      colors: [
-        Color.fromARGB(255, 8, 82, 143),
-        Colors.blue,
-        Colors.green,
-        Colors.yellow,
-        Colors.orange,
-        Colors.red,
-      ],
-      stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
+  Gradient gradiente = LinearGradient(
+    colors: [
+      Color.fromARGB(255, 8, 82, 143),
+      Colors.blue,
+      Colors.green,
+      Colors.yellow,
+      Colors.orange,
+      Colors.red,
+    ],
+    stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
   );
 
   String selectedComponente = '';
@@ -120,7 +120,9 @@ class _GrillasPageState extends State<GrillasPage>
               controller: tabController,
               physics: const NeverScrollableScrollPhysics(),
               children: [
-                BmuPestana(gradiente: gradiente,),
+                BmuPestana(
+                  gradiente: gradiente,
+                ),
                 //_buildWidgetBMUs(),
                 UmatPestana(gradiente: gradiente),
                 //_buildWidgetGrillaComponentes(mapaRta),
@@ -205,13 +207,16 @@ class _GrillasPageState extends State<GrillasPage>
           mostarGrilla
               ? Expanded(
                   child: GrillaHexagonos(
-                      dataMap: dataUdist,
-                      filas: filas,
-                      nombreColumnas: nombresColumnas,
-                      clusters: mapaRtaClusters,
-                      codebook: codebook,
-                      columnas: columnas,
-                      titulo: "Clustering"),
+                    dataMap: dataUdist,
+                    filas: filas,
+                    nombreColumnas: nombresColumnas,
+                    clusters: mapaRtaClusters,
+                    codebook: codebook,
+                    columnas: columnas,
+                    titulo: "Clustering",
+                    min: null,
+                    max: null,
+                  ),
                 )
               : const Text("")
         ],

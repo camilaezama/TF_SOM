@@ -23,12 +23,12 @@ class _ClustersPestanaState extends State<ClustersPestana> {
     clustersController = TextEditingController(text: "10");
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
-
     final datosProvider = context.read<DatosProvider>();
     final clustersProvider = context.watch<ClustersProvider>();
-    
+
     return Center(
       child: Column(
         children: [
@@ -52,7 +52,8 @@ class _ClustersPestanaState extends State<ClustersPestana> {
           ),
           ElevatedButton(
               onPressed: () {
-                clustersProvider.llamadaClustering(context, clustersController.text);
+                clustersProvider.llamadaClustering(
+                    context, clustersController.text);
               },
               style: AppTheme.primaryButtonStyle,
               child: clustersProvider.cargando
@@ -64,13 +65,16 @@ class _ClustersPestanaState extends State<ClustersPestana> {
           clustersProvider.mostarGrilla
               ? Expanded(
                   child: GrillaHexagonos(
-                      dataMap: datosProvider.dataUdist,
-                      filas: datosProvider.filas,
-                      nombreColumnas: datosProvider.nombresColumnas,
-                      clusters: clustersProvider.mapaRtaClusters,
-                      codebook: datosProvider.codebook,
-                      columnas: datosProvider.columnas,
-                      titulo: "Clustering"),
+                    dataMap: datosProvider.dataUdist,
+                    filas: datosProvider.filas,
+                    nombreColumnas: datosProvider.nombresColumnas,
+                    clusters: clustersProvider.mapaRtaClusters,
+                    codebook: datosProvider.codebook,
+                    columnas: datosProvider.columnas,
+                    titulo: "Clustering",
+                    min: null,
+                    max: null,
+                  ),
                 )
               : const Text("")
         ],
