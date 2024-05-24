@@ -8,13 +8,14 @@ class ComponentesPestana extends StatefulWidget {
   final int filas;
   final int columnas;
   final List<String> nombrecolumnas;
+  final Gradient gradiente;
   const ComponentesPestana(
       {super.key,
       required this.mapaRta,
       required this.codebook,
       required this.filas,
       required this.nombrecolumnas,
-      required this.columnas});
+      required this.columnas, required this.gradiente});
 
   @override
   State<ComponentesPestana> createState() => _ComponentesPestanaState();
@@ -24,7 +25,6 @@ class _ComponentesPestanaState extends State<ComponentesPestana> {
   List<String> opciones = [];
   List<bool> seleccionadas = [];
   List<String> opcionesSeleccionadas = [];
-  late Gradient gradiente;
   late List<int> opcionesGrillasPorFila;
   late int opcionGrillasPorFila;
   bool _mostrarGradiente = true;
@@ -34,19 +34,6 @@ class _ComponentesPestanaState extends State<ComponentesPestana> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
-    gradiente = const LinearGradient(
-      colors: [
-        Color.fromARGB(255, 8, 82, 143),
-        Colors.blue,
-        Colors.green,
-        Colors.yellow,
-        Colors.orange,
-        Colors.red,
-      ],
-      stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
-    );
-
     //Ignora las primeras 6 (i = 7) porque son BMU, Udist, etc etc, me quedo con las que son componentes
 
     for (var i = 0; i < widget.nombrecolumnas.length; i++) {
@@ -146,7 +133,7 @@ class _ComponentesPestanaState extends State<ComponentesPestana> {
                 height: sizeHeight / 2,
                 child: GrillaHexagonos(
                   titulo: opcionesSeleccionadas[index * 2],
-                  gradiente: gradiente,
+                  gradiente: widget.gradiente,
                   codebook: widget.codebook,
                   nombreColumnas: widget.nombrecolumnas,
                   dataMap: widget.mapaRta[opcionesSeleccionadas[index * 2]],
@@ -165,7 +152,7 @@ class _ComponentesPestanaState extends State<ComponentesPestana> {
                       height: sizeHeight / 2,
                       child: GrillaHexagonos(
                         titulo: opcionesSeleccionadas[index * 2 + 1],
-                        gradiente: gradiente,
+                        gradiente: widget.gradiente,
                         codebook: widget.codebook,
                         nombreColumnas: widget.nombrecolumnas,
                         dataMap: widget
@@ -220,7 +207,7 @@ class _ComponentesPestanaState extends State<ComponentesPestana> {
                 height: sizeHeight / grillasPorFila,
                 child: GrillaHexagonos(
                   titulo: option,
-                  gradiente: gradiente,
+                  gradiente: widget.gradiente,
                   nombreColumnas: widget.nombrecolumnas,
                   codebook: widget.codebook,
                   dataMap: widget.mapaRta[option],

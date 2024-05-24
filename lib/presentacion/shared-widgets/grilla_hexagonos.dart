@@ -45,7 +45,7 @@ class GrillaHexagonos extends StatelessWidget {
   final double? min, max;
   GrillaHexagonos(
       {super.key,
-      this.gradiente,
+      required this.gradiente,
       this.dataMap,
       required this.filas,
       required this.columnas,
@@ -202,22 +202,23 @@ class GrillaHexagonos extends StatelessWidget {
                     if (mostrarGradiente)
                       Container(
                         width: 100.0, // ajusta la altura según tus necesidades
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment
-                                .topCenter, // comienza desde la parte superior
-                            end: Alignment
-                                .bottomCenter, // termina en la parte inferior
-                            colors: [
-                              Colors.red,
-                              Colors.orange,
-                              Colors.yellow,
-                              Colors.green,
-                              Colors.blue,
-                              Color.fromARGB(255, 8, 82, 143),
-                            ],
-                            stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
-                          ),
+                        decoration: BoxDecoration(
+                          gradient: gradiente
+                          // gradient: LinearGradient(
+                          //   begin: Alignment
+                          //       .topCenter, // comienza desde la parte superior
+                          //   end: Alignment
+                          //       .bottomCenter, // termina en la parte inferior
+                          //   colors: [
+                          //     Colors.red,
+                          //     Colors.orange,
+                          //     Colors.yellow,
+                          //     Colors.green,
+                          //     Colors.blue,
+                          //     Color.fromARGB(255, 8, 82, 143),
+                          //   ],
+                          //   stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
+                          // ),
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,

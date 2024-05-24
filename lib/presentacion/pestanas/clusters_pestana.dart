@@ -7,7 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class ClustersPestana extends StatefulWidget {
-  const ClustersPestana({super.key});
+  final Gradient gradiente;
+  const ClustersPestana({super.key, required this.gradiente});
 
   @override
   State<ClustersPestana> createState() => _ClustersPestanaState();
@@ -64,6 +65,7 @@ class _ClustersPestanaState extends State<ClustersPestana> {
           clustersProvider.mostarGrilla
               ? Expanded(
                   child: GrillaHexagonos(
+                    gradiente: widget.gradiente,
                     dataMap: datosProvider.resultadoEntrenamiento.dataUdist,
                     filas: datosProvider.resultadoEntrenamiento.filas,
                     nombreColumnas:
