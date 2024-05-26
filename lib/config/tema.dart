@@ -9,10 +9,10 @@ class AppTheme {
   );
 
   static final ColorScheme colorScheme = ColorScheme.fromSwatch(
-    primarySwatch: Colors.brown,
+    primarySwatch: Colors.blue,
     accentColor: Colors.green,
   ).copyWith(
-    secondary: Colors.red,
+    secondary: const Color.fromARGB(255, 155, 205, 247),
   );
 
   static final Color colorFondoPrimary = colorScheme.primary.withOpacity(0.2);

@@ -67,9 +67,10 @@ class GrillaHexagonos extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(titulo, style: Theme.of(context).textTheme.headlineLarge),
+        //Text(titulo, style: Theme.of(context).textTheme.headlineLarge),
         Expanded(
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (mostrarBotonImprimir)
                 ElevatedButton(
