@@ -67,7 +67,7 @@ class GrillaHexagonos extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        //Text(titulo, style: Theme.of(context).textTheme.headlineLarge),
+        Text(titulo, style: Theme.of(context).textTheme.headlineLarge),
         Expanded(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -228,22 +228,22 @@ class GrillaHexagonos extends StatelessWidget {
                               double.parse((min! +
                                       4 *
                                           double.parse(
-                                              (max! / 5).toStringAsFixed(1)))
+                                              ((max!-min!) / 5).toStringAsFixed(1)))
                                   .toStringAsFixed(1)),
                               double.parse((min! +
                                       3 *
                                           double.parse(
-                                              (max! / 5).toStringAsFixed(1)))
+                                              ((max!-min!) / 5).toStringAsFixed(1)))
                                   .toStringAsFixed(1)),
                               double.parse((min! +
                                       2 *
                                           double.parse(
-                                              (max! / 5).toStringAsFixed(1)))
+                                              ((max!-min!) / 5).toStringAsFixed(1)))
                                   .toStringAsFixed(1)),
                               double.parse((min! +
                                       1 *
                                           double.parse(
-                                              (max! / 5).toStringAsFixed(1)))
+                                              ((max!-min!) / 5).toStringAsFixed(1)))
                                   .toStringAsFixed(1)),
                               double.parse(min!.toStringAsFixed(1))
                             ])
