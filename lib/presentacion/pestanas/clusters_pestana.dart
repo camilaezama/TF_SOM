@@ -74,6 +74,7 @@ class _ClustersPestanaState extends State<ClustersPestana> {
                     codebook: datosProvider.resultadoEntrenamiento.codebook,
                     columnas: datosProvider.resultadoEntrenamiento.columnas,
                     titulo: "Clustering",
+                    mostrarGradiente: false,
                     min: 0,
                     max: 1,
                   ),

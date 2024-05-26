@@ -11,7 +11,15 @@ class HitsPestana extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final datosProvider = context.read<DatosProvider>();
+    List<double> doubleValues = datosProvider
+        .resultadoEntrenamiento.dataUdist.values
+        .map((value) => double.tryParse(value))
+        .where((value) => value != null && value != -1)
+        .toList()
+        .cast<double>();
 
+    double minValue = doubleValues.reduce((a, b) => a < b ? a : b);
+    double maxValue = doubleValues.reduce((a, b) => a > b ? a : b);
     return GrillaHexagonos(
       titulo: "Hits",
       gradiente: gradiente,
@@ -22,8 +30,8 @@ class HitsPestana extends StatelessWidget {
       columnas: datosProvider.resultadoEntrenamiento.columnas,
       hits: true,
       hitsMap: datosProvider.resultadoEntrenamiento.hitsMap,
-      min: 0,
-      max: 1,
+      min: minValue,
+      max: maxValue,
     );
   }
 }

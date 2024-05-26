@@ -202,24 +202,23 @@ class GrillaHexagonos extends StatelessWidget {
                     if (mostrarGradiente)
                       Container(
                         width: 100.0, // ajusta la altura según tus necesidades
-                        decoration: BoxDecoration(
-                          gradient: gradiente
-                          // gradient: LinearGradient(
-                          //   begin: Alignment
-                          //       .topCenter, // comienza desde la parte superior
-                          //   end: Alignment
-                          //       .bottomCenter, // termina en la parte inferior
-                          //   colors: [
-                          //     Colors.red,
-                          //     Colors.orange,
-                          //     Colors.yellow,
-                          //     Colors.green,
-                          //     Colors.blue,
-                          //     Color.fromARGB(255, 8, 82, 143),
-                          //   ],
-                          //   stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
-                          // ),
-                        ),
+                        decoration: BoxDecoration(gradient: gradiente
+                            // gradient: LinearGradient(
+                            //   begin: Alignment
+                            //       .topCenter, // comienza desde la parte superior
+                            //   end: Alignment
+                            //       .bottomCenter, // termina en la parte inferior
+                            //   colors: [
+                            //     Colors.red,
+                            //     Colors.orange,
+                            //     Colors.yellow,
+                            //     Colors.green,
+                            //     Colors.blue,
+                            //     Color.fromARGB(255, 8, 82, 143),
+                            //   ],
+                            //   stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
+                            // ),
+                            ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
@@ -245,11 +244,19 @@ class GrillaHexagonos extends StatelessWidget {
                                           double.parse(
                                               (max! / 5).toStringAsFixed(1)))
                                   .toStringAsFixed(1)),
-                              min!
+                              double.parse(min!.toStringAsFixed(1))
                             ])
                               Text(
                                 '${stop}',
-                                style: TextStyle(color: Colors.black),
+                                style: (gradiente!.colors.contains(
+                                            Color.fromARGB(255, 0, 0, 0)) ||
+                                        gradiente!.colors.contains(
+                                            Color.fromARGB(255, 40, 40, 40)))
+                                    ? TextStyle(
+                                        color: Color.fromARGB(255, 247, 255, 9))
+                                    : TextStyle(
+                                        color:
+                                            const Color.fromARGB(255, 0, 0, 0)),
                               ),
                           ],
                         ),

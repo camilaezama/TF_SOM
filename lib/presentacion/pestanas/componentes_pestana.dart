@@ -15,7 +15,8 @@ class ComponentesPestana extends StatefulWidget {
       required this.codebook,
       required this.filas,
       required this.nombrecolumnas,
-      required this.columnas, required this.gradiente});
+      required this.columnas,
+      required this.gradiente});
 
   @override
   State<ComponentesPestana> createState() => _ComponentesPestanaState();
@@ -161,8 +162,8 @@ class _ComponentesPestanaState extends State<ComponentesPestana> {
                         columnas: widget.columnas,
                         mostrarGradiente: _mostrarGradiente,
                         mostrarBotonImprimir: _mostrarBotonImprimir,
-                        min: 0,
-                        max: 1,
+                        min: minValue,
+                        max: maxValue,
                       ),
                       //child: Text(opciones[index * 2]),
                     )
