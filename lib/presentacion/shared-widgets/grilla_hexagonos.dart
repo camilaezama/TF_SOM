@@ -43,6 +43,7 @@ class GrillaHexagonos extends StatelessWidget {
   final bool mostrarGradiente;
   final bool mostrarBotonImprimir;
   final double? min, max;
+  final bool transparente;
   GrillaHexagonos(
       {super.key,
       required this.gradiente,
@@ -59,7 +60,8 @@ class GrillaHexagonos extends StatelessWidget {
       this.mostrarGradiente = true,
       this.mostrarBotonImprimir = true,
       required this.min,
-      required this.max});
+      required this.max,
+      this.transparente = false});
 
   final _widgetKey = GlobalKey();
 
@@ -101,13 +103,13 @@ class GrillaHexagonos extends StatelessWidget {
                                 double valor = double.parse(valorDistConPunto);
                                 return HexagonWidgetBuilder(
                                   color: clusters == null
-                                      ? getInterpolatedColor(
-                                          valor, gradiente, min!, max!)
+                                      ? transparente ? Color.fromARGB(0, 0, 0, 0) : getInterpolatedColor(
+                                          valor, gradiente, min!, max!) 
                                       : getClusterColor(col, row, clusters),
                                   //color: getColorForValue(valor),
                                   //generarColorAleatorioEnEspectro(), //row.isEven ? Colors.yellow : Colors.orangeAccent,
-                                  elevation: 0.0,
-                                  padding: paddingEntreHexagonos,
+                                  elevation: transparente ?  1.0 : 0.0,
+                                  padding:  transparente ? 0.0 : paddingEntreHexagonos,
                                 );
                               } else {
                                 return HexagonWidgetBuilder(
@@ -125,6 +127,9 @@ class GrillaHexagonos extends StatelessWidget {
                                   ? const Text("")
                                   : ElevatedButton(
                                       style: ElevatedButton.styleFrom(
+                                        // side: transparente ? const BorderSide(
+                                        //   color: Colors.black, width: 2
+                                        // ) : null,
                                           textStyle: const TextStyle(
                                             // Tamaño del texto
                                             color:
