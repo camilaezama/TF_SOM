@@ -4,23 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 Color getInterpolatedColor(
-    double value, Gradient? gradiente, Map<String, String>? dataMap) {
-  // final double min = doubleMap.values.reduce(
-  //     (value, element) => (value < element && element != -1) ? value : element);
-  // final double max = doubleMap.values
-  //     .reduce((value, element) => (value > element) ? value : element);
-  final double min = 0;
-  final double max = 1;
-  // const Gradient gradient = LinearGradient(
-  //   colors: [
-  //     Colors.blue,
-  //     Colors.green,
-  //     Colors.yellow,
-  //     Colors.red,
-  //   ],
-  //   stops: [0.0, 0.3, 0.6, 1.0],
-  // );
-
+    double value, Gradient? gradiente, double min, double max) {
   Gradient gradient = gradiente!;
   if (value == -1) {
     return Colors.transparent;

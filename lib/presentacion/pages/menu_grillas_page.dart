@@ -4,6 +4,7 @@ import 'package:TF_SOM_UNMdP/presentacion/pestanas/componentes_pestana.dart';
 import 'package:TF_SOM_UNMdP/presentacion/pestanas/hits_pestana.dart';
 import 'package:TF_SOM_UNMdP/presentacion/pestanas/umat_pestana.dart';
 import 'package:TF_SOM_UNMdP/providers/datos_provider.dart';
+import 'package:TF_SOM_UNMdP/providers/gradiente_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hexagon/hexagon.dart';
@@ -28,6 +29,7 @@ class _GrillasPageState extends State<GrillasPage>
   bool hasControls = true;
   bool showControls = true;
   late TabController tabController;
+  late Gradient gradiente;
   //static final clustersController = TextEditingController(text: "10");
   // Map<String, String> dataUdist = {};
   // Map<String, Object> respuesta = {};
@@ -47,6 +49,8 @@ class _GrillasPageState extends State<GrillasPage>
     super.initState();
     tabController = TabController(initialIndex: 0, length: 5, vsync: this);
     tabController.addListener(_onTabChange);
+    final gradienteProvider = context.read<GradienteProvider>();
+    gradiente = gradienteProvider.gradienteElegido();
   }
 
   void _onTabChange() {
@@ -60,18 +64,6 @@ class _GrillasPageState extends State<GrillasPage>
       });
     }
   }
-
-  Gradient gradiente = const LinearGradient(
-      colors: [
-        Color.fromARGB(255, 8, 82, 143),
-        Colors.blue,
-        Colors.green,
-        Colors.yellow,
-        Colors.orange,
-        Colors.red,
-      ],
-      stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
-  );
 
   String selectedComponente = '';
   @override
@@ -99,7 +91,7 @@ class _GrillasPageState extends State<GrillasPage>
     // dataUdist = mapaRta["Udist"]!;
 
     final datosProvider = context.read<DatosProvider>();
-    
+
     return Scaffold(
         appBar: AppBar(
           title: const Text('Grillas'),
@@ -125,20 +117,24 @@ class _GrillasPageState extends State<GrillasPage>
               controller: tabController,
               physics: const NeverScrollableScrollPhysics(),
               children: [
-                BmuPestana(gradiente: gradiente,),
+                BmuPestana(
+                  gradiente: gradiente,
+                ),
                 UmatPestana(gradiente: gradiente),
                 ComponentesPestana(
                   mapaRta: datosProvider.resultadoEntrenamiento.mapaRta,
                   codebook: datosProvider.resultadoEntrenamiento.codebook,
-                  nombrecolumnas: datosProvider.resultadoEntrenamiento.nombresColumnas,
+                  nombrecolumnas:
+                      datosProvider.resultadoEntrenamiento.nombresColumnas,
                   filas: datosProvider.resultadoEntrenamiento.filas,
                   columnas: datosProvider.resultadoEntrenamiento.columnas,
+                  gradiente: gradiente,
                 ),
                 HitsPestana(gradiente: gradiente),
-                const ClustersPestana()
+                ClustersPestana(gradiente: gradiente,)
               ],
             ),
           ),
         ));
   }
- }
+}

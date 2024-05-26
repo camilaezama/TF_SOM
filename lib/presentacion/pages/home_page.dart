@@ -1,5 +1,6 @@
 import 'package:TF_SOM_UNMdP/config/tema.dart';
 import 'package:TF_SOM_UNMdP/models/resultado_entrenamiento_model.dart';
+import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/dialogs/configurar_gradiente_dialog.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/dialogs/configurar_parametros_dialog.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/dialogs/seleccionar_opciones_dialog.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/tabla_datos.dart';
@@ -62,7 +63,8 @@ class _HomePageState extends State<HomePage> {
         });
       });
     } else {
-      mostrarDialogTexto(context, 'Archivo Invalido', 'Debe seleccionar un archivo CSV.');
+      mostrarDialogTexto(
+          context, 'Archivo Invalido', 'Debe seleccionar un archivo CSV.');
     }
   }
 
@@ -101,17 +103,34 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: ElevatedButton(
-                      onPressed: _selectFile,
-                      child: const Text(
-                        'Seleccionar Archivo CSV',
-                        style: TextStyle(fontSize: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: ElevatedButton(
+                        onPressed: _selectFile,
+                        child: const Text(
+                          'Seleccionar Archivo CSV',
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
                     ),
-                  ),
+                    IconButton(
+                      tooltip: 'Elegir gradiente',
+                        onPressed: () {
+                          showDialog<void>(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return ConfigurarGradienteDialog(
+                                widthPantalla: _width,
+                                heightPantalla: _height,
+                              );
+                            },
+                          );
+                        },
+                        icon: const Icon(Icons.gradient_outlined))
+                  ],
                 ),
                 (csvData.isNotEmpty)
                     ? IconButton(
@@ -266,11 +285,11 @@ class _HomePageState extends State<HomePage> {
           cargando = false;
         });
       } catch (e) {
-        mostrarDialogTexto(context, 'Error',
-            'Error en la  llamada de servicio: $e');
+        mostrarDialogTexto(
+            context, 'Error', 'Error en la  llamada de servicio: $e');
         setState(() {
           cargando = false;
-          botonAceptar = "Aceptar";
+          botonAceptar = "Entrenar";
         });
       }
     } else {
@@ -309,7 +328,7 @@ class _HomePageState extends State<HomePage> {
       print('Error: $e');
       setState(() {
         cargando = false;
-        botonAceptar = "Aceptar";
+        botonAceptar = "Entrenar";
       });
     }
   }

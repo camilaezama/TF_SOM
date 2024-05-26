@@ -63,8 +63,8 @@ class _GrillaSimpleState extends State<GrillaSimple> {
                       String valorDistConPunto = valorDist.replaceAll(',', '.');
                       double valor = double.parse(valorDistConPunto);
                       return HexagonWidgetBuilder(
-                        color: getInterpolatedColor(
-                            valor, widget.gradiente, widget.dataMap),
+                        // color: getInterpolatedColor(
+                        //     valor, widget.gradiente, widget.dataMap),
                         //color: getColorForValue(valor),
                         //generarColorAleatorioEnEspectro(), //row.isEven ? Colors.yellow : Colors.orangeAccent,
                         elevation: 0.0,

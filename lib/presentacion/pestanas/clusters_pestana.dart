@@ -7,7 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class ClustersPestana extends StatefulWidget {
-  const ClustersPestana({super.key});
+  final Gradient gradiente;
+  const ClustersPestana({super.key, required this.gradiente});
 
   @override
   State<ClustersPestana> createState() => _ClustersPestanaState();
@@ -22,12 +23,12 @@ class _ClustersPestanaState extends State<ClustersPestana> {
     clustersController = TextEditingController(text: "10");
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
-
     final datosProvider = context.read<DatosProvider>();
     final clustersProvider = context.watch<ClustersProvider>();
-    
+
     return Center(
       child: Column(
         children: [
@@ -51,7 +52,8 @@ class _ClustersPestanaState extends State<ClustersPestana> {
           ),
           ElevatedButton(
               onPressed: () {
-                clustersProvider.llamadaClustering(context, clustersController.text);
+                clustersProvider.llamadaClustering(
+                    context, clustersController.text);
               },
               style: AppTheme.primaryButtonStyle,
               child: clustersProvider.cargando
@@ -63,13 +65,19 @@ class _ClustersPestanaState extends State<ClustersPestana> {
           clustersProvider.mostarGrilla
               ? Expanded(
                   child: GrillaHexagonos(
-                      dataMap: datosProvider.resultadoEntrenamiento.dataUdist,
-                      filas: datosProvider.resultadoEntrenamiento.filas,
-                      nombreColumnas: datosProvider.resultadoEntrenamiento.nombresColumnas,
-                      clusters: clustersProvider.mapaRtaClusters,
-                      codebook: datosProvider.resultadoEntrenamiento.codebook,
-                      columnas: datosProvider.resultadoEntrenamiento.columnas,
-                      titulo: "Clustering"),
+                    gradiente: widget.gradiente,
+                    dataMap: datosProvider.resultadoEntrenamiento.dataUdist,
+                    filas: datosProvider.resultadoEntrenamiento.filas,
+                    nombreColumnas:
+                        datosProvider.resultadoEntrenamiento.nombresColumnas,
+                    clusters: clustersProvider.mapaRtaClusters,
+                    codebook: datosProvider.resultadoEntrenamiento.codebook,
+                    columnas: datosProvider.resultadoEntrenamiento.columnas,
+                    titulo: "Clustering",
+                    mostrarGradiente: false,
+                    min: 0,
+                    max: 1,
+                  ),
                 )
               : const Text("")
         ],

@@ -27,8 +27,6 @@ List<TableRow> crearTablaDatos(List<String> etiquetas, List<dynamic> codebook) {
   return listaTablita;
 }
 
-
-
 class GrillaHexagonos extends StatelessWidget {
   final Gradient? gradiente;
   final Map<String, String>? dataMap;
@@ -44,9 +42,10 @@ class GrillaHexagonos extends StatelessWidget {
   final bool hits;
   final bool mostrarGradiente;
   final bool mostrarBotonImprimir;
+  final double? min, max;
   GrillaHexagonos(
       {super.key,
-      this.gradiente,
+      required this.gradiente,
       this.dataMap,
       required this.filas,
       required this.columnas,
@@ -58,7 +57,9 @@ class GrillaHexagonos extends StatelessWidget {
       this.hitsMap,
       this.hits = false,
       this.mostrarGradiente = true,
-      this.mostrarBotonImprimir = true});
+      this.mostrarBotonImprimir = true,
+      required this.min,
+      required this.max});
 
   final _widgetKey = GlobalKey();
 
@@ -66,9 +67,10 @@ class GrillaHexagonos extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(titulo, style: Theme.of(context).textTheme.headlineLarge),
+        //Text(titulo, style: Theme.of(context).textTheme.headlineLarge),
         Expanded(
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (mostrarBotonImprimir)
                 ElevatedButton(
@@ -100,7 +102,7 @@ class GrillaHexagonos extends StatelessWidget {
                                 return HexagonWidgetBuilder(
                                   color: clusters == null
                                       ? getInterpolatedColor(
-                                          valor, gradiente, dataMap)
+                                          valor, gradiente, min!, max!)
                                       : getClusterColor(col, row, clusters),
                                   //color: getColorForValue(valor),
                                   //generarColorAleatorioEnEspectro(), //row.isEven ? Colors.yellow : Colors.orangeAccent,
@@ -160,7 +162,7 @@ class GrillaHexagonos extends StatelessWidget {
                                                               255, 52, 56, 253),
                                                           fontSize: 30.0),
                                                     ),
-                                                    Table( 
+                                                    Table(
                                                       border: TableBorder.all(
                                                           color: Colors.black,
                                                           style:
@@ -168,7 +170,7 @@ class GrillaHexagonos extends StatelessWidget {
                                                           width: 1),
                                                       children: crearTablaDatos(
                                                           nombreColumnas,
-                                                          (codebook[bMU-1])),
+                                                          (codebook[bMU - 1])),
                                                     ),
                                                   ],
                                                 ),
@@ -201,30 +203,61 @@ class GrillaHexagonos extends StatelessWidget {
                     if (mostrarGradiente)
                       Container(
                         width: 100.0, // ajusta la altura según tus necesidades
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment
-                                .topCenter, // comienza desde la parte superior
-                            end: Alignment
-                                .bottomCenter, // termina en la parte inferior
-                            colors: [
-                              Colors.red,
-                              Colors.orange,
-                              Colors.yellow,
-                              Colors.green,
-                              Colors.blue,
-                              Color.fromARGB(255, 8, 82, 143),
-                            ],
-                            stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
-                          ),
-                        ),
+                        decoration: BoxDecoration(gradient: gradiente
+                            // gradient: LinearGradient(
+                            //   begin: Alignment
+                            //       .topCenter, // comienza desde la parte superior
+                            //   end: Alignment
+                            //       .bottomCenter, // termina en la parte inferior
+                            //   colors: [
+                            //     Colors.red,
+                            //     Colors.orange,
+                            //     Colors.yellow,
+                            //     Colors.green,
+                            //     Colors.blue,
+                            //     Color.fromARGB(255, 8, 82, 143),
+                            //   ],
+                            //   stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
+                            // ),
+                            ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            for (double stop in [1.0, 0.8, 0.6, 0.4, 0.2, 0.0])
+                            for (double stop in [
+                              double.parse(max!.toStringAsFixed(1)),
+                              double.parse((min! +
+                                      4 *
+                                          double.parse(
+                                              (max! / 5).toStringAsFixed(1)))
+                                  .toStringAsFixed(1)),
+                              double.parse((min! +
+                                      3 *
+                                          double.parse(
+                                              (max! / 5).toStringAsFixed(1)))
+                                  .toStringAsFixed(1)),
+                              double.parse((min! +
+                                      2 *
+                                          double.parse(
+                                              (max! / 5).toStringAsFixed(1)))
+                                  .toStringAsFixed(1)),
+                              double.parse((min! +
+                                      1 *
+                                          double.parse(
+                                              (max! / 5).toStringAsFixed(1)))
+                                  .toStringAsFixed(1)),
+                              double.parse(min!.toStringAsFixed(1))
+                            ])
                               Text(
                                 '${stop}',
-                                style: TextStyle(color: Colors.black),
+                                style: (gradiente!.colors.contains(
+                                            Color.fromARGB(255, 0, 0, 0)) ||
+                                        gradiente!.colors.contains(
+                                            Color.fromARGB(255, 40, 40, 40)))
+                                    ? TextStyle(
+                                        color: Color.fromARGB(255, 247, 255, 9))
+                                    : TextStyle(
+                                        color:
+                                            const Color.fromARGB(255, 0, 0, 0)),
                               ),
                           ],
                         ),
@@ -267,4 +300,3 @@ class GrillaHexagonos extends StatelessWidget {
     html.Url.revokeObjectUrl(url);
   }
 }
-
