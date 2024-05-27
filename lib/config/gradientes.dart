@@ -42,7 +42,7 @@ List<Gradient> listaGradientes = [
     ],
     stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
   ),
-    const LinearGradient(
+  const LinearGradient(
     begin: Alignment.topCenter, // comienza desde la parte superior
     end: Alignment.bottomCenter,
     colors: [

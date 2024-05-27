@@ -7,7 +7,8 @@ import 'dart:typed_data';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 
-List<TableRow> crearTablaDatos(List<String> etiquetas, List<dynamic> codebook) {
+List<TableRow> crearTablaDatos(
+    List<String> etiquetas, List<dynamic> codebook, String titulo) {
   List<TableRow> listaTablita = [];
   TableRow filita;
 
@@ -15,10 +16,16 @@ List<TableRow> crearTablaDatos(List<String> etiquetas, List<dynamic> codebook) {
     String etiquetactual = etiquetas[j];
     filita = TableRow(children: [
       Column(children: [
-        Text(etiquetactual, style: const TextStyle(fontSize: 20.0))
+        Text(etiquetactual,
+            style: etiquetactual == titulo
+                ? TextStyle(fontSize: 20.0, backgroundColor: Colors.yellow)
+                : TextStyle(fontSize: 20.0))
       ]), //etiqueta
       Column(children: [
-        Text(codebook[j].toString(), style: const TextStyle(fontSize: 20.0))
+        Text(codebook[j].toString(),
+            style: etiquetactual == titulo
+                ? TextStyle(fontSize: 20.0, backgroundColor: Colors.yellow)
+                : TextStyle(fontSize: 20.0))
       ]), //valor
     ]);
     listaTablita.add(filita);
@@ -60,11 +67,13 @@ class GrillaHexagonos extends StatelessWidget {
       this.mostrarBotonImprimir = true,
       required this.min,
       required this.max});
-
+  late double _width, _height;
   final _widgetKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
+    _width = MediaQuery.of(context).size.width;
+    _height = MediaQuery.of(context).size.height;
     return Column(
       children: [
         Text(titulo, style: Theme.of(context).textTheme.headlineLarge),
@@ -146,33 +155,45 @@ class GrillaHexagonos extends StatelessWidget {
                                           builder: (BuildContext context) {
                                             return AlertDialog(
                                               title: const Text('Información'),
-                                              content: SingleChildScrollView(
-                                                child: ListBody(
-                                                  children: [
-                                                    const Text(
-                                                        'Este es un cuadro de diálogo de ejemplo.'),
-                                                    Text('BMU = $bMU'),
-                                                    Text('Udist = $valorDist'),
-                                                    const Text(
-                                                      "Codebook",
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: TextStyle(
-                                                          color: Color.fromARGB(
-                                                              255, 52, 56, 253),
-                                                          fontSize: 30.0),
-                                                    ),
-                                                    Table(
-                                                      border: TableBorder.all(
-                                                          color: Colors.black,
-                                                          style:
-                                                              BorderStyle.solid,
-                                                          width: 1),
-                                                      children: crearTablaDatos(
-                                                          nombreColumnas,
-                                                          (codebook[bMU - 1])),
-                                                    ),
-                                                  ],
+                                              content: SizedBox(
+                                                width: _width / 3,
+                                                // height: _height / 3,
+                                                child: SingleChildScrollView(
+                                                  child: ListBody(
+                                                    children: [
+                                                      const Text(
+                                                          'Este es un cuadro de diálogo de ejemplo.'),
+                                                      Text('BMU = $bMU'),
+                                                      Text(
+                                                          'Udist = $valorDist'),
+                                                      const Text(
+                                                        "Codebook",
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    52,
+                                                                    56,
+                                                                    253),
+                                                            fontSize: 30.0),
+                                                      ),
+                                                      Table(
+                                                        border: TableBorder.all(
+                                                            color: Colors.black,
+                                                            style: BorderStyle
+                                                                .solid,
+                                                            width: 1),
+                                                        children:
+                                                            crearTablaDatos(
+                                                                nombreColumnas,
+                                                                (codebook[
+                                                                    bMU - 1]),
+                                                                titulo),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
                                               actions: [
@@ -224,28 +245,28 @@ class GrillaHexagonos extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             for (double stop in [
-                              double.parse(max!.toStringAsFixed(1)),
+                              double.parse(min!.toStringAsFixed(1)),
                               double.parse((min! +
-                                      4 *
-                                          double.parse(
-                                              ((max!-min!) / 5).toStringAsFixed(1)))
-                                  .toStringAsFixed(1)),
-                              double.parse((min! +
-                                      3 *
-                                          double.parse(
-                                              ((max!-min!) / 5).toStringAsFixed(1)))
+                                      1 *
+                                          double.parse(((max! - min!) / 5)
+                                              .toStringAsFixed(1)))
                                   .toStringAsFixed(1)),
                               double.parse((min! +
                                       2 *
-                                          double.parse(
-                                              ((max!-min!) / 5).toStringAsFixed(1)))
+                                          double.parse(((max! - min!) / 5)
+                                              .toStringAsFixed(1)))
                                   .toStringAsFixed(1)),
                               double.parse((min! +
-                                      1 *
-                                          double.parse(
-                                              ((max!-min!) / 5).toStringAsFixed(1)))
+                                      3 *
+                                          double.parse(((max! - min!) / 5)
+                                              .toStringAsFixed(1)))
                                   .toStringAsFixed(1)),
-                              double.parse(min!.toStringAsFixed(1))
+                              double.parse((min! +
+                                      4 *
+                                          double.parse(((max! - min!) / 5)
+                                              .toStringAsFixed(1)))
+                                  .toStringAsFixed(1)),
+                              double.parse(max!.toStringAsFixed(1))
                             ])
                               Text(
                                 '${stop}',

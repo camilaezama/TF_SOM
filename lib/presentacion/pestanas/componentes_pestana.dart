@@ -127,6 +127,16 @@ class _ComponentesPestanaState extends State<ComponentesPestana> {
 
           double minValue = doubleValues.reduce((a, b) => a < b ? a : b);
           double maxValue = doubleValues.reduce((a, b) => a > b ? a : b);
+
+          dataMap = widget.mapaRta[opcionesSeleccionadas[index * 2 + 1]];
+          doubleValues = dataMap.values
+              .map((value) => double.tryParse(value))
+              .where((value) => value != null && value != -1)
+              .toList()
+              .cast<double>();
+
+          double minValue1 = doubleValues.reduce((a, b) => a < b ? a : b);
+          double maxValue1 = doubleValues.reduce((a, b) => a > b ? a : b);
           return Row(
             children: [
               Container(
@@ -162,8 +172,8 @@ class _ComponentesPestanaState extends State<ComponentesPestana> {
                         columnas: widget.columnas,
                         mostrarGradiente: _mostrarGradiente,
                         mostrarBotonImprimir: _mostrarBotonImprimir,
-                        min: minValue,
-                        max: maxValue,
+                        min: minValue1,
+                        max: maxValue1,
                       ),
                       //child: Text(opciones[index * 2]),
                     )
