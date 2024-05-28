@@ -1,6 +1,12 @@
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/dialogs/seleccionar_opciones_dialog.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/grilla_hexagonos.dart';
 import 'package:flutter/material.dart';
+import 'dart:ui';
+import 'package:flutter/rendering.dart';
+import 'dart:typed_data';
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html;
+import 'package:TF_SOM_UNMdP/utils/mostrar_dialog_texto.dart';
 
 class ComponentesPestana extends StatefulWidget {
   final Map<String, dynamic> mapaRta;
@@ -45,6 +51,7 @@ class _ComponentesPestanaState extends State<ComponentesPestana> {
     opcionGrillasPorFila = 2;
   }
 
+  final _widgetKey = GlobalKey();
   @override
   Widget build(BuildContext context) {
     print((widget.nombrecolumnas.length / 2).ceil());
@@ -104,6 +111,8 @@ class _ComponentesPestanaState extends State<ComponentesPestana> {
                 });
               },
             ),
+            SizedBox(width: 20),
+            ElevatedButton(onPressed: save, child: const Icon(Icons.download))
           ],
         ),
         opcionGrillasPorFila == 2
@@ -137,53 +146,56 @@ class _ComponentesPestanaState extends State<ComponentesPestana> {
 
           double minValue1 = doubleValues.reduce((a, b) => a < b ? a : b);
           double maxValue1 = doubleValues.reduce((a, b) => a > b ? a : b);
-          return Row(
-            children: [
-              Container(
-                width: sizeWidth / 2,
-                height: sizeHeight / 2,
-                child: GrillaHexagonos(
-                  titulo: opcionesSeleccionadas[index * 2],
-                  gradiente: widget.gradiente,
-                  codebook: widget.codebook,
-                  nombreColumnas: widget.nombrecolumnas,
-                  dataMap: widget.mapaRta[opcionesSeleccionadas[index * 2]],
-                  filas: widget.filas,
-                  columnas: widget.columnas,
-                  mostrarGradiente: _mostrarGradiente,
-                  mostrarBotonImprimir: _mostrarBotonImprimir,
-                  min: minValue,
-                  max: maxValue,
+          return RepaintBoundary(
+            key: _widgetKey,
+            child: Row(
+              children: [
+                Container(
+                  width: sizeWidth / 2,
+                  height: sizeHeight / 2,
+                  child: GrillaHexagonos(
+                    titulo: opcionesSeleccionadas[index * 2],
+                    gradiente: widget.gradiente,
+                    codebook: widget.codebook,
+                    nombreColumnas: widget.nombrecolumnas,
+                    dataMap: widget.mapaRta[opcionesSeleccionadas[index * 2]],
+                    filas: widget.filas,
+                    columnas: widget.columnas,
+                    mostrarGradiente: _mostrarGradiente,
+                    mostrarBotonImprimir: _mostrarBotonImprimir,
+                    min: minValue,
+                    max: maxValue,
+                  ),
+                  //child: Text(opciones[index * 2]),
                 ),
-                //child: Text(opciones[index * 2]),
-              ),
-              (index * 2 + 1 < opcionesSeleccionadas.length)
-                  ? Container(
-                      width: sizeWidth / 2,
-                      height: sizeHeight / 2,
-                      child: GrillaHexagonos(
-                        titulo: opcionesSeleccionadas[index * 2 + 1],
-                        gradiente: widget.gradiente,
-                        codebook: widget.codebook,
-                        nombreColumnas: widget.nombrecolumnas,
-                        dataMap: widget
-                            .mapaRta[opcionesSeleccionadas[index * 2 + 1]],
-                        filas: widget.filas,
-                        columnas: widget.columnas,
-                        mostrarGradiente: _mostrarGradiente,
-                        mostrarBotonImprimir: _mostrarBotonImprimir,
-                        min: minValue1,
-                        max: maxValue1,
-                      ),
-                      //child: Text(opciones[index * 2]),
-                    )
-                  : Text(""),
-              // Expanded(child:
-              //     // child: Text((index * 2 + 1 < opciones.length)
-              //     //     ? opciones[index * 2 + 1]
-              //     //     : ""),
-              //     ),
-            ],
+                (index * 2 + 1 < opcionesSeleccionadas.length)
+                    ? Container(
+                        width: sizeWidth / 2,
+                        height: sizeHeight / 2,
+                        child: GrillaHexagonos(
+                          titulo: opcionesSeleccionadas[index * 2 + 1],
+                          gradiente: widget.gradiente,
+                          codebook: widget.codebook,
+                          nombreColumnas: widget.nombrecolumnas,
+                          dataMap: widget
+                              .mapaRta[opcionesSeleccionadas[index * 2 + 1]],
+                          filas: widget.filas,
+                          columnas: widget.columnas,
+                          mostrarGradiente: _mostrarGradiente,
+                          mostrarBotonImprimir: _mostrarBotonImprimir,
+                          min: minValue1,
+                          max: maxValue1,
+                        ),
+                        //child: Text(opciones[index * 2]),
+                      )
+                    : Text(""),
+                // Expanded(child:
+                //     // child: Text((index * 2 + 1 < opciones.length)
+                //     //     ? opciones[index * 2 + 1]
+                //     //     : ""),
+                //     ),
+              ],
+            ),
           );
         },
       ),
@@ -202,35 +214,38 @@ class _ComponentesPestanaState extends State<ComponentesPestana> {
           }
           List<String> currentOptions =
               opcionesSeleccionadas.sublist(startIndex, endIndex);
-          return Row(
-            children: currentOptions.map((option) {
-              var dataMap = widget.mapaRta[option];
-              List<double> doubleValues = dataMap.values
-                  .map((value) => double.tryParse(value))
-                  .where((value) => value != null && value != -1)
-                  .toList()
-                  .cast<double>();
+          return RepaintBoundary(
+            key: _widgetKey,
+            child: Row(
+              children: currentOptions.map((option) {
+                var dataMap = widget.mapaRta[option];
+                List<double> doubleValues = dataMap.values
+                    .map((value) => double.tryParse(value))
+                    .where((value) => value != null && value != -1)
+                    .toList()
+                    .cast<double>();
 
-              double minValue = doubleValues.reduce((a, b) => a < b ? a : b);
-              double maxValue = doubleValues.reduce((a, b) => a > b ? a : b);
-              return Container(
-                width: sizeWidth / grillasPorFila,
-                height: sizeHeight / grillasPorFila,
-                child: GrillaHexagonos(
-                  titulo: option,
-                  gradiente: widget.gradiente,
-                  nombreColumnas: widget.nombrecolumnas,
-                  codebook: widget.codebook,
-                  dataMap: widget.mapaRta[option],
-                  filas: widget.filas,
-                  columnas: widget.columnas,
-                  mostrarGradiente: _mostrarGradiente,
-                  mostrarBotonImprimir: _mostrarBotonImprimir,
-                  min: minValue,
-                  max: maxValue,
-                ),
-              );
-            }).toList(),
+                double minValue = doubleValues.reduce((a, b) => a < b ? a : b);
+                double maxValue = doubleValues.reduce((a, b) => a > b ? a : b);
+                return Container(
+                  width: sizeWidth / grillasPorFila,
+                  height: sizeHeight / grillasPorFila,
+                  child: GrillaHexagonos(
+                    titulo: option,
+                    gradiente: widget.gradiente,
+                    nombreColumnas: widget.nombrecolumnas,
+                    codebook: widget.codebook,
+                    dataMap: widget.mapaRta[option],
+                    filas: widget.filas,
+                    columnas: widget.columnas,
+                    mostrarGradiente: _mostrarGradiente,
+                    mostrarBotonImprimir: _mostrarBotonImprimir,
+                    min: minValue,
+                    max: maxValue,
+                  ),
+                );
+              }).toList(),
+            ),
           );
         },
       ),
@@ -250,5 +265,29 @@ class _ComponentesPestanaState extends State<ComponentesPestana> {
     setState(() {
       opcionesSeleccionadas = seleccionadasList;
     });
+  }
+
+  void save() async {
+    try {
+      final boundary = _widgetKey.currentContext!.findRenderObject()!
+          as RenderRepaintBoundary;
+      final image = await boundary.toImage(pixelRatio: 2);
+      final byteData = await image.toByteData(format: ImageByteFormat.png);
+
+      Uint8List pngBytes = byteData!.buffer.asUint8List();
+
+      final blob = html.Blob([pngBytes]);
+      final url = html.Url.createObjectUrlFromBlob(blob);
+      // ignore: unused_local_variable
+      final anchor = html.AnchorElement(href: url)
+        ..setAttribute('download', "MapaComponentes.png")
+        ..click();
+
+      html.Url.revokeObjectUrl(url);
+    } catch (e) {
+      // ignore: use_build_context_synchronously
+      mostrarDialogTexto(context, 'Error al descargar',
+          'Debe seleccionar dos o mas componentes.');
+    }
   }
 }
