@@ -30,6 +30,7 @@ class UmatPestana extends StatelessWidget {
       paddingEntreHexagonos: 0.2,
       min: minValue,
       max: maxValue,
+      expandida: true,
     );
   }
 }
