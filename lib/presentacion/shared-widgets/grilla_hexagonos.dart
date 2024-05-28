@@ -130,17 +130,29 @@ class GrillaHexagonos extends StatelessWidget {
                               }
                             },
                             buildChild: (col, row) {
-                              int bMU = row * columnas + col + 1;
-                              // if (expandida) {
-                              //   bMU = int.parse(
-                              //       ((bMU - row * columnas) / 2).toString());
-                              // }
-                              String valorDist = dataMap![bMU.toString()]!;
                               int columna = col;
                               if (dataMap![(row * columnas + 1).toString()] ==
                                   "-1") {
                                 columna = col - 1;
                               }
+                              int bMU = row * columnas + col + 1;
+                              if (expandida) {
+                                if (!((row + 1) % 2 == 0 ||
+                                    (columna + 1) % 2 == 0)) {
+                                  if (row != 0) {
+                                    bMU = int.parse(
+                                        (((row * (columnas / 2)) / 2 +
+                                                1 +
+                                                (columna / 2))
+                                            .toString()));
+                                  } else {
+                                    bMU = int.parse(((bMU + 1) / 2).toString());
+                                  }
+                                }
+                              }
+
+                              String valorDist = dataMap![bMU.toString()]!;
+
                               return valorDist == '-1'
                                   ? const Text("")
                                   : (((row + 1) % 2 == 0 ||
