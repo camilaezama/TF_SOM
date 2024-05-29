@@ -39,10 +39,12 @@ class GrillaHexagonos extends StatelessWidget {
   final double
       paddingEntreHexagonos; //podria no ser final y luego cambiarse luego de ser generado
   final Map<int, int>? hitsMap;
+  final Map<int, List>? hitsLabels;
   final bool hits;
   final bool mostrarGradiente;
   final bool mostrarBotonImprimir;
   final double? min, max;
+  
   GrillaHexagonos(
       {super.key,
       required this.gradiente,
@@ -55,6 +57,7 @@ class GrillaHexagonos extends StatelessWidget {
       this.clusters,
       this.paddingEntreHexagonos = 0.6,
       this.hitsMap,
+      this.hitsLabels,
       this.hits = false,
       this.mostrarGradiente = true,
       this.mostrarBotonImprimir = true,
@@ -153,6 +156,9 @@ class GrillaHexagonos extends StatelessWidget {
                                                         'Este es un cuadro de diálogo de ejemplo.'),
                                                     Text('BMU = $bMU'),
                                                     Text('Udist = $valorDist'),
+                                                    Text('Hits = ${label_hits(bMU)}'),
+                                                    //OJO ACA, ES -1 PORQUE SE MANDA DISTINTO EL COUNT Y EL LABEL. 
+                                                    //Despues lo charlamos para emprolijar
                                                     const Text(
                                                       "Codebook",
                                                       textAlign:
@@ -170,7 +176,7 @@ class GrillaHexagonos extends StatelessWidget {
                                                           width: 1),
                                                       children: crearTablaDatos(
                                                           nombreColumnas,
-                                                          (codebook[bMU - 1])),
+                                                          (codebook[bMU])),
                                                     ),
                                                   ],
                                                 ),
@@ -189,7 +195,7 @@ class GrillaHexagonos extends StatelessWidget {
                                         );
                                       },
                                       child: Text(
-                                        hits ? hits_count(bMU) : '',
+                                        hits ? hits_count(bMU-1) : '',
                                         //'',
                                         //'123456789',
                                         //'$BMU',
@@ -281,6 +287,15 @@ class GrillaHexagonos extends StatelessWidget {
     }
     return cant;
   }
+
+  String label_hits(int bmu){
+    String hitsEnCeldaTexto = "";
+    if (hitsLabels!.keys.contains(bmu)){
+      hitsEnCeldaTexto = hitsLabels![bmu].toString();
+    }
+  return hitsEnCeldaTexto;
+  }
+ 
 
   void save() async {
     final boundary =

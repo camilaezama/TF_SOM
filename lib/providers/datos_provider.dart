@@ -43,7 +43,7 @@ class DatosProvider extends ChangeNotifier {
     Map<String, dynamic> HitsLabelsJSON = decodedJson["HitsLabels"];
     
     var tempHitsMap = procesarHits(HitsJSON);
-    //var tempHitsLabelsMap = null;// procesarHitsLabels(HitsLabelsJSON);
+    var tempHitsLabelsMap = procesarHitsLabels(HitsLabelsJSON);
     var tempMapaRta = procesarBmus(NeuronsJSON, tipoLlamada);
     var tempDataUdist = tempMapaRta["Udist"]!;
     var tempMapaRtaUmat = procesarUmat(UmatJSON)!;
@@ -56,6 +56,7 @@ class DatosProvider extends ChangeNotifier {
       mapaRtaUmat: tempMapaRtaUmat,
       dataUdist: tempDataUdist,
       hitsMap: tempHitsMap,
+      hitsLabels: tempHitsLabelsMap,
       nombresColumnas: tempNombresColumnas,
       filas: int.parse(parametros["filas"]),
       columnas: int.parse(parametros["columnas"]),

@@ -30,6 +30,7 @@ class HitsPestana extends StatelessWidget {
       columnas: datosProvider.resultadoEntrenamiento.columnas,
       hits: true,
       hitsMap: datosProvider.resultadoEntrenamiento.hitsMap,
+      hitsLabels:datosProvider.resultadoEntrenamiento.hitsLabels,
       min: minValue,
       max: maxValue,
     );
