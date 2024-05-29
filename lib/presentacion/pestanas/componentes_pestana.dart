@@ -124,31 +124,31 @@ class _ComponentesPestanaState extends State<ComponentesPestana> {
 
   Widget grillas2(double sizeWidth, double sizeHeight) {
     return Expanded(
-      child: ListView.builder(
-        itemCount: (opcionesSeleccionadas.length / 2).ceil(),
-        itemBuilder: (context, index) {
-          var dataMap = widget.mapaRta[opcionesSeleccionadas[index * 2]];
-          List<double> doubleValues = dataMap.values
-              .map((value) => double.tryParse(value))
-              .where((value) => value != null && value != -1)
-              .toList()
-              .cast<double>();
+      child: RepaintBoundary(
+        key: _widgetKey,
+        child: ListView.builder(
+          itemCount: (opcionesSeleccionadas.length / 2).ceil(),
+          itemBuilder: (context, index) {
+            var dataMap = widget.mapaRta[opcionesSeleccionadas[index * 2]];
+            List<double> doubleValues = dataMap.values
+                .map((value) => double.tryParse(value))
+                .where((value) => value != null && value != -1)
+                .toList()
+                .cast<double>();
 
-          double minValue = doubleValues.reduce((a, b) => a < b ? a : b);
-          double maxValue = doubleValues.reduce((a, b) => a > b ? a : b);
+            double minValue = doubleValues.reduce((a, b) => a < b ? a : b);
+            double maxValue = doubleValues.reduce((a, b) => a > b ? a : b);
 
-          dataMap = widget.mapaRta[opcionesSeleccionadas[index * 2 + 1]];
-          doubleValues = dataMap.values
-              .map((value) => double.tryParse(value))
-              .where((value) => value != null && value != -1)
-              .toList()
-              .cast<double>();
+            dataMap = widget.mapaRta[opcionesSeleccionadas[index * 2 + 1]];
+            doubleValues = dataMap.values
+                .map((value) => double.tryParse(value))
+                .where((value) => value != null && value != -1)
+                .toList()
+                .cast<double>();
 
-          double minValue1 = doubleValues.reduce((a, b) => a < b ? a : b);
-          double maxValue1 = doubleValues.reduce((a, b) => a > b ? a : b);
-          return RepaintBoundary(
-            key: _widgetKey,
-            child: Row(
+            double minValue1 = doubleValues.reduce((a, b) => a < b ? a : b);
+            double maxValue1 = doubleValues.reduce((a, b) => a > b ? a : b);
+            return Row(
               children: [
                 Container(
                   width: sizeWidth / 2,
@@ -195,28 +195,28 @@ class _ComponentesPestanaState extends State<ComponentesPestana> {
                 //     //     : ""),
                 //     ),
               ],
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
 
   Widget grillas(double sizeWidth, double sizeHeight, int grillasPorFila) {
     return Expanded(
-      child: ListView.builder(
-        itemCount: (opcionesSeleccionadas.length / grillasPorFila).ceil(),
-        itemBuilder: (context, index) {
-          int startIndex = index * grillasPorFila;
-          int endIndex = startIndex + grillasPorFila;
-          if (endIndex > opcionesSeleccionadas.length) {
-            endIndex = opcionesSeleccionadas.length;
-          }
-          List<String> currentOptions =
-              opcionesSeleccionadas.sublist(startIndex, endIndex);
-          return RepaintBoundary(
-            key: _widgetKey,
-            child: Row(
+      child: RepaintBoundary(
+        key: _widgetKey,
+        child: ListView.builder(
+          itemCount: (opcionesSeleccionadas.length / grillasPorFila).ceil(),
+          itemBuilder: (context, index) {
+            int startIndex = index * grillasPorFila;
+            int endIndex = startIndex + grillasPorFila;
+            if (endIndex > opcionesSeleccionadas.length) {
+              endIndex = opcionesSeleccionadas.length;
+            }
+            List<String> currentOptions =
+                opcionesSeleccionadas.sublist(startIndex, endIndex);
+            return Row(
               children: currentOptions.map((option) {
                 var dataMap = widget.mapaRta[option];
                 List<double> doubleValues = dataMap.values
@@ -245,9 +245,9 @@ class _ComponentesPestanaState extends State<ComponentesPestana> {
                   ),
                 );
               }).toList(),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
