@@ -40,8 +40,10 @@ class DatosProvider extends ChangeNotifier {
     List<dynamic> UmatJSON = decodedJson["UMat"];
 
     Map<String, dynamic> HitsJSON = decodedJson["Hits"];
+    Map<String, dynamic> HitsLabelsJSON = decodedJson["HitsLabels"];
     
     var tempHitsMap = procesarHits(HitsJSON);
+    var tempHitsLabelsMap = null; //pendiente sacar null y procesar!
     var tempMapaRta = procesarBmus(NeuronsJSON, tipoLlamada);
     var tempDataUdist = tempMapaRta["Udist"]!;
     var tempMapaRtaUmat = procesarUmat(UmatJSON)!;

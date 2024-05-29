@@ -6,7 +6,6 @@ import 'package:TF_SOM_UNMdP/presentacion/pestanas/umat_pestana.dart';
 import 'package:TF_SOM_UNMdP/providers/datos_provider.dart';
 import 'package:TF_SOM_UNMdP/providers/gradiente_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:hexagon/hexagon.dart';
 
 import 'package:provider/provider.dart';
