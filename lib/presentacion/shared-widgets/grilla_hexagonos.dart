@@ -65,6 +65,7 @@ class GrillaHexagonos extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Gradient? GradienteInverso;
     return Column(
       children: [
         Text(titulo, style: Theme.of(context).textTheme.headlineLarge),
@@ -203,23 +204,17 @@ class GrillaHexagonos extends StatelessWidget {
                     if (mostrarGradiente)
                       Container(
                         width: 100.0, // ajusta la altura según tus necesidades
-                        decoration: BoxDecoration(gradient: gradiente
-                            // gradient: LinearGradient(
-                            //   begin: Alignment
-                            //       .topCenter, // comienza desde la parte superior
-                            //   end: Alignment
-                            //       .bottomCenter, // termina en la parte inferior
-                            //   colors: [
-                            //     Colors.red,
-                            //     Colors.orange,
-                            //     Colors.yellow,
-                            //     Colors.green,
-                            //     Colors.blue,
-                            //     Color.fromARGB(255, 8, 82, 143),
-                            //   ],
-                            //   stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
-                            // ),
-                            ),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment
+                                .topCenter, // comienza desde la parte superior
+                            end: Alignment
+                                .bottomCenter, // termina en la parte inferior
+                            colors: gradiente!.colors.reversed
+                                .toList(), //para que quede bien (arriba hacia abajo)
+                            stops: gradiente!.stops,
+                          ),
+                        ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
@@ -227,23 +222,23 @@ class GrillaHexagonos extends StatelessWidget {
                               double.parse(max!.toStringAsFixed(1)),
                               double.parse((min! +
                                       4 *
-                                          double.parse(
-                                              ((max!-min!) / 5).toStringAsFixed(1)))
+                                          double.parse(((max! - min!) / 5)
+                                              .toStringAsFixed(1)))
                                   .toStringAsFixed(1)),
                               double.parse((min! +
                                       3 *
-                                          double.parse(
-                                              ((max!-min!) / 5).toStringAsFixed(1)))
+                                          double.parse(((max! - min!) / 5)
+                                              .toStringAsFixed(1)))
                                   .toStringAsFixed(1)),
                               double.parse((min! +
                                       2 *
-                                          double.parse(
-                                              ((max!-min!) / 5).toStringAsFixed(1)))
+                                          double.parse(((max! - min!) / 5)
+                                              .toStringAsFixed(1)))
                                   .toStringAsFixed(1)),
                               double.parse((min! +
                                       1 *
-                                          double.parse(
-                                              ((max!-min!) / 5).toStringAsFixed(1)))
+                                          double.parse(((max! - min!) / 5)
+                                              .toStringAsFixed(1)))
                                   .toStringAsFixed(1)),
                               double.parse(min!.toStringAsFixed(1))
                             ])

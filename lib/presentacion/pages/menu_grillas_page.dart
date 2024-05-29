@@ -103,8 +103,8 @@ class _GrillasPageState extends State<GrillasPage>
               bottom: TabBar(
                 controller: tabController,
                 tabs: const [
-                  Tab(text: 'BMUs'),
-                  Tab(text: 'Umat'),
+                  Tab(text: 'Mapa'),
+                  Tab(text: 'Umat+'),
                   Tab(text: 'Componentes'),
                   Tab(text: 'Hits'),
                   Tab(text: 'Clustering'),
