@@ -76,16 +76,6 @@ class GrillaHexagonos extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (hits) {
-      print('Etiquetas:');
-      print(etiquetas);
-      print('Etiquetas posibles');
-      print(etiquetasMap);
-      print('Etiquetas por BMU:');
-      print(mapaBMUconEtiquetas);
-      print('Colores');
-      print(mapaColores);
-    }
     return Column(
       children: [
         Text(titulo, style: Theme.of(context).textTheme.headlineLarge),

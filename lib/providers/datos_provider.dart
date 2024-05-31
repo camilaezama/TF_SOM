@@ -93,7 +93,7 @@ class DatosProvider extends ChangeNotifier {
 
   List<Map<String, dynamic>> procesarEtiquetas(
       Map<String, dynamic> etiquetasJSON) {
-    print('Etiquetas');
+    //print('Etiquetas');
     //print(etiquetasJSON);
     //print('fin');
     List<Map<String, dynamic>> listaDeMapas = [];
