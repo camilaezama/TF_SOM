@@ -4,7 +4,13 @@ class DialogOpciones extends StatefulWidget {
   final List<String> opciones;
   final List<bool> seleccionadas;
   final Function(List<bool>) actualizarOpciones;
-  const DialogOpciones({super.key, required this.opciones, required this.seleccionadas, required this.actualizarOpciones});
+  final String tituloDialog;
+  const DialogOpciones(
+      {super.key,
+      required this.opciones,
+      required this.seleccionadas,
+      required this.actualizarOpciones,
+      this.tituloDialog = 'Seleccionar opciones'});
 
   @override
   State<DialogOpciones> createState() => _DialogOpcionesState();
@@ -24,41 +30,41 @@ class _DialogOpcionesState extends State<DialogOpciones> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-          title: const Text("Seleccionar Opciones"),
-          content: SingleChildScrollView(
-            child: Column(
-              children: opciones.asMap().entries.map((entry) {
-                int index = entry.key;
-                String opcion = entry.value;
-                return CheckboxListTile(
-                  title: Text(opcion),
-                  value: seleccionadas[index],
-                  onChanged: (bool? valor) {
-                    setState(() {
-                      seleccionadas[index] = valor!;
-                    });
-                  },
-                );
-              }).toList(),
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text("Cerrar"),
-              onPressed: () {
-                Navigator.of(context).pop();
+      title: Text(widget.tituloDialog),
+      content: SingleChildScrollView(
+        child: Column(
+          children: opciones.asMap().entries.map((entry) {
+            int index = entry.key;
+            String opcion = entry.value;
+            return CheckboxListTile(
+              title: Text(opcion),
+              value: seleccionadas[index],
+              onChanged: (bool? valor) {
+                setState(() {
+                  seleccionadas[index] = valor!;
+                });
               },
-            ),
-            TextButton(
-              child: const Text("Guardar"),
-              onPressed: () {
-                _mostrarSeleccionadas();
-                widget.actualizarOpciones(seleccionadas);
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
+            );
+          }).toList(),
+        ),
+      ),
+      actions: <Widget>[
+        TextButton(
+          child: const Text("Cerrar"),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        TextButton(
+          child: const Text("Guardar"),
+          onPressed: () {
+            _mostrarSeleccionadas();
+            widget.actualizarOpciones(seleccionadas);
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
   }
 
   void _mostrarSeleccionadas() {
@@ -70,6 +76,6 @@ class _DialogOpcionesState extends State<DialogOpciones> {
       }
     }
 
-    print(seleccionadasList);
+    //print(seleccionadasList);
   }
 }

@@ -6,6 +6,7 @@ class ResultadoEntrenamientoModel {
   int filas = 0;
   int columnas = 0;
   List<String> nombresColumnas = [];
+  List<Map<String, dynamic>> etiquetas = [];
   Map<int, int> hitsMap = {};
 
   ResultadoEntrenamientoModel(
@@ -16,11 +17,13 @@ class ResultadoEntrenamientoModel {
       int? filas,
       int? columnas,
       List<String>? nombresColumnas,
+      List<Map<String, dynamic>>? etiquetas,
       Map<int, int>? hitsMap}) {
     if (mapaRta != null) this.mapaRta = mapaRta;
     if (dataUdist != null) this.dataUdist = dataUdist;
     if (mapaRtaUmat != null) this.mapaRtaUmat = mapaRtaUmat;
     if (codebook != null) this.codebook = codebook;
+    if (etiquetas != null) this.etiquetas = etiquetas;
     if (filas != null) this.filas = filas;
     if (columnas != null) this.columnas = columnas;
     if (nombresColumnas != null) this.nombresColumnas = nombresColumnas;
