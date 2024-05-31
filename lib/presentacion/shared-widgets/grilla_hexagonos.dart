@@ -18,13 +18,19 @@ List<TableRow> crearTablaDatos(
       Column(children: [
         Text(etiquetactual,
             style: etiquetactual == titulo
-                ? TextStyle(fontSize: 20.0, backgroundColor: Colors.yellow)
+                ? TextStyle(
+                    fontSize: 20.0,
+                    backgroundColor: Colors.yellow,
+                    fontWeight: FontWeight.bold)
                 : TextStyle(fontSize: 20.0))
       ]), //etiqueta
       Column(children: [
         Text(codebook[j].toString(),
             style: etiquetactual == titulo
-                ? TextStyle(fontSize: 20.0, backgroundColor: Colors.yellow)
+                ? TextStyle(
+                    fontSize: 20.0,
+                    backgroundColor: Colors.yellow,
+                    fontWeight: FontWeight.bold)
                 : TextStyle(fontSize: 20.0))
       ]), //valor
     ]);
@@ -136,6 +142,7 @@ class GrillaHexagonos extends StatelessWidget {
                                 columna = col - 1;
                               }
                               int bMU = row * columnas + col + 1;
+                              String valorDist = dataMap![bMU.toString()]!;
                               if (expandida) {
                                 if (!((row + 1) % 2 == 0 ||
                                     (columna + 1) % 2 == 0)) {
@@ -150,8 +157,6 @@ class GrillaHexagonos extends StatelessWidget {
                                   }
                                 }
                               }
-
-                              String valorDist = dataMap![bMU.toString()]!;
 
                               return valorDist == '-1'
                                   ? const Text("")
