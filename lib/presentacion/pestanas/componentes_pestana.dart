@@ -138,16 +138,20 @@ class _ComponentesPestanaState extends State<ComponentesPestana> {
 
             double minValue = doubleValues.reduce((a, b) => a < b ? a : b);
             double maxValue = doubleValues.reduce((a, b) => a > b ? a : b);
+            double minValue1 = 0;
+            double maxValue1 = 1;
+            if (index * 2 + 1 < opcionesSeleccionadas.length) {
+              dataMap = widget.mapaRta[opcionesSeleccionadas[index * 2 + 1]];
+              doubleValues = dataMap.values
+                  .map((value) => double.tryParse(value))
+                  .where((value) => value != null && value != -1)
+                  .toList()
+                  .cast<double>();
 
-            dataMap = widget.mapaRta[opcionesSeleccionadas[index * 2 + 1]];
-            doubleValues = dataMap.values
-                .map((value) => double.tryParse(value))
-                .where((value) => value != null && value != -1)
-                .toList()
-                .cast<double>();
+              minValue1 = doubleValues.reduce((a, b) => a < b ? a : b);
+              maxValue1 = doubleValues.reduce((a, b) => a > b ? a : b);
+            }
 
-            double minValue1 = doubleValues.reduce((a, b) => a < b ? a : b);
-            double maxValue1 = doubleValues.reduce((a, b) => a > b ? a : b);
             return Row(
               children: [
                 Container(
