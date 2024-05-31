@@ -8,7 +8,8 @@ import 'dart:typed_data';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 
-List<TableRow> crearTablaDatos(List<String> etiquetas, List<dynamic> codebook) {
+List<TableRow> crearTablaDatos(
+    List<String> etiquetas, List<dynamic> codebook, String titulo) {
   List<TableRow> listaTablita = [];
   TableRow filita;
 
@@ -16,10 +17,22 @@ List<TableRow> crearTablaDatos(List<String> etiquetas, List<dynamic> codebook) {
     String etiquetactual = etiquetas[j];
     filita = TableRow(children: [
       Column(children: [
-        Text(etiquetactual, style: const TextStyle(fontSize: 20.0))
+        Text(etiquetactual,
+            style: etiquetactual == titulo
+                ? TextStyle(
+                    fontSize: 20.0,
+                    backgroundColor: Colors.yellow,
+                    fontWeight: FontWeight.bold)
+                : TextStyle(fontSize: 20.0))
       ]), //etiqueta
       Column(children: [
-        Text(codebook[j].toString(), style: const TextStyle(fontSize: 20.0))
+        Text(codebook[j].toString(),
+            style: etiquetactual == titulo
+                ? TextStyle(
+                    fontSize: 20.0,
+                    backgroundColor: Colors.yellow,
+                    fontWeight: FontWeight.bold)
+                : TextStyle(fontSize: 20.0))
       ]), //valor
     ]);
     listaTablita.add(filita);
@@ -44,11 +57,13 @@ class GrillaHexagonos extends StatelessWidget {
   final bool mostrarGradiente;
   final bool mostrarBotonImprimir;
   final double? min, max;
+  final bool expandida;
   final List<Map<String, dynamic>> etiquetas;
   final Map<int, Map<String, List<String>>>? mapaBMUconEtiquetas;
   final Map<String, List<String>>? etiquetasMap;
   final Map<String, Color>? mapaColores;
   final String? selectedKey;
+
   GrillaHexagonos(
       {super.key,
       required this.gradiente,
@@ -66,17 +81,21 @@ class GrillaHexagonos extends StatelessWidget {
       this.mostrarBotonImprimir = true,
       required this.min,
       required this.max,
-      this.etiquetas = const [],
+      this.expandida = false,
+        this.etiquetas = const [],
       this.mapaBMUconEtiquetas,
       this.etiquetasMap,
       this.selectedKey,
       this.mapaColores,});
-
+  late double _width, _height;
   final _widgetKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
-    Gradient? GradienteInverso;
+
+    _width = MediaQuery.of(context).size.width;
+    _height = MediaQuery.of(context).size.height;
+    
     return Column(
       children: [
         Text(titulo, style: Theme.of(context).textTheme.headlineLarge),
@@ -131,10 +150,34 @@ class GrillaHexagonos extends StatelessWidget {
                               }
                             },
                             buildChild: (col, row) {
+                              int columna = col;
+                              if (dataMap![(row * columnas + 1).toString()] ==
+                                  "-1") {
+                                columna = col - 1;
+                              }
                               int bMU = row * columnas + col + 1;
                               String valorDist = dataMap![bMU.toString()]!;
+                              if (expandida) {
+                                if (!((row + 1) % 2 == 0 ||
+                                    (columna + 1) % 2 == 0)) {
+                                  if (row != 0) {
+                                    bMU = int.parse(
+                                        (((row * (columnas / 2)) / 2 +
+                                                1 +
+                                                (columna / 2))
+                                            .toString()));
+                                  } else {
+                                    bMU = int.parse(((bMU + 1) / 2).toString());
+                                  }
+                                }
+                              }
+
                               return valorDist == '-1'
                                   ? const Text("")
+                                  : (((row + 1) % 2 == 0 ||
+                                              (columna + 1) % 2 == 0) &&
+                                          expandida)
+                                      ? const Text("")
                                   : Tooltip(
                                     
                                       message: hits ? tooltipHits(bMU) : '',
@@ -154,6 +197,7 @@ class GrillaHexagonos extends StatelessWidget {
                                               //   borderRadius: BorderRadius.circular(8.0),
                                               //side: BorderSide(color: Colors.blue), // Borde del color deseado
                                               //),
+
                                               padding:
                                                   const EdgeInsets.all(0.0)),
                                           onPressed: () {
@@ -165,6 +209,7 @@ class GrillaHexagonos extends StatelessWidget {
                                                       const Text('Información'),
                                                   content:
                                                       SingleChildScrollView(
+                                                        
                                                     child: ListBody(
                                                       children: [
                                                         const Text(
@@ -228,6 +273,7 @@ class GrillaHexagonos extends StatelessWidget {
                                                   ),
                                                 )),
                                     );
+
                             }),
                       ),
                     ),
@@ -250,28 +296,32 @@ class GrillaHexagonos extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             for (double stop in [
-                              double.parse(max!.toStringAsFixed(1)),
+                              double.parse(min!.toStringAsFixed(1)),
                               double.parse((min! +
                                       4 *
+
                                           double.parse(((max! - min!) / 5)
                                               .toStringAsFixed(1)))
                                   .toStringAsFixed(1)),
                               double.parse((min! +
                                       3 *
+
                                           double.parse(((max! - min!) / 5)
                                               .toStringAsFixed(1)))
                                   .toStringAsFixed(1)),
                               double.parse((min! +
                                       2 *
+
                                           double.parse(((max! - min!) / 5)
                                               .toStringAsFixed(1)))
                                   .toStringAsFixed(1)),
                               double.parse((min! +
                                       1 *
+
                                           double.parse(((max! - min!) / 5)
                                               .toStringAsFixed(1)))
                                   .toStringAsFixed(1)),
-                              double.parse(min!.toStringAsFixed(1))
+                              double.parse(max!.toStringAsFixed(1))
                             ])
                               Text(
                                 '$stop',
