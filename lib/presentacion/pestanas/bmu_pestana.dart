@@ -13,7 +13,7 @@ class BmuPestana extends StatelessWidget {
     final datosProvider = context.read<DatosProvider>();
 
     return GrillaHexagonos(
-      titulo: "Mapa",
+      titulo: "BMU",
       gradiente: gradiente,
       dataMap: datosProvider.resultadoEntrenamiento.dataUdist,
       nombreColumnas: datosProvider.resultadoEntrenamiento.nombresColumnas,

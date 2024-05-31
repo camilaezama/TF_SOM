@@ -46,12 +46,12 @@ List<Gradient> listaGradientes = [
     begin: Alignment.topCenter, // comienza desde la parte superior
     end: Alignment.bottomCenter,
     colors: [
-      Color.fromARGB(255, 167, 237, 255),
-      Color.fromARGB(255, 84, 196, 250),
-      Color.fromARGB(255, 107, 179, 248),
-      Color.fromARGB(255, 158, 141, 245),
-      Color.fromARGB(255, 218, 96, 241),
-      Color.fromARGB(255,255,0,237),
+      Color.fromARGB(255, 40, 40, 40),
+      Color.fromARGB(255, 80, 80, 80),
+      Color.fromARGB(255, 120, 120, 120),
+      Color.fromARGB(255, 160, 160, 160),
+      Color.fromARGB(255, 200, 200, 200),
+      Color.fromARGB(255, 240, 240, 240),
     ],
     stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
   ),

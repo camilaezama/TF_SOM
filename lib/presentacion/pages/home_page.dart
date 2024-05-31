@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
 
   List<List<dynamic>> csvData = [];
   List<List<dynamic>> csvDataOriginal = [];
-  String botonAceptar = 'Entrenar';
+  String botonAceptar = 'Aceptar';
   String botonParam = 'Modificar Parametros';
 
   bool cargando = false;
