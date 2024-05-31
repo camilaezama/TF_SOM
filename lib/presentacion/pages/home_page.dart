@@ -36,12 +36,16 @@ class _HomePageState extends State<HomePage> {
 
   bool cargando = false;
 
-  List<String> opciones = [];
-  List<bool> seleccionadas = [];
-  List<String> opcionesSeleccionadas = [];
+  /// Lista con todos los nombres de las columnas, seleccionados o no
+  List<String> listaNombresColumnasOriginal = [];
 
-  List<String>? columnNames;
-  List<String>? columnNamesOriginal;
+  /// Lista de bool que contiene true o false dependiendo de si la columna esta seleccionada
+  List<bool> listaBoolColumnasSeleccionadas = [];
+  List<bool> listaBoolEtiquetasSeleccionadas = [];
+
+  /// Lista con nombre de las columnas seleccionadas
+  List<String> listaNombresColumnasSeleccionadas = [];
+
   late double _width, _height;
 
   void _loadCSVData(FilePickerResult result) async {
@@ -56,11 +60,20 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         csvDataOriginal = csvTable;
         csvData = csvTable;
-        columnNamesOriginal = csvData[0][0].toString().split(';');
-        columnNames = csvData[0][0].toString().split(';');
-        columnNames!.forEach((element) {
-          seleccionadas.add(true);
-        });
+        listaNombresColumnasOriginal = csvData[0][0].toString().split(';');
+        listaNombresColumnasSeleccionadas = csvData[0][0].toString().split(';');
+        // Inicializo lista de bools
+        listaBoolColumnasSeleccionadas = [];
+        for (int i = 0; i < listaNombresColumnasOriginal.length; i++) {
+          listaBoolColumnasSeleccionadas.add(true);
+        }
+        listaBoolEtiquetasSeleccionadas = [];
+        for (int i = 0; i < listaNombresColumnasOriginal.length; i++) {
+          listaBoolEtiquetasSeleccionadas.add(false);
+        }
+        // Para probar !!!!! TODO: BORRAR
+        listaBoolEtiquetasSeleccionadas[0] = true;
+        listaBoolEtiquetasSeleccionadas[1] = true;
       });
     } else {
       mostrarDialogTexto(
@@ -117,7 +130,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     IconButton(
-                      tooltip: 'Elegir gradiente',
+                        tooltip: 'Elegir gradiente',
                         onPressed: () {
                           showDialog<void>(
                             context: context,
@@ -133,28 +146,54 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
                 (csvData.isNotEmpty)
-                    ? IconButton(
-                        icon: const Icon(Icons.list),
-                        onPressed: () {
-                          opciones = columnNamesOriginal!;
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return DialogOpciones(
-                                opciones: opciones,
-                                seleccionadas: seleccionadas,
-                                actualizarOpciones: actualizarOpciones,
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TextButton.icon(
+                            label: const Text('Columnas'),
+                            icon: const Icon(Icons.list),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return DialogOpciones(
+                                    opciones: listaNombresColumnasOriginal,
+                                    seleccionadas:
+                                        listaBoolColumnasSeleccionadas,
+                                    actualizarOpciones: actualizarOpciones,
+                                  );
+                                },
                               );
                             },
-                          );
-                        },
-                        //onPressed: () => {_mostrarListaOpciones(context)},
+                            //onPressed: () => {_mostrarListaOpciones(context)},
+                          ),
+                          TextButton.icon(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return DialogOpciones(
+                                    tituloDialog:
+                                        'Seleccionar columnas que son etiquetas',
+                                    opciones: listaNombresColumnasOriginal,
+                                    seleccionadas:
+                                        listaBoolEtiquetasSeleccionadas,
+                                    actualizarOpciones:
+                                        actualizarOpcionesEtiquetas,
+                                  );
+                                },
+                              );
+                            },
+                            icon: const Icon(Icons.sell_outlined),
+                            label: const Text('Etiquetas'),
+                          )
+                        ],
                       )
                     : const SizedBox.shrink(),
                 (csvData.isNotEmpty)
                     ? TablaDatos(
                         csvData: csvData,
-                        columnNames: columnNames,
+                        columnNames: listaNombresColumnasSeleccionadas,
                       )
                     : const SizedBox.shrink(),
                 Center(
@@ -214,46 +253,46 @@ class _HomePageState extends State<HomePage> {
   }
 
   void actualizarOpciones(List<bool> opcionesSeleccionadasBool) {
-    seleccionadas = opcionesSeleccionadasBool;
+    listaBoolColumnasSeleccionadas = opcionesSeleccionadasBool;
 
-    List<List<dynamic>> filteredData = [];
+    // A partir de los datos originales y las col seleccionadas, devuelve datos solo con col seleccionadas
+    List<List<dynamic>> filteredData = filtrarCsvData(opcionesSeleccionadasBool,
+        listaNombresColumnasOriginal, csvDataOriginal);
 
-    List<dynamic> headerRow = [];
-
-    for (int i = 0; i < columnNamesOriginal!.length; i++) {
-      if (seleccionadas[i]) {
-        headerRow.add(columnNamesOriginal![i]);
-      }
-    }
-
-    for (List<dynamic> fila in csvDataOriginal) {
-      List<String> columnas = fila[0].split(';');
-      List<String> filaFiltrada = [];
-
-      for (int i = 0; i < columnas.length; i++) {
-        if (seleccionadas[i]) {
-          filaFiltrada.add(columnas[i]);
-        }
-      }
-
-      List<dynamic> lista = [filaFiltrada.join(';')];
-      filteredData.add(lista);
-    }
-
-    seleccionadas = opcionesSeleccionadasBool;
-
+    // Armo lista de nombres con columnas seleccionadas
     List<String> seleccionadasList = [];
-
-    for (int i = 0; i < opciones.length; i++) {
-      if (seleccionadas[i]) {
-        seleccionadasList.add(opciones[i]);
+    for (int i = 0; i < listaNombresColumnasOriginal.length; i++) {
+      if (listaBoolColumnasSeleccionadas[i]) {
+        seleccionadasList.add(listaNombresColumnasOriginal[i]);
       }
     }
+
     setState(() {
-      opcionesSeleccionadas = seleccionadasList;
+      listaNombresColumnasSeleccionadas = seleccionadasList;
       csvData = filteredData;
-      columnNames = opcionesSeleccionadas;
     });
+  }
+
+  void actualizarOpcionesEtiquetas(List<bool> opcionesSeleccionadasBool) {
+    listaBoolEtiquetasSeleccionadas = opcionesSeleccionadasBool;
+
+    setState(() {});
+  }
+
+  // junto ambas listas de bool y filtro csv data origin
+  List<List<dynamic>> filtroColumnasSeleccionadasYEtiquetas() {
+    List<bool> columnasATenerEnCuenta = [];
+    for (int index = 0; index < listaNombresColumnasOriginal.length; index++) {
+      if (listaBoolEtiquetasSeleccionadas[index] == true ||
+          listaBoolColumnasSeleccionadas[index] == false) {
+        columnasATenerEnCuenta.add(false);
+      } else {
+        columnasATenerEnCuenta.add(true);
+      }
+    }
+    List<List<dynamic>> filteredData = filtrarCsvData(columnasATenerEnCuenta,
+        listaNombresColumnasOriginal, csvDataOriginal);
+    return filteredData;
   }
 
   void _llamadaAPI() async {
@@ -261,9 +300,17 @@ class _HomePageState extends State<HomePage> {
     final datosProvider = context.read<DatosProvider>();
 
     if (csvData.isNotEmpty) {
-      List<Map<String, String>> data = csvToData(csvData);
 
+      //TODO: Si hay columnas de string, preguntar si se quieren seleccionar como etiquetas o algo asi
+      
+      List<List<dynamic>> filteredCsv = filtroColumnasSeleccionadasYEtiquetas();
+      List<Map<String, String>> data = csvToData(filteredCsv);
       String jsonResult = jsonEncode(data);
+
+      List<List<dynamic>> filteredEtiquetas = filtrarCsvData(listaBoolEtiquetasSeleccionadas,
+        listaNombresColumnasOriginal, csvDataOriginal);
+      List<Map<String, String>> dataEtiquetas = csvToData(filteredEtiquetas);
+      String jsonResultEtiquetas = jsonEncode(dataEtiquetas);
 
       try {
         String tipoLlamada = "bmu";
@@ -274,7 +321,7 @@ class _HomePageState extends State<HomePage> {
         });
 
         ResultadoEntrenamientoModel resultadoEntrenamiento = await datosProvider
-            .entrenamiento(tipoLlamada, parametros, jsonResult);
+            .entrenamiento(tipoLlamada, parametros, jsonResult, jsonResultEtiquetas);
 
         setState(() {
           Navigator.pushNamed(
@@ -285,6 +332,7 @@ class _HomePageState extends State<HomePage> {
           cargando = false;
         });
       } catch (e) {
+        print(e);
         mostrarDialogTexto(
             context, 'Error', 'Error en la  llamada de servicio: $e');
         setState(() {
@@ -314,7 +362,7 @@ class _HomePageState extends State<HomePage> {
       });
 
       ResultadoEntrenamientoModel resultadoEntrenamiento = await datosProvider
-          .entrenamiento(tipoLlamada, parametros, jsonResult);
+          .entrenamiento(tipoLlamada, parametros, jsonResult, "");
 
       setState(() {
         Navigator.pushNamed(
@@ -333,3 +381,5 @@ class _HomePageState extends State<HomePage> {
     }
   }
 }
+
+
