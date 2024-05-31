@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -57,6 +58,12 @@ class GrillaHexagonos extends StatelessWidget {
   final bool mostrarBotonImprimir;
   final double? min, max;
   final bool expandida;
+  final List<Map<String, dynamic>> etiquetas;
+  final Map<int, Map<String, List<String>>>? mapaBMUconEtiquetas;
+  final Map<String, List<String>>? etiquetasMap;
+  final Map<String, Color>? mapaColores;
+  final String? selectedKey;
+
   GrillaHexagonos(
       {super.key,
       required this.gradiente,
@@ -74,14 +81,21 @@ class GrillaHexagonos extends StatelessWidget {
       this.mostrarBotonImprimir = true,
       required this.min,
       required this.max,
-      this.expandida = false});
+      this.expandida = false,
+        this.etiquetas = const [],
+      this.mapaBMUconEtiquetas,
+      this.etiquetasMap,
+      this.selectedKey,
+      this.mapaColores,});
   late double _width, _height;
   final _widgetKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
+
     _width = MediaQuery.of(context).size.width;
     _height = MediaQuery.of(context).size.height;
+    
     return Column(
       children: [
         Text(titulo, style: Theme.of(context).textTheme.headlineLarge),
@@ -164,7 +178,10 @@ class GrillaHexagonos extends StatelessWidget {
                                               (columna + 1) % 2 == 0) &&
                                           expandida)
                                       ? const Text("")
-                                      : ElevatedButton(
+                                  : Tooltip(
+                                    
+                                      message: hits ? tooltipHits(bMU) : '',
+                                      child: ElevatedButton(
                                           style: ElevatedButton.styleFrom(
                                               textStyle: const TextStyle(
                                                 // Tamaño del texto
@@ -180,7 +197,9 @@ class GrillaHexagonos extends StatelessWidget {
                                               //   borderRadius: BorderRadius.circular(8.0),
                                               //side: BorderSide(color: Colors.blue), // Borde del color deseado
                                               //),
-                                              padding: EdgeInsets.all(0.0)),
+
+                                              padding:
+                                                  const EdgeInsets.all(0.0)),
                                           onPressed: () {
                                             showDialog<void>(
                                               context: context,
@@ -188,49 +207,44 @@ class GrillaHexagonos extends StatelessWidget {
                                                 return AlertDialog(
                                                   title:
                                                       const Text('Información'),
-                                                  content: SizedBox(
-                                                    width: _width / 3,
-                                                    // height: _height / 3,
-                                                    child:
-                                                        SingleChildScrollView(
-                                                      child: ListBody(
-                                                        children: [
-                                                          const Text(
-                                                              'Este es un cuadro de diálogo de ejemplo.'),
-                                                          Text('BMU = $bMU'),
-                                                          Text(
-                                                              'Udist = $valorDist'),
-                                                          const Text(
-                                                            "Codebook",
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                            style: TextStyle(
-                                                                color: Color
-                                                                    .fromARGB(
-                                                                        255,
-                                                                        52,
-                                                                        56,
-                                                                        253),
-                                                                fontSize: 30.0),
-                                                          ),
-                                                          Table(
-                                                            border: TableBorder.all(
-                                                                color: Colors
-                                                                    .black,
-                                                                style:
-                                                                    BorderStyle
-                                                                        .solid,
-                                                                width: 1),
-                                                            children:
-                                                                crearTablaDatos(
-                                                                    nombreColumnas,
-                                                                    (codebook[
-                                                                        bMU -
-                                                                            1]),
-                                                                    titulo),
-                                                          ),
-                                                        ],
-                                                      ),
+                                                  content:
+                                                      SingleChildScrollView(
+                                                        
+                                                    child: ListBody(
+                                                      children: [
+                                                        const Text(
+                                                            'Este es un cuadro de diálogo de ejemplo.'),
+                                                        Text('BMU = $bMU'),
+                                                        Text(
+                                                            'Udist = $valorDist'),
+                                                        const Text(
+                                                          "Codebook",
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: TextStyle(
+                                                              color: Color
+                                                                  .fromARGB(
+                                                                      255,
+                                                                      52,
+                                                                      56,
+                                                                      253),
+                                                              fontSize: 30.0),
+                                                        ),
+                                                        Table(
+                                                          border: TableBorder.all(
+                                                              color:
+                                                                  Colors.black,
+                                                              style: BorderStyle
+                                                                  .solid,
+                                                              width: 1),
+                                                          children:
+                                                              crearTablaDatos(
+                                                                  nombreColumnas,
+                                                                  (codebook[
+                                                                      bMU -
+                                                                          1])),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
                                                   actions: [
@@ -247,76 +261,80 @@ class GrillaHexagonos extends StatelessWidget {
                                               },
                                             );
                                           },
-                                          child: Text(
-                                            hits ? hits_count(bMU) : '',
-                                            //'',
-                                            //'123456789',
-                                            //'$BMU',
-                                            style: const TextStyle(
-                                              color: Colors.black,
-                                            ),
-                                          ));
+                                          child: hits
+                                              ? widgetHits(bMU)
+                                              : const Text(
+                                                  '',
+                                                  //'',
+                                                  //'123456789',
+                                                  //'$BMU',
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                  ),
+                                                )),
+                                    );
+
                             }),
                       ),
                     ),
                     if (mostrarGradiente)
                       Container(
-                        width: 100.0, // ajusta la altura según tus necesidades
-                        decoration: BoxDecoration(gradient: gradiente
-                            // gradient: LinearGradient(
-                            //   begin: Alignment
-                            //       .topCenter, // comienza desde la parte superior
-                            //   end: Alignment
-                            //       .bottomCenter, // termina en la parte inferior
-                            //   colors: [
-                            //     Colors.red,
-                            //     Colors.orange,
-                            //     Colors.yellow,
-                            //     Colors.green,
-                            //     Colors.blue,
-                            //     Color.fromARGB(255, 8, 82, 143),
-                            //   ],
-                            //   stops: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
-                            // ),
-                            ),
+                        width: 80.0, // ajusta la altura según tus necesidades
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment
+                                .topCenter, // comienza desde la parte superior
+                            end: Alignment
+                                .bottomCenter, // termina en la parte inferior
+                            colors: gradiente!.colors.reversed
+                                .toList(), //para que quede bien (arriba hacia abajo)
+                            stops: gradiente!.stops,
+                          ),
+                        ),
+
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             for (double stop in [
                               double.parse(min!.toStringAsFixed(1)),
                               double.parse((min! +
-                                      1 *
-                                          double.parse(((max! - min!) / 5)
-                                              .toStringAsFixed(1)))
-                                  .toStringAsFixed(1)),
-                              double.parse((min! +
-                                      2 *
+                                      4 *
+
                                           double.parse(((max! - min!) / 5)
                                               .toStringAsFixed(1)))
                                   .toStringAsFixed(1)),
                               double.parse((min! +
                                       3 *
+
                                           double.parse(((max! - min!) / 5)
                                               .toStringAsFixed(1)))
                                   .toStringAsFixed(1)),
                               double.parse((min! +
-                                      4 *
+                                      2 *
+
+                                          double.parse(((max! - min!) / 5)
+                                              .toStringAsFixed(1)))
+                                  .toStringAsFixed(1)),
+                              double.parse((min! +
+                                      1 *
+
                                           double.parse(((max! - min!) / 5)
                                               .toStringAsFixed(1)))
                                   .toStringAsFixed(1)),
                               double.parse(max!.toStringAsFixed(1))
                             ])
                               Text(
-                                '${stop}',
+                                '$stop',
                                 style: (gradiente!.colors.contains(
-                                            Color.fromARGB(255, 0, 0, 0)) ||
+                                            const Color.fromARGB(
+                                                255, 0, 0, 0)) ||
                                         gradiente!.colors.contains(
-                                            Color.fromARGB(255, 40, 40, 40)))
-                                    ? TextStyle(
+                                            const Color.fromARGB(
+                                                255, 40, 40, 40)))
+                                    ? const TextStyle(
                                         color: Color.fromARGB(255, 247, 255, 9))
-                                    : TextStyle(
-                                        color:
-                                            const Color.fromARGB(255, 0, 0, 0)),
+                                    : const TextStyle(
+                                        color: Color.fromARGB(255, 0, 0, 0)),
                               ),
                           ],
                         ),
@@ -331,14 +349,70 @@ class GrillaHexagonos extends StatelessWidget {
     );
   }
 
-  String hits_count(int bmu) {
-    String cant;
-    if (hitsMap!.keys.contains(bmu)) {
-      cant = hitsMap![bmu].toString();
-    } else {
-      cant = "";
+  // Un solo color para cada circulo
+  // Widget widgetHits(int bmu) {
+  //   if (mapaBMUconEtiquetas!.containsKey(bmu)) {
+  //     final etiquetas = mapaBMUconEtiquetas![bmu]![selectedKey];
+  //     if (etiquetas != null && etiquetas.isNotEmpty) {
+  //       final primerColor = mapaColores![
+  //           etiquetas[0]]; // Obtiene el color de la primera etiqueta
+  //       return CircleAvatar(
+  //         backgroundColor: primerColor,
+  //         radius: 10, // Ajusta el tamaño del círculo según sea necesario
+  //       );
+  //     }
+  //   }
+  //   return SizedBox(); // Retorna un widget vacío si el BMU no tiene etiquetas o no existe en el mapa
+  // }
+
+  /// Multiples colores en cada circulo
+  Widget widgetHits(int bmu) {
+  if (mapaBMUconEtiquetas!.containsKey(bmu)) {
+    final etiquetas = mapaBMUconEtiquetas![bmu]![selectedKey];
+    if (etiquetas != null && etiquetas.isNotEmpty) {
+      final List<Color> colores = etiquetas.map((etiqueta) => mapaColores![etiqueta]!).toList();
+      if (colores.length > 1) {
+        return CustomPaint(
+          size: const Size(20, 20), // Tamaño del círculo
+          painter: MultipleCirclePainter(colores),
+        );
+      } else if (colores.length == 1) {
+        // Si solo hay un color, mostrar un círculo con ese color
+        return Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.black, width: 1.0), // Borde negro
+          ),
+          child: CircleAvatar(
+            backgroundColor: colores[0],
+            radius: 10, // Ajusta el tamaño del círculo según sea necesario
+          ),
+        );
+      }
     }
-    return cant;
+  }
+  return SizedBox(); // Retorna un widget vacío si el BMU no tiene etiquetas o no existe en el mapa
+}
+
+  String tooltipHits(int bmu) {
+    if (mapaBMUconEtiquetas!.containsKey(bmu)) {
+      final bmuInfo = mapaBMUconEtiquetas![bmu]!;
+      final StringBuffer infoBuffer = StringBuffer();
+
+      bmuInfo.forEach((key, value) {
+        infoBuffer.write('$key: ');
+        infoBuffer.writeAll(value, ', ');
+        // Agregar un salto de línea solo si no es la última clave
+        if (key != bmuInfo.keys.last) {
+          infoBuffer.writeln();
+        }
+      });
+
+      return infoBuffer.toString();
+    } else {
+      // Si el BMU no existe en el mapa, retornar un string vacío
+      return '';
+    }
   }
 
   void save() async {
@@ -357,5 +431,68 @@ class GrillaHexagonos extends StatelessWidget {
       ..click();
 
     html.Url.revokeObjectUrl(url);
+  }
+}
+
+// class MultipleCirclePainter extends CustomPainter {
+//   final List<Color> colores;
+
+//   MultipleCirclePainter(this.colores);
+
+//   @override
+//   void paint(Canvas canvas, Size size) {
+//     double startAngle = 0;
+//     double sweepAngle = (2 * pi) / colores.length;
+//     double radius = size.width / 2;
+
+//     for (int i = 0; i < colores.length; i++) {
+//       Paint paint = Paint()..color = colores[i];
+
+//       Rect rect = Rect.fromCircle(center: Offset(radius, radius), radius: radius);
+//       canvas.drawArc(rect, startAngle, sweepAngle, true, paint);
+
+//       startAngle += sweepAngle;
+//     }
+//   }
+
+//   @override
+//   bool shouldRepaint(covariant CustomPainter oldDelegate) {
+//     return true;
+//   }
+// }
+
+
+class MultipleCirclePainter extends CustomPainter {
+  final List<Color> colores;
+
+  MultipleCirclePainter(this.colores);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    double startAngle = 0;
+    double sweepAngle = (2 * pi) / colores.length;
+    double radius = size.width / 2;
+
+    // Dibujar el borde negro alrededor del círculo
+    Paint borderPaint = Paint()
+      ..color = Colors.black
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0;
+    canvas.drawCircle(Offset(radius, radius), radius, borderPaint);
+
+    // Dibujar los círculos internos con los colores
+    for (int i = 0; i < colores.length; i++) {
+      Paint paint = Paint()..color = colores[i];
+
+      Rect rect = Rect.fromCircle(center: Offset(radius, radius), radius: radius);
+      canvas.drawArc(rect, startAngle, sweepAngle, true, paint);
+
+      startAngle += sweepAngle;
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
   }
 }

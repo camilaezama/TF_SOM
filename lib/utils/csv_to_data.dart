@@ -54,3 +54,33 @@ List<Map<String, String>> csvToData(List<List<dynamic>> csvData) {
   List<Map<String, String>> result = convertRowsToMap(rows);
   return result;
 }
+
+
+/// A partir de la lista de bool con las columnas seleccionadas, filtra csv data para que contenga las columnas seleccionadas
+List<List<dynamic>> filtrarCsvData(List<bool> listaBoolColumnasSeleccionadas,
+    List<String> columnNamesOriginal, List<List<dynamic>> csvDataOriginal) {
+  List<List<dynamic>> filteredData = [];
+  List<dynamic> headerRow = [];
+
+  for (int i = 0; i < columnNamesOriginal.length; i++) {
+    if (listaBoolColumnasSeleccionadas[i]) {
+      headerRow.add(columnNamesOriginal[i]);
+    }
+  }
+
+  for (List<dynamic> fila in csvDataOriginal) {
+    List<String> columnas = fila[0].split(';');
+    List<String> filaFiltrada = [];
+
+    for (int i = 0; i < columnas.length; i++) {
+      if (listaBoolColumnasSeleccionadas[i]) {
+        filaFiltrada.add(columnas[i]);
+      }
+    }
+
+    List<dynamic> lista = [filaFiltrada.join(';')];
+    filteredData.add(lista);
+  }
+
+  return filteredData;
+}

@@ -1,52 +1,79 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:TF_SOM_UNMdP/models/resultado_entrenamiento_model.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'dart:html' as html;
 
 class DatosProvider extends ChangeNotifier {
+  ResultadoEntrenamientoModel resultadoEntrenamiento =
+      ResultadoEntrenamientoModel();
 
-  ResultadoEntrenamientoModel resultadoEntrenamiento = ResultadoEntrenamientoModel();
+  Future<ResultadoEntrenamientoModel> entrenamiento(
+      String tipoLlamada,
+      Map<String, dynamic> parametros,
+      String jsonResult,
+      String jsonResultEtiquetas) async {
+    Map<String, dynamic> decodedJson = await llamadaApiEntrenamiento(
+        tipoLlamada, parametros, jsonResult, jsonResultEtiquetas);
 
-  Future<ResultadoEntrenamientoModel> entrenamiento(String tipoLlamada,
-      Map<String, dynamic> parametros, String jsonResult) async {
-    
-    Map<String, dynamic> decodedJson = await llamadaApiEntrenamiento(tipoLlamada,parametros,jsonResult);
-
-    ResultadoEntrenamientoModel resultado = procesarDatos(decodedJson,tipoLlamada, parametros);
+    ResultadoEntrenamientoModel resultado =
+        procesarDatos(decodedJson, tipoLlamada, parametros);
 
     return resultado;
   }
 
-  Future<Map<String, dynamic>> llamadaApiEntrenamiento(String tipoLlamada,
-      Map<String, dynamic> parametros, String jsonResult) async {
+  Future<Map<String, dynamic>> llamadaApiEntrenamiento(
+      String tipoLlamada,
+      Map<String, dynamic> parametros,
+      String jsonResult,
+      String jsonResultEtiquetas) async {
     var url = Uri.parse('http://localhost:7777/$tipoLlamada');
 
     var response = await http.post(url,
         headers: {'Accept': '/*'},
-        body: jsonEncode(
-            {"datos": jsonResult, 
-            "tipo": tipoLlamada, 
-            "params": parametros}));
+        body: jsonEncode({
+          "datos": jsonResult,
+          "tipo": tipoLlamada,
+          "params": parametros,
+          "etiquetas": jsonResultEtiquetas
+        }));
+
+    // Descargar response.body para copiar en resultadoPrueba.json
+      // final bytes = utf8.encode(response.body);
+      // final blob = html.Blob([bytes]);
+      // final urlAux = html.Url.createObjectUrlFromBlob(blob);
+      // final anchor = html.AnchorElement(href: urlAux)
+      //   ..setAttribute("download", "response_body.txt")
+      //   ..click();
+      // html.Url.revokeObjectUrl(urlAux);
+      // print('Archivo descargado');
 
     Map<String, dynamic> decodedJson = json.decode(response.body);
+    //print(response.body);
 
     return decodedJson;
   }
 
-  ResultadoEntrenamientoModel procesarDatos(Map<String, dynamic> decodedJson, String tipoLlamada, Map<String, dynamic> parametros) {
+  ResultadoEntrenamientoModel procesarDatos(Map<String, dynamic> decodedJson,
+      String tipoLlamada, Map<String, dynamic> parametros) {
     Map<String, dynamic> NeuronsJSON = decodedJson["Neurons"];
     List<dynamic> Codebook = decodedJson["Codebook"];
     List<dynamic> UmatJSON = decodedJson["UMat"];
 
     Map<String, dynamic> HitsJSON = decodedJson["Hits"];
-    
+    //Map<String, dynamic> HitsLabelsJSON = decodedJson["HitsLabels"];  
+    Map<String, dynamic> etiquetasJSON = decodedJson["Etiquetas"];
     var tempHitsMap = procesarHits(HitsJSON);
+    //var tempHitsLabelsMap = null;// procesarHitsLabels(HitsLabelsJSON);
     var tempMapaRta = procesarBmus(NeuronsJSON, tipoLlamada);
     var tempDataUdist = tempMapaRta["Udist"]!;
     var tempMapaRtaUmat = procesarUmat(UmatJSON)!;
     var tempCodebook = procesarCodebook(Codebook);
-    var tempNombresColumnas = procesarNombresColumnas(tempMapaRta);  
+    var tempNombresColumnas = procesarNombresColumnas(tempMapaRta);
+    var etiquetas = procesarEtiquetas(etiquetasJSON);
 
     ResultadoEntrenamientoModel resultado = ResultadoEntrenamientoModel(
       codebook: tempCodebook,
@@ -57,11 +84,37 @@ class DatosProvider extends ChangeNotifier {
       nombresColumnas: tempNombresColumnas,
       filas: int.parse(parametros["filas"]),
       columnas: int.parse(parametros["columnas"]),
-    );  
+      etiquetas: etiquetas,
+    );
 
     resultadoEntrenamiento = resultado;
 
     return resultado;
+  }
+
+  List<Map<String, dynamic>> procesarEtiquetas(
+      Map<String, dynamic> etiquetasJSON) {
+    //print('Etiquetas');
+    //print(etiquetasJSON);
+    //print('fin');
+    List<Map<String, dynamic>> listaDeMapas = [];
+
+    int numRows = etiquetasJSON["Dato"].length; // Obtener el número de filas
+
+    for (int i = 0; i < numRows; i++) {
+      Map<String, dynamic> nuevoMapa = {
+        "Dato": etiquetasJSON["Dato"][i.toString()],
+        "BMU": etiquetasJSON["BMU"][i.toString()]
+      };
+      etiquetasJSON.forEach((key, value) {
+        if (key != "Dato" && key != "BMU") {
+          nuevoMapa[key] = value[i.toString()];
+        }
+      });
+      listaDeMapas.add(nuevoMapa);
+    }
+
+    return listaDeMapas;
   }
 
   Map<int, int> procesarHits(Map<String, dynamic> HitsJSON) {
@@ -69,6 +122,13 @@ class DatosProvider extends ChangeNotifier {
         HitsJSON.map((key, value) => MapEntry(int.parse(key), value)));
     return hitsMap;
   }
+
+  /* Map<int, List> procesarHitsLabels(Map<String, dynamic> HitsLabelsJSON) {
+    Map<int, List> hitsLabelsMap = Map<int, List>.from(
+        HitsLabelsJSON.map((key, value) => MapEntry(int.parse(key), value)));
+    print(hitsLabelsMap);
+    return hitsLabelsMap;
+  } */
 
   Map<String, String>? procesarUmat(List<dynamic> UmatJSON) {
     /// Procesamiento de datos para UMat
@@ -99,7 +159,8 @@ class DatosProvider extends ChangeNotifier {
     return lista;
   }
 
-  Map<String, Map<String, String>> procesarBmus(Map<String, dynamic> NeuronsJSON, String tipoLlamada) {
+  Map<String, Map<String, String>> procesarBmus(
+      Map<String, dynamic> NeuronsJSON, String tipoLlamada) {
     /// Procesamiento de datos para BMUs
     Map<String, Map<String, String>> mapaRta = {};
 
