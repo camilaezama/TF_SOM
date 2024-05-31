@@ -64,38 +64,38 @@ class GrillaHexagonos extends StatelessWidget {
   final Map<String, Color>? mapaColores;
   final String? selectedKey;
 
-  GrillaHexagonos(
-      {super.key,
-      required this.gradiente,
-      this.dataMap,
-      required this.filas,
-      required this.columnas,
-      required this.titulo,
-      required this.codebook,
-      required this.nombreColumnas,
-      this.clusters,
-      this.paddingEntreHexagonos = 0.6,
-      this.hitsMap,
-      this.hits = false,
-      this.mostrarGradiente = true,
-      this.mostrarBotonImprimir = true,
-      required this.min,
-      required this.max,
-      this.expandida = false,
-        this.etiquetas = const [],
-      this.mapaBMUconEtiquetas,
-      this.etiquetasMap,
-      this.selectedKey,
-      this.mapaColores,});
+  GrillaHexagonos({
+    super.key,
+    required this.gradiente,
+    this.dataMap,
+    required this.filas,
+    required this.columnas,
+    required this.titulo,
+    required this.codebook,
+    required this.nombreColumnas,
+    this.clusters,
+    this.paddingEntreHexagonos = 0.6,
+    this.hitsMap,
+    this.hits = false,
+    this.mostrarGradiente = true,
+    this.mostrarBotonImprimir = true,
+    required this.min,
+    required this.max,
+    this.expandida = false,
+    this.etiquetas = const [],
+    this.mapaBMUconEtiquetas,
+    this.etiquetasMap,
+    this.selectedKey,
+    this.mapaColores,
+  });
   late double _width, _height;
   final _widgetKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
-
     _width = MediaQuery.of(context).size.width;
     _height = MediaQuery.of(context).size.height;
-    
+
     return Column(
       children: [
         Text(titulo, style: Theme.of(context).textTheme.headlineLarge),
@@ -178,102 +178,107 @@ class GrillaHexagonos extends StatelessWidget {
                                               (columna + 1) % 2 == 0) &&
                                           expandida)
                                       ? const Text("")
-                                  : Tooltip(
-                                    
-                                      message: hits ? tooltipHits(bMU) : '',
-                                      child: ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                              textStyle: const TextStyle(
-                                                // Tamaño del texto
-                                                color: Colors
-                                                    .black, // Color del texto
-                                              ),
-                                              backgroundColor: Colors
-                                                  .transparent, // Fondo transparente
-                                              //onPrimary: Colors.blue, // Color del texto cuando se presiona
-                                              elevation:
-                                                  0, // Elimina la sombra del botón
-                                              // shape: RoundedRectangleBorder(
-                                              //   borderRadius: BorderRadius.circular(8.0),
-                                              //side: BorderSide(color: Colors.blue), // Borde del color deseado
-                                              //),
+                                      : Tooltip(
+                                          message: hits ? tooltipHits(bMU) : '',
+                                          child: ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                  textStyle: const TextStyle(
+                                                    // Tamaño del texto
+                                                    color: Colors
+                                                        .black, // Color del texto
+                                                  ),
+                                                  backgroundColor: Colors
+                                                      .transparent, // Fondo transparente
+                                                  //onPrimary: Colors.blue, // Color del texto cuando se presiona
+                                                  elevation:
+                                                      0, // Elimina la sombra del botón
+                                                  // shape: RoundedRectangleBorder(
+                                                  //   borderRadius: BorderRadius.circular(8.0),
+                                                  //side: BorderSide(color: Colors.blue), // Borde del color deseado
+                                                  //),
 
-                                              padding:
-                                                  const EdgeInsets.all(0.0)),
-                                          onPressed: () {
-                                            showDialog<void>(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return AlertDialog(
-                                                  title:
-                                                      const Text('Información'),
-                                                  content:
-                                                      SingleChildScrollView(
-                                                        
-                                                    child: ListBody(
-                                                      children: [
-                                                        const Text(
-                                                            'Este es un cuadro de diálogo de ejemplo.'),
-                                                        Text('BMU = $bMU'),
-                                                        Text(
-                                                            'Udist = $valorDist'),
-                                                        const Text(
-                                                          "Codebook",
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          style: TextStyle(
-                                                              color: Color
-                                                                  .fromARGB(
-                                                                      255,
-                                                                      52,
-                                                                      56,
-                                                                      253),
-                                                              fontSize: 30.0),
+                                                  padding: const EdgeInsets.all(
+                                                      0.0)),
+                                              onPressed: () {
+                                                showDialog<void>(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AlertDialog(
+                                                      title: const Text(
+                                                          'Información'),
+                                                      content: SizedBox(
+                                                        width: _width / 3,
+                                                        child:
+                                                            SingleChildScrollView(
+                                                          child: ListBody(
+                                                            children: [
+                                                              const Text(
+                                                                  'Este es un cuadro de diálogo de ejemplo.'),
+                                                              Text(
+                                                                  'BMU = $bMU'),
+                                                              Text(
+                                                                  'Udist = $valorDist'),
+                                                              const Text(
+                                                                "Codebook",
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                                style: TextStyle(
+                                                                    color: Color
+                                                                        .fromARGB(
+                                                                            255,
+                                                                            52,
+                                                                            56,
+                                                                            253),
+                                                                    fontSize:
+                                                                        30.0),
+                                                              ),
+                                                              Table(
+                                                                border: TableBorder.all(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    style: BorderStyle
+                                                                        .solid,
+                                                                    width: 1),
+                                                                children: crearTablaDatos(
+                                                                    nombreColumnas,
+                                                                    (codebook[
+                                                                        bMU -
+                                                                            1]),
+                                                                    titulo),
+                                                              ),
+                                                            ],
+                                                          ),
                                                         ),
-                                                        Table(
-                                                          border: TableBorder.all(
-                                                              color:
-                                                                  Colors.black,
-                                                              style: BorderStyle
-                                                                  .solid,
-                                                              width: 1),
-                                                          children:
-                                                              crearTablaDatos(
-                                                                  nombreColumnas,
-                                                                  (codebook[
-                                                                      bMU -
-                                                                          1])),
+                                                      ),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop(); // Cerrar el cuadro de diálogo
+                                                          },
+                                                          child: const Text(
+                                                              'Cerrar'),
                                                         ),
                                                       ],
-                                                    ),
-                                                  ),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () {
-                                                        Navigator.of(context)
-                                                            .pop(); // Cerrar el cuadro de diálogo
-                                                      },
-                                                      child:
-                                                          const Text('Cerrar'),
-                                                    ),
-                                                  ],
+                                                    );
+                                                  },
                                                 );
                                               },
-                                            );
-                                          },
-                                          child: hits
-                                              ? widgetHits(bMU)
-                                              : const Text(
-                                                  '',
-                                                  //'',
-                                                  //'123456789',
-                                                  //'$BMU',
-                                                  style: TextStyle(
-                                                    color: Colors.black,
-                                                  ),
-                                                )),
-                                    );
-
+                                              child: hits
+                                                  ? widgetHits(bMU)
+                                                  : const Text(
+                                                      '',
+                                                      //'',
+                                                      //'123456789',
+                                                      //'$BMU',
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                      ),
+                                                    )),
+                                        );
                             }),
                       ),
                     ),
@@ -296,32 +301,28 @@ class GrillaHexagonos extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             for (double stop in [
-                              double.parse(min!.toStringAsFixed(1)),
+                              double.parse(max!.toStringAsFixed(1)),
                               double.parse((min! +
                                       4 *
-
                                           double.parse(((max! - min!) / 5)
                                               .toStringAsFixed(1)))
                                   .toStringAsFixed(1)),
                               double.parse((min! +
                                       3 *
-
                                           double.parse(((max! - min!) / 5)
                                               .toStringAsFixed(1)))
                                   .toStringAsFixed(1)),
                               double.parse((min! +
                                       2 *
-
                                           double.parse(((max! - min!) / 5)
                                               .toStringAsFixed(1)))
                                   .toStringAsFixed(1)),
                               double.parse((min! +
                                       1 *
-
                                           double.parse(((max! - min!) / 5)
                                               .toStringAsFixed(1)))
                                   .toStringAsFixed(1)),
-                              double.parse(max!.toStringAsFixed(1))
+                              double.parse(min!.toStringAsFixed(1)),
                             ])
                               Text(
                                 '$stop',
@@ -367,32 +368,34 @@ class GrillaHexagonos extends StatelessWidget {
 
   /// Multiples colores en cada circulo
   Widget widgetHits(int bmu) {
-  if (mapaBMUconEtiquetas!.containsKey(bmu)) {
-    final etiquetas = mapaBMUconEtiquetas![bmu]![selectedKey];
-    if (etiquetas != null && etiquetas.isNotEmpty) {
-      final List<Color> colores = etiquetas.map((etiqueta) => mapaColores![etiqueta]!).toList();
-      if (colores.length > 1) {
-        return CustomPaint(
-          size: const Size(20, 20), // Tamaño del círculo
-          painter: MultipleCirclePainter(colores),
-        );
-      } else if (colores.length == 1) {
-        // Si solo hay un color, mostrar un círculo con ese color
-        return Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.black, width: 1.0), // Borde negro
-          ),
-          child: CircleAvatar(
-            backgroundColor: colores[0],
-            radius: 10, // Ajusta el tamaño del círculo según sea necesario
-          ),
-        );
+    if (mapaBMUconEtiquetas!.containsKey(bmu)) {
+      final etiquetas = mapaBMUconEtiquetas![bmu]![selectedKey];
+      if (etiquetas != null && etiquetas.isNotEmpty) {
+        final List<Color> colores =
+            etiquetas.map((etiqueta) => mapaColores![etiqueta]!).toList();
+        if (colores.length > 1) {
+          return CustomPaint(
+            size: const Size(20, 20), // Tamaño del círculo
+            painter: MultipleCirclePainter(colores),
+          );
+        } else if (colores.length == 1) {
+          // Si solo hay un color, mostrar un círculo con ese color
+          return Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border:
+                  Border.all(color: Colors.black, width: 1.0), // Borde negro
+            ),
+            child: CircleAvatar(
+              backgroundColor: colores[0],
+              radius: 10, // Ajusta el tamaño del círculo según sea necesario
+            ),
+          );
+        }
       }
     }
+    return SizedBox(); // Retorna un widget vacío si el BMU no tiene etiquetas o no existe en el mapa
   }
-  return SizedBox(); // Retorna un widget vacío si el BMU no tiene etiquetas o no existe en el mapa
-}
 
   String tooltipHits(int bmu) {
     if (mapaBMUconEtiquetas!.containsKey(bmu)) {
@@ -461,7 +464,6 @@ class GrillaHexagonos extends StatelessWidget {
 //   }
 // }
 
-
 class MultipleCirclePainter extends CustomPainter {
   final List<Color> colores;
 
@@ -484,7 +486,8 @@ class MultipleCirclePainter extends CustomPainter {
     for (int i = 0; i < colores.length; i++) {
       Paint paint = Paint()..color = colores[i];
 
-      Rect rect = Rect.fromCircle(center: Offset(radius, radius), radius: radius);
+      Rect rect =
+          Rect.fromCircle(center: Offset(radius, radius), radius: radius);
       canvas.drawArc(rect, startAngle, sweepAngle, true, paint);
 
       startAngle += sweepAngle;
