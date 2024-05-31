@@ -64,9 +64,10 @@ class DatosProvider extends ChangeNotifier {
     List<dynamic> UmatJSON = decodedJson["UMat"];
 
     Map<String, dynamic> HitsJSON = decodedJson["Hits"];
+    //Map<String, dynamic> HitsLabelsJSON = decodedJson["HitsLabels"];  
     Map<String, dynamic> etiquetasJSON = decodedJson["Etiquetas"];
-
     var tempHitsMap = procesarHits(HitsJSON);
+    //var tempHitsLabelsMap = null;// procesarHitsLabels(HitsLabelsJSON);
     var tempMapaRta = procesarBmus(NeuronsJSON, tipoLlamada);
     var tempDataUdist = tempMapaRta["Udist"]!;
     var tempMapaRtaUmat = procesarUmat(UmatJSON)!;
@@ -121,6 +122,13 @@ class DatosProvider extends ChangeNotifier {
         HitsJSON.map((key, value) => MapEntry(int.parse(key), value)));
     return hitsMap;
   }
+
+  /* Map<int, List> procesarHitsLabels(Map<String, dynamic> HitsLabelsJSON) {
+    Map<int, List> hitsLabelsMap = Map<int, List>.from(
+        HitsLabelsJSON.map((key, value) => MapEntry(int.parse(key), value)));
+    print(hitsLabelsMap);
+    return hitsLabelsMap;
+  } */
 
   Map<String, String>? procesarUmat(List<dynamic> UmatJSON) {
     /// Procesamiento de datos para UMat

@@ -76,6 +76,7 @@ class GrillaHexagonos extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Gradient? GradienteInverso;
     return Column(
       children: [
         Text(titulo, style: Theme.of(context).textTheme.headlineLarge),
@@ -233,7 +234,18 @@ class GrillaHexagonos extends StatelessWidget {
                     if (mostrarGradiente)
                       Container(
                         width: 80.0, // ajusta la altura según tus necesidades
-                        decoration: BoxDecoration(gradient: gradiente),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment
+                                .topCenter, // comienza desde la parte superior
+                            end: Alignment
+                                .bottomCenter, // termina en la parte inferior
+                            colors: gradiente!.colors.reversed
+                                .toList(), //para que quede bien (arriba hacia abajo)
+                            stops: gradiente!.stops,
+                          ),
+                        ),
+
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
