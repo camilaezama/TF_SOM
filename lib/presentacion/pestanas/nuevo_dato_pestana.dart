@@ -4,11 +4,13 @@ import 'dart:typed_data';
 import 'package:TF_SOM_UNMdP/config/tema.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/dialogs/seleccionar_opciones_dialog.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/tabla_datos.dart';
+import 'package:TF_SOM_UNMdP/providers/nuevos_datos_provider.dart';
 import 'package:TF_SOM_UNMdP/utils/csv_to_data.dart';
 import 'package:TF_SOM_UNMdP/utils/mostrar_dialog_texto.dart';
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class NuevoDatoPestana extends StatefulWidget {
   const NuevoDatoPestana({super.key});
@@ -20,6 +22,8 @@ class NuevoDatoPestana extends StatefulWidget {
 class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
   List<List<dynamic>> csvData = [];
   List<List<dynamic>> csvDataOriginal = [];
+
+  List<List<dynamic>> csvDataIdentificadores = [];
 
   bool cargando = false;
 
@@ -181,9 +185,22 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
                 ],
               ),
               (csvData.isNotEmpty)
-                  ? TablaDatos(
-                      csvData: csvData,
-                      columnNames: listaNombresColumnasSeleccionadas,
+                  ? Row(
+                      children: [
+                        SizedBox(
+                          child: TablaDatos(
+                            csvData: csvDataIdentificadores,
+                            columnNames: const ['Dato'],
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 5.0,
+                        ),
+                        TablaDatos(
+                          csvData: csvData,
+                          columnNames: listaNombresColumnasSeleccionadas,
+                        ),
+                      ],
                     )
                   : const SizedBox.shrink(),
               Center(
@@ -193,12 +210,7 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              mostrarGrilla = true;
-                              abierto = false;
-                            });
-                          },
+                          onPressed:  llamadaApi,
                           child: cargando
                               ? const CircularProgressIndicator()
                               : const Text(
@@ -214,6 +226,59 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
         ),
       ),
     );
+  }
+
+  void llamadaApi() async{
+
+    final nuevosDatosProvider = context.read<NuevosDatosProvider>();
+    
+    List<List<dynamic>> filteredCsv = filtroColumnasSeleccionadasYEtiquetas();
+      List<Map<String, String>> data = csvToData(filteredCsv);
+      String jsonResult = jsonEncode(data);
+
+      List<List<dynamic>> filteredEtiquetas = filtrarCsvData(listaBoolEtiquetasSeleccionadas,
+        listaNombresColumnasOriginal, csvDataOriginal);
+      List<Map<String, String>> dataEtiquetas = csvToData(filteredEtiquetas);
+      String jsonResultEtiquetas = jsonEncode(dataEtiquetas);
+
+      try {
+
+        setState(() {
+          cargando = true;
+        });
+
+        dynamic resultado = await nuevosDatosProvider.llamadaNuevosDatos(context, jsonResult, jsonResultEtiquetas);
+
+        setState(() {
+          mostrarGrilla = true;
+          abierto = false;
+        });
+
+      } catch (e) {
+        print(e);
+        mostrarDialogTexto(
+            context, 'Error', 'Error en la  llamada de servicio: $e');
+        setState(() {
+          cargando = false;
+          mostrarGrilla = false;
+        });
+      }
+  }
+
+  // junto ambas listas de bool y filtro csv data origin //TODO: USAR LA MISMA QUE HOME PAGE
+  List<List<dynamic>> filtroColumnasSeleccionadasYEtiquetas() {
+    List<bool> columnasATenerEnCuenta = [];
+    for (int index = 0; index < listaNombresColumnasOriginal.length; index++) {
+      if (listaBoolEtiquetasSeleccionadas[index] == true ||
+          listaBoolColumnasSeleccionadas[index] == false) {
+        columnasATenerEnCuenta.add(false);
+      } else {
+        columnasATenerEnCuenta.add(true);
+      }
+    }
+    List<List<dynamic>> filteredData = filtrarCsvData(columnasATenerEnCuenta,
+        listaNombresColumnasOriginal, csvDataOriginal);
+    return filteredData;
   }
 
   void _loadCSVData(FilePickerResult result) async {
@@ -239,6 +304,14 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
         for (int i = 0; i < listaNombresColumnasOriginal.length; i++) {
           listaBoolEtiquetasSeleccionadas.add(false);
         }
+
+        csvDataIdentificadores.add(['Dato']);
+        for (int identificador_dato = 1;
+            identificador_dato < csvData.length;
+            identificador_dato++) {
+          csvDataIdentificadores.add([identificador_dato]);
+        }
+
         // Para probar !!!!! TODO: BORRAR
         listaBoolEtiquetasSeleccionadas[0] = true;
         listaBoolEtiquetasSeleccionadas[1] = true;

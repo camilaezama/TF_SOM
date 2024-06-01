@@ -2,6 +2,7 @@ import 'package:TF_SOM_UNMdP/config/tema.dart';
 import 'package:TF_SOM_UNMdP/providers/clusters_provider.dart';
 import 'package:TF_SOM_UNMdP/providers/datos_provider.dart';
 import 'package:TF_SOM_UNMdP/providers/gradiente_provider.dart';
+import 'package:TF_SOM_UNMdP/providers/nuevos_datos_provider.dart';
 import 'package:TF_SOM_UNMdP/providers/parametros_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -32,7 +33,10 @@ class MyApp extends StatelessWidget {
           create: (_) => ClustersProvider()),
         ChangeNotifierProvider(
           lazy: false,
-          create: (_) => GradienteProvider())
+          create: (_) => GradienteProvider()),
+        ChangeNotifierProvider(
+          lazy: false,
+          create: (_) => NuevosDatosProvider())
       ],
       child: MaterialApp(
         title: 'TF SOM - UNMdP',
