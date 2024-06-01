@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 
 class NuevosDatosProvider extends ChangeNotifier {
   List<List<int>> mapaRtaClusters = [];
-  
+
   bool cargando = false;
 
   void updateDatos({
@@ -16,19 +16,15 @@ class NuevosDatosProvider extends ChangeNotifier {
     //
   }
 
-  Future<String> llamadaNuevosDatos(
-      BuildContext context, 
-      String datosNuevos,
-      String jsonResultEtiquetas
-    ) async {
-    
+  Future<Map<String, String>> llamadaNuevosDatos(BuildContext context, String datosNuevos,
+      String jsonResultEtiquetas) async {
     cargando = true;
     notifyListeners();
 
     final datosProvider = context.read<DatosProvider>();
 
     String tipoLlamada = "nuevosDatos";
-      var url = Uri.parse('http://localhost:7777/$tipoLlamada');
+    var url = Uri.parse('http://localhost:7777/$tipoLlamada');
 
     final parametros = <String, dynamic>{
       'filas': datosProvider.resultadoEntrenamiento.filas.toString() != ""
@@ -48,11 +44,21 @@ class NuevosDatosProvider extends ChangeNotifier {
           "params": parametros,
           "etiquetas": jsonResultEtiquetas
         }));
-    
+
     //List<dynamic> decodedJson = json.decode(response.body);
 
-    print(response.body);
-    
-    return response.body;
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+    Map<String, dynamic> datos = jsonResponse['Resultado']['Dato'];
+    Map<String, dynamic> bmu = jsonResponse['Resultado']['BMU'];
+
+    // {dato:bmu}
+    Map<String, String> result = {};
+
+    for (var key in datos.keys) {
+      result[datos[key].toString()] = bmu[key].toString();
+    }
+    print(result);
+
+    return result;
   }
 }

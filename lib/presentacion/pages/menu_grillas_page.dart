@@ -133,7 +133,7 @@ class _GrillasPageState extends State<GrillasPage>
                 ),
                 HitsPestana(gradiente: gradiente),
                 ClustersPestana(gradiente: gradiente,),
-                const NuevoDatoPestana(),
+                NuevoDatoPestana(gradiente: gradiente),
               ],
             ),
           ),

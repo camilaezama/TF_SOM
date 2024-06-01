@@ -58,7 +58,7 @@ class GrillaHexagonos extends StatelessWidget {
   final bool mostrarBotonImprimir;
   final double? min, max;
   final bool expandida;
-  final List<Map<String, dynamic>> etiquetas;
+  //final List<Map<String, dynamic>> etiquetas;
   final Map<int, Map<String, List<String>>>? mapaBMUconEtiquetas;
   final Map<String, List<String>>? etiquetasMap;
   final Map<String, Color>? mapaColores;
@@ -82,7 +82,7 @@ class GrillaHexagonos extends StatelessWidget {
     required this.min,
     required this.max,
     this.expandida = false,
-    this.etiquetas = const [],
+    //this.etiquetas = const [],
     this.mapaBMUconEtiquetas,
     this.etiquetasMap,
     this.selectedKey,
