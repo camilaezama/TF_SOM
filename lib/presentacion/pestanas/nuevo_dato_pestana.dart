@@ -3,8 +3,12 @@ import 'dart:typed_data';
 
 import 'package:TF_SOM_UNMdP/config/tema.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/dialogs/seleccionar_opciones_dialog.dart';
+import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/grilla_con_etiquetas.dart';
+import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/grilla_hexagonos.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/tabla_datos.dart';
+import 'package:TF_SOM_UNMdP/providers/datos_provider.dart';
 import 'package:TF_SOM_UNMdP/providers/nuevos_datos_provider.dart';
+import 'package:TF_SOM_UNMdP/utils/colores_hits.dart';
 import 'package:TF_SOM_UNMdP/utils/csv_to_data.dart';
 import 'package:TF_SOM_UNMdP/utils/mostrar_dialog_texto.dart';
 import 'package:csv/csv.dart';
@@ -13,7 +17,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class NuevoDatoPestana extends StatefulWidget {
-  const NuevoDatoPestana({super.key});
+  final Gradient gradiente;
+
+  const NuevoDatoPestana({super.key, required this.gradiente});
 
   @override
   State<NuevoDatoPestana> createState() => _NuevoDatoPestanaState();
@@ -38,6 +44,14 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
   /// Lista con nombre de las columnas seleccionadas
   List<String> listaNombresColumnasSeleccionadas = [];
 
+  // {4: {Datos: [1]}, 6: {Datos: [2,4]}, ...}
+  Map<int, Map<String, List<String>>> mapaBMUconEtiquetas = {};
+  // {Datos: [1,2,3,4]}
+  Map<String, List<String>> etiquetasMap = {};
+  String selectedKey = '';
+  List<String> selectedValues = [];
+  Map<String, Color> mapaColores = {};
+
   bool abierto = true;
   bool mostrarGrilla = false;
 
@@ -55,7 +69,8 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
 
     return Stack(
       children: [
-        if (mostrarGrilla) const Center(child: Text('Grilla hexagonos')),
+        if (mostrarGrilla)
+          GrillaConEtiquetas(mapaBMUconEtiquetas: mapaBMUconEtiquetas, etiquetasMap: etiquetasMap, gradiente: widget.gradiente, tituloGrilla: 'Nuevos Datos', tituloColumnaEtiquetas: 'Datos',),
         Row(
           children: [
             Container(
@@ -210,7 +225,7 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton(
-                          onPressed:  llamadaApi,
+                          onPressed: llamadaApi,
                           child: cargando
                               ? const CircularProgressIndicator()
                               : const Text(
@@ -228,41 +243,67 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
     );
   }
 
-  void llamadaApi() async{
-
+  void llamadaApi() async {
     final nuevosDatosProvider = context.read<NuevosDatosProvider>();
-    
+
     List<List<dynamic>> filteredCsv = filtroColumnasSeleccionadasYEtiquetas();
-      List<Map<String, String>> data = csvToData(filteredCsv);
-      String jsonResult = jsonEncode(data);
+    List<Map<String, String>> data = csvToData(filteredCsv);
+    String jsonResult = jsonEncode(data);
 
-      List<List<dynamic>> filteredEtiquetas = filtrarCsvData(listaBoolEtiquetasSeleccionadas,
-        listaNombresColumnasOriginal, csvDataOriginal);
-      List<Map<String, String>> dataEtiquetas = csvToData(filteredEtiquetas);
-      String jsonResultEtiquetas = jsonEncode(dataEtiquetas);
+    List<List<dynamic>> filteredEtiquetas = filtrarCsvData(
+        listaBoolEtiquetasSeleccionadas,
+        listaNombresColumnasOriginal,
+        csvDataOriginal);
+    List<Map<String, String>> dataEtiquetas = csvToData(filteredEtiquetas);
+    String jsonResultEtiquetas = jsonEncode(dataEtiquetas);
 
-      try {
+    try {
+      setState(() {
+        cargando = true;
+      });
 
-        setState(() {
-          cargando = true;
-        });
+      Map<String, String> resultado = await nuevosDatosProvider
+          .llamadaNuevosDatos(context, jsonResult, jsonResultEtiquetas);
 
-        dynamic resultado = await nuevosDatosProvider.llamadaNuevosDatos(context, jsonResult, jsonResultEtiquetas);
+      procesarDatos(resultado);
 
-        setState(() {
-          mostrarGrilla = true;
-          abierto = false;
-        });
+      setState(() {
+        mostrarGrilla = true;
+        abierto = false;
+        cargando = false;
+      });
+    } catch (e) {
+      print(e);
+      mostrarDialogTexto(
+          context, 'Error', 'Error en la  llamada de servicio: $e');
+      setState(() {
+        cargando = false;
+        mostrarGrilla = false;
+      });
+    }
+  }
 
-      } catch (e) {
-        print(e);
-        mostrarDialogTexto(
-            context, 'Error', 'Error en la  llamada de servicio: $e');
-        setState(() {
-          cargando = false;
-          mostrarGrilla = false;
-        });
+  void procesarDatos(Map<String, String> resultado) {
+    resultado.forEach((dato, bmu) {
+      int bmuInt = int.parse(bmu);
+      if (!mapaBMUconEtiquetas.containsKey(bmuInt)) {
+        mapaBMUconEtiquetas[bmuInt] = {'Datos': []};
       }
+      mapaBMUconEtiquetas[bmuInt]!['Datos']!.add(dato);
+    });
+
+    List<String> keysList = resultado.keys.toList();
+    etiquetasMap['Datos'] = keysList;
+
+    selectedKey = etiquetasMap.keys.first;
+    selectedValues = etiquetasMap[selectedKey]!;
+    mapaColores = generateColorMap(selectedValues);
+
+    // print(mapaBMUconEtiquetas);
+    // print(etiquetasMap);
+    // print(selectedKey);
+    // print(selectedValues);
+    // print(mapaColores);
   }
 
   // junto ambas listas de bool y filtro csv data origin //TODO: USAR LA MISMA QUE HOME PAGE
@@ -276,8 +317,8 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
         columnasATenerEnCuenta.add(true);
       }
     }
-    List<List<dynamic>> filteredData = filtrarCsvData(columnasATenerEnCuenta,
-        listaNombresColumnasOriginal, csvDataOriginal);
+    List<List<dynamic>> filteredData = filtrarCsvData(
+        columnasATenerEnCuenta, listaNombresColumnasOriginal, csvDataOriginal);
     return filteredData;
   }
 
@@ -355,3 +396,5 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
     setState(() {});
   }
 }
+
+
