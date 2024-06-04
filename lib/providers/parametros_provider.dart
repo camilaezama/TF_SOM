@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 class ParametrosProvider extends ChangeNotifier {
   String filas = "14";
   String columnas = "24";
-  String itera = "100";
-  String factorEntrenamiento = "2";
+  String rough = "";
+  String finetuning = "";
   String funcionVecindad = 'gaussian';
   String inicializacion = 'random';
   String normalizacion = 'var';
@@ -15,16 +15,16 @@ class ParametrosProvider extends ChangeNotifier {
   void updateParametros({
     required String filas,
     required String columnas,
-    required String itera,
-    required String factorEntrenamiento,
+    required String rough,
+    required String finetuning,
     required String funcionVecindad,
     required String inicializacion,
     required String normalizacion,
   }) {
     this.filas = filas;
     this.columnas = columnas;
-    this.itera = itera;
-    this.factorEntrenamiento = factorEntrenamiento;
+    this.rough = rough;
+    this.finetuning = finetuning;
     this.funcionVecindad = funcionVecindad;
     this.inicializacion = inicializacion;
     this.normalizacion = normalizacion;
@@ -36,16 +36,16 @@ class ParametrosProvider extends ChangeNotifier {
           'filas': filas != "" ? filas : 24,
           'columnas': columnas != ""
               ? columnas
-              : 31, //TODO IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
+              : 31, 
           'vecindad': funcionVecindad,
           'inicializacion': inicializacion,
-          'iteraciones': itera != ""
-              ? itera
-              : 200, //IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
+          'rough': rough != ""
+              ? rough
+              : 0, //si viene vacio, va a tomar valor óptimo de IntraSOM
           'normalizacion': normalizacion,
-          'factorEntrenamiento': factorEntrenamiento != ""
-              ? factorEntrenamiento
-              : 2 //IMPORTANTE VALIDAR QUE LA ENTRADA DEL USUARIO SEA NUMEROS!!
+          'finetuning': finetuning != ""
+              ? finetuning
+              : 0 //si viene vacio, va a tomar valor óptimo de IntraSOM
     };
     return parametros;
   }
