@@ -54,3 +54,4 @@ macos/Flutter/GeneratedPluginRegistrant.swift
 linux/flutter/generated_plugins.cmake
 linux/flutter/generated_plugin_registrant.h
 linux/flutter/generated_plugin_registrant.cc
+.vscode/settings.json
