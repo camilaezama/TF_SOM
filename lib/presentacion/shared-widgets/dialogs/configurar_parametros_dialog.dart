@@ -19,8 +19,8 @@ class _ConfigurarParametrosDialogState
     extends State<ConfigurarParametrosDialog> {
   late TextEditingController filasController;
   late TextEditingController columnasController;
-  late TextEditingController iteracontroller;
-  late TextEditingController factorEntrenamientoController;
+  late TextEditingController roughcontroller;
+  late TextEditingController fineController;
 
   late String funcionVecindad;
   late String inicializacion;
@@ -32,9 +32,9 @@ class _ConfigurarParametrosDialogState
     filasController = TextEditingController(text: parametrosProvider.filas);
     columnasController =
         TextEditingController(text: parametrosProvider.columnas);
-    iteracontroller = TextEditingController(text: parametrosProvider.itera);
-    factorEntrenamientoController =
-        TextEditingController(text: parametrosProvider.factorEntrenamiento);
+    roughcontroller = TextEditingController(text: parametrosProvider.rough);
+    fineController =
+        TextEditingController(text: parametrosProvider.finetuning);
     funcionVecindad = parametrosProvider.funcionVecindad;
     inicializacion = parametrosProvider.inicializacion;
     normalizacion = parametrosProvider.normalizacion;
@@ -89,14 +89,14 @@ class _ConfigurarParametrosDialogState
                   Expanded(
                     child: TextField(
                         keyboardType: TextInputType.number,
-                        controller: iteracontroller,
+                        controller: roughcontroller,
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly
                         ],
                         decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                             labelText:
-                                'Cantidad máxima de iteraciones por época')),
+                                'Cantidad de iteraciones de entrenamiento')),
                   ),
                   const SizedBox(
                     width: 25,
@@ -104,14 +104,14 @@ class _ConfigurarParametrosDialogState
                   Expanded(
                     child: TextField(
                         keyboardType: TextInputType.number,
-                        controller: factorEntrenamientoController,
+                        controller: fineController,
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly
                         ],
                         decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                             labelText:
-                                'Factor de incremento iteraciones del entrenamiento')),
+                                'Cantidad de iteraciones de refinamiento')),
                   )
                 ],
               ),
@@ -204,8 +204,8 @@ class _ConfigurarParametrosDialogState
             parametrosProvider.updateParametros(
                 filas: filasController.text,
                 columnas: columnasController.text,
-                itera: iteracontroller.text,
-                factorEntrenamiento: factorEntrenamientoController.text,
+                rough: roughcontroller.text,
+                finetuning: fineController.text,
                 funcionVecindad: funcionVecindad,
                 inicializacion: inicializacion,
                 normalizacion: normalizacion);
@@ -219,7 +219,7 @@ class _ConfigurarParametrosDialogState
 }
 
 
-
+//################################ CÓDIGO ANTERIOR  ################################
 
 // //Esto se podria poner en mas funciones a medida que agreguemos mas parametros.
 //   Widget _parametrosConfigurables(
