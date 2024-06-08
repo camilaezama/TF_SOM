@@ -98,14 +98,24 @@ class GrillaHexagonos extends StatelessWidget {
 
     return Column(
       children: [
-        Text(titulo, style: Theme.of(context).textTheme.headlineLarge),
+        Row(mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(titulo, style: Theme.of(context).textTheme.headlineLarge),
+            if (mostrarBotonImprimir)
+                Row(
+                  children: [
+                    const SizedBox(width: 20),
+                    ElevatedButton(
+                        onPressed: save, child: const Icon(Icons.download)),
+                  ],
+                ),
+          ],
+        ),
         Expanded(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (mostrarBotonImprimir)
-                ElevatedButton(
-                    onPressed: save, child: const Icon(Icons.download)),
+              
 
               // Container(
               //     height: 50.0,
