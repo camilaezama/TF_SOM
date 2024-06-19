@@ -2,6 +2,7 @@ import 'package:TF_SOM_UNMdP/presentacion/pestanas/bmu_pestana.dart';
 import 'package:TF_SOM_UNMdP/presentacion/pestanas/clusters_pestana.dart';
 import 'package:TF_SOM_UNMdP/presentacion/pestanas/componentes_pestana.dart';
 import 'package:TF_SOM_UNMdP/presentacion/pestanas/hits_pestana.dart';
+import 'package:TF_SOM_UNMdP/presentacion/pestanas/imagen_pestana.dart';
 import 'package:TF_SOM_UNMdP/presentacion/pestanas/nuevo_dato_pestana.dart';
 import 'package:TF_SOM_UNMdP/presentacion/pestanas/umat_pestana.dart';
 import 'package:TF_SOM_UNMdP/providers/datos_provider.dart';
@@ -47,7 +48,7 @@ class _GrillasPageState extends State<GrillasPage>
   @override
   void initState() {
     super.initState();
-    tabController = TabController(initialIndex: 0, length: 6, vsync: this);
+    tabController = TabController(initialIndex: 0, length: 7, vsync: this);
     tabController.addListener(_onTabChange);
     final gradienteProvider = context.read<GradienteProvider>();
     gradiente = gradienteProvider.gradienteElegido();
@@ -97,7 +98,7 @@ class _GrillasPageState extends State<GrillasPage>
           title: const Text('Grillas'),
         ),
         body: DefaultTabController(
-          length: 6,
+          length: 7,
           initialIndex: 0,
           child: Scaffold(
             appBar: AppBar(
@@ -110,6 +111,7 @@ class _GrillasPageState extends State<GrillasPage>
                   Tab(text: 'Hits'),
                   Tab(text: 'Clustering'),
                   Tab(text: 'Nuevo dato'),
+                  Tab(text: 'Imagen'),
                 ],
               ),
               toolbarHeight: 0.0,
@@ -134,6 +136,7 @@ class _GrillasPageState extends State<GrillasPage>
                 HitsPestana(gradiente: gradiente),
                 ClustersPestana(gradiente: gradiente,),
                 NuevoDatoPestana(gradiente: gradiente),
+                ImagenPestana(gradiente: gradiente)
               ],
             ),
           ),

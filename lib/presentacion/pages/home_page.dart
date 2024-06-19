@@ -48,9 +48,11 @@ class _HomePageState extends State<HomePage> {
 
   late double _width, _height;
 
+  String fileName = '';
+
   void _loadCSVData(FilePickerResult result) async {
     Uint8List? fileBytes = result.files.first.bytes;
-    String fileName = result.files.first.name;
+    fileName = result.files.first.name;
 
     if (fileName.endsWith('.csv')) {
       String fileContent = utf8.decode(fileBytes!);
@@ -72,8 +74,8 @@ class _HomePageState extends State<HomePage> {
           listaBoolEtiquetasSeleccionadas.add(false);
         }
         // Para probar !!!!! TODO: BORRAR
-        listaBoolEtiquetasSeleccionadas[0] = true;
-        listaBoolEtiquetasSeleccionadas[1] = true;
+        // listaBoolEtiquetasSeleccionadas[0] = true;
+        // listaBoolEtiquetasSeleccionadas[1] = true;
       });
     } else {
       mostrarDialogTexto(
@@ -190,12 +192,20 @@ class _HomePageState extends State<HomePage> {
                         ],
                       )
                     : const SizedBox.shrink(),
-                (csvData.isNotEmpty)
-                    ? TablaDatos(
+                // (csvData.isNotEmpty)
+                //     ? TablaDatos(
+                //         csvData: csvData,
+                //         columnNames: listaNombresColumnasSeleccionadas,
+                //       )
+                //     : const SizedBox.shrink(),
+                (csvData.isNotEmpty) ? 
+                  (csvData.length > 100) ? 
+                    Text(fileName) :
+                      TablaDatos(
                         csvData: csvData,
                         columnNames: listaNombresColumnasSeleccionadas,
-                      )
-                    : const SizedBox.shrink(),
+                      ) : 
+                    const SizedBox.shrink(), 
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),

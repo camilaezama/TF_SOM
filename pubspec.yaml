@@ -37,6 +37,7 @@ dependencies:
   flutter_svg: ^2.0.9
   hexagon: ^0.2.0
   http: ^1.1.2
+  image: ^4.2.0
   path_provider: ^2.1.3
   provider: ^6.1.2
 
