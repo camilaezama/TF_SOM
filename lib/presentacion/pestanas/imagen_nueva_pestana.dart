@@ -392,6 +392,8 @@ Future<ui.Image> _generarImagenConDatos(
     9: const Color(0xFF788231),
     10: const Color(0xFFE56FFE),
   };
+  //Map<int, Color> pixelGroups = generatePixelGroups(pixelIds); // Para que el fondo sea negro y lo demas de gradiente
+
 
   /// Crea un buffer para almacenar los datos de los píxeles
   final Uint8List pixels = Uint8List(widthImagen * heightImagen * 4);
@@ -430,4 +432,53 @@ Future<ui.Image> _generarImagenConDatos(
 
 Future<void> _downloadImage() async {
   ///TODO: Que se pueda descargar imagen generada
+}
+
+/// Funcion para que el color mayoritario sea negro y los demas dependan de un gradiente
+Map<int, Color> generatePixelGroups(List<int> pixelIds) {
+  // Contar la frecuencia de cada pixelId
+  Map<int, int> frequencyMap = {};
+  for (int id in pixelIds) {
+    if (!frequencyMap.containsKey(id)) {
+      frequencyMap[id] = 0;
+    }
+    frequencyMap[id] = frequencyMap[id]! + 1;
+  }
+
+  // Ordenar los pixelIds por frecuencia
+  List<int> sortedPixelIds = frequencyMap.keys.toList()
+    ..sort((a, b) => frequencyMap[b]!.compareTo(frequencyMap[a]!));
+
+  List<Color> gradientColors = [
+    Colors.red,
+    Colors.orange,
+    Colors.yellow,
+    Colors.green,
+    Colors.blue,
+    Colors.indigo,
+    Colors.purple,
+    Colors.pink,
+    Colors.teal,
+    Colors.cyan,
+    Colors.lime,
+    Colors.amber,
+    Colors.brown,
+    Colors.grey,
+    Colors.lightBlue,
+    Colors.lightGreen,
+  ];
+  
+  // Asegurar que haya suficientes colores en el gradiente
+  while (gradientColors.length < sortedPixelIds.length - 1) {
+    gradientColors.addAll(gradientColors);
+  }
+
+  // Crear el Map<int, Color> asignando colores a cada pixelId
+  Map<int, Color> pixelGroups = {};
+  for (int i = 0; i < sortedPixelIds.length; i++) {
+    int pixelId = sortedPixelIds[i];
+    pixelGroups[pixelId] = (i == 0) ? Colors.black : gradientColors[i - 1];
+  }
+
+  return pixelGroups;
 }
