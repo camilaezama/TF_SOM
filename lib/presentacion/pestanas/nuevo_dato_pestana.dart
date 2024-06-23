@@ -1,12 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
-
-import 'package:TF_SOM_UNMdP/config/tema.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/dialogs/seleccionar_opciones_dialog.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/grilla_con_etiquetas.dart';
-import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/grilla_hexagonos.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/tabla_datos.dart';
-import 'package:TF_SOM_UNMdP/providers/datos_provider.dart';
 import 'package:TF_SOM_UNMdP/providers/nuevos_datos_provider.dart';
 import 'package:TF_SOM_UNMdP/utils/colores_hits.dart';
 import 'package:TF_SOM_UNMdP/utils/csv_to_data.dart';
@@ -55,6 +51,8 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
   bool abierto = true;
   bool mostrarGrilla = false;
 
+  String fileName = '';
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -70,7 +68,13 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
     return Stack(
       children: [
         if (mostrarGrilla)
-          GrillaConEtiquetas(mapaBMUconEtiquetas: mapaBMUconEtiquetas, etiquetasMap: etiquetasMap, gradiente: widget.gradiente, tituloGrilla: 'Nuevos Datos', tituloColumnaEtiquetas: 'Datos',),
+          GrillaConEtiquetas(
+            mapaBMUconEtiquetas: mapaBMUconEtiquetas,
+            etiquetasMap: etiquetasMap,
+            gradiente: widget.gradiente,
+            tituloGrilla: 'Nuevos Datos',
+            tituloColumnaEtiquetas: 'Datos',
+          ),
         Row(
           children: [
             Container(
@@ -113,13 +117,14 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
         Positioned(
             width: widthPestana,
             height: heightPestana,
-            child:
-                Visibility(visible: abierto, child: pestanaLateral(context))),
+            child: Visibility(
+                visible: abierto,
+                child: pestanaLateral(context, heightPestana))),
       ],
     );
   }
 
-  Container pestanaLateral(BuildContext context) {
+  Container pestanaLateral(BuildContext context, double heightPestana) {
     return Container(
       //color: AppTheme.colorFondoPrimary,
       child: Padding(
@@ -142,6 +147,14 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  ElevatedButton(
+                      onPressed: llamadaApi,
+                      child: cargando
+                          ? const CircularProgressIndicator()
+                          : const Text(
+                              "Devolver BMU datos",
+                              style: TextStyle(fontSize: 16),
+                            )),
                   Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: ElevatedButton(
@@ -199,23 +212,28 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
                       : const SizedBox.shrink(),
                 ],
               ),
-              (csvData.isNotEmpty)
-                  ? Row(
-                      children: [
-                        SizedBox(
-                          child: TablaDatos(
-                            csvData: csvDataIdentificadores,
-                            columnNames: const ['Dato'],
+              (csvData.isNotEmpty) ?
+                  (csvData.length > 100) ? 
+                    Text(fileName) :
+                   SizedBox(
+                      height: heightPestana * 0.7,
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            child: TablaDatos(
+                              csvData: csvDataIdentificadores,
+                              columnNames: const ['Dato'],
+                            ),
                           ),
-                        ),
-                        const SizedBox(
-                          width: 5.0,
-                        ),
-                        TablaDatos(
-                          csvData: csvData,
-                          columnNames: listaNombresColumnasSeleccionadas,
-                        ),
-                      ],
+                          const SizedBox(
+                            width: 5.0,
+                          ),
+                          TablaDatos(
+                            csvData: csvData,
+                            columnNames: listaNombresColumnasSeleccionadas,
+                          ),
+                        ],
+                      ),
                     )
                   : const SizedBox.shrink(),
               Center(
@@ -324,7 +342,7 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
 
   void _loadCSVData(FilePickerResult result) async {
     Uint8List? fileBytes = result.files.first.bytes;
-    String fileName = result.files.first.name;
+    fileName = result.files.first.name;
 
     if (fileName.endsWith('.csv')) {
       String fileContent = utf8.decode(fileBytes!);
@@ -396,5 +414,3 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
     setState(() {});
   }
 }
-
-

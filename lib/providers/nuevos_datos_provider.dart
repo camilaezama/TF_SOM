@@ -16,6 +16,7 @@ class NuevosDatosProvider extends ChangeNotifier {
     //
   }
 
+  // Map<String, String> {dato:bmu}
   Future<Map<String, String>> llamadaNuevosDatos(BuildContext context, String datosNuevos,
       String jsonResultEtiquetas) async {
     cargando = true;
@@ -54,10 +55,18 @@ class NuevosDatosProvider extends ChangeNotifier {
     // {dato:bmu}
     Map<String, String> result = {};
 
-    for (var key in datos.keys) {
-      result[datos[key].toString()] = bmu[key].toString();
-    }
-    print(result);
+    /// ESTO HACE QUE LOS DATOS QUE SON IGUALES SOLO SE CARGUEN UNA VEZ
+    // for (var key in datos.keys) {
+    //   result[datos[key].toString()] = bmu[key].toString();
+    // }
+
+    bmu.forEach((indice, bmu){
+      int numDato = int.parse(indice) + 1;
+      result['Dato $numDato'] = bmu.toString();
+    });
+    
+    // print(result);
+    // print('result.length ${result.length}');
 
     return result;
   }
