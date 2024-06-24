@@ -41,15 +41,14 @@ class DatosProvider extends ChangeNotifier {
           "etiquetas": jsonResultEtiquetas
         }));
 
-    // Descargar response.body para copiar en resultadoPrueba.json
-      // final bytes = utf8.encode(response.body);
-      // final blob = html.Blob([bytes]);
-      // final urlAux = html.Url.createObjectUrlFromBlob(blob);
-      // final anchor = html.AnchorElement(href: urlAux)
-      //   ..setAttribute("download", "response_body.txt")
-      //   ..click();
-      // html.Url.revokeObjectUrl(urlAux);
-      // print('Archivo descargado');
+    //Descargar response.body para copiar en resultadoPrueba.json
+    final bytes = utf8.encode(response.body);
+    final blob = html.Blob([bytes]);
+    final urlAux = html.Url.createObjectUrlFromBlob(blob);
+    final anchor = html.AnchorElement(href: urlAux)
+      ..setAttribute("download", "response_body.json")
+      ..click();
+    html.Url.revokeObjectUrl(urlAux);
 
     Map<String, dynamic> decodedJson = json.decode(response.body);
     //print(response.body);
@@ -64,7 +63,7 @@ class DatosProvider extends ChangeNotifier {
     List<dynamic> UmatJSON = decodedJson["UMat"];
 
     Map<String, dynamic> HitsJSON = decodedJson["Hits"];
-    //Map<String, dynamic> HitsLabelsJSON = decodedJson["HitsLabels"];  
+    //Map<String, dynamic> HitsLabelsJSON = decodedJson["HitsLabels"];
     Map<String, dynamic> etiquetasJSON = decodedJson["Etiquetas"];
     var tempHitsMap = procesarHits(HitsJSON);
     //var tempHitsLabelsMap = null;// procesarHitsLabels(HitsLabelsJSON);
@@ -198,33 +197,31 @@ class DatosProvider extends ChangeNotifier {
   }
 }
 
+// Map<String, Map<String, String>> mapaRta = {};
+// Map<String, String> dataUdist = {};
+// Map<String, String> mapaRtaUmat = {};
+// List<List<double>> codebook = [];
+// int filas = 0;
+// int columnas = 0;
+// List<String> nombresColumnas = [];
+// Map<int, int> hitsMap = {};
 
-
-  // Map<String, Map<String, String>> mapaRta = {};
-  // Map<String, String> dataUdist = {};
-  // Map<String, String> mapaRtaUmat = {};
-  // List<List<double>> codebook = [];
-  // int filas = 0;
-  // int columnas = 0;
-  // List<String> nombresColumnas = [];
-  // Map<int, int> hitsMap = {};
-
-  // void updateDatos(
-  //     {Map<String, Map<String, String>>? mapaRta,
-  //     Map<String, String>? dataUdist,
-  //     Map<String, String>? mapaRtaUmat,
-  //     List<List<double>>? codebook,
-  //     int? filas,
-  //     int? columnas,
-  //     List<String>? nombresColumnas,
-  //     Map<int, int>? hitsMap}) {
-  //   if (mapaRta != null) this.mapaRta = mapaRta;
-  //   if (dataUdist != null) this.dataUdist = dataUdist;
-  //   if (mapaRtaUmat != null) this.mapaRtaUmat = mapaRtaUmat;
-  //   if (codebook != null) this.codebook = codebook;
-  //   if (filas != null) this.filas = filas;
-  //   if (columnas != null) this.columnas = columnas;
-  //   if (nombresColumnas != null) this.nombresColumnas = nombresColumnas;
-  //   if (hitsMap != null) this.hitsMap = hitsMap;
-  //   //notifyListeners(); // Notifica a los oyentes sobre los cambios
-  // }
+// void updateDatos(
+//     {Map<String, Map<String, String>>? mapaRta,
+//     Map<String, String>? dataUdist,
+//     Map<String, String>? mapaRtaUmat,
+//     List<List<double>>? codebook,
+//     int? filas,
+//     int? columnas,
+//     List<String>? nombresColumnas,
+//     Map<int, int>? hitsMap}) {
+//   if (mapaRta != null) this.mapaRta = mapaRta;
+//   if (dataUdist != null) this.dataUdist = dataUdist;
+//   if (mapaRtaUmat != null) this.mapaRtaUmat = mapaRtaUmat;
+//   if (codebook != null) this.codebook = codebook;
+//   if (filas != null) this.filas = filas;
+//   if (columnas != null) this.columnas = columnas;
+//   if (nombresColumnas != null) this.nombresColumnas = nombresColumnas;
+//   if (hitsMap != null) this.hitsMap = hitsMap;
+//   //notifyListeners(); // Notifica a los oyentes sobre los cambios
+// }
