@@ -19,7 +19,7 @@ List<TableRow> crearTablaDatos(
       Column(children: [
         Text(etiquetactual,
             style: etiquetactual == titulo
-                ? TextStyle(
+                ? const TextStyle(
                     fontSize: 20.0,
                     backgroundColor: Colors.yellow,
                     fontWeight: FontWeight.bold)
@@ -28,7 +28,7 @@ List<TableRow> crearTablaDatos(
       Column(children: [
         Text(codebook[j].toString(),
             style: etiquetactual == titulo
-                ? TextStyle(
+                ? const TextStyle(
                     fontSize: 20.0,
                     backgroundColor: Colors.yellow,
                     fontWeight: FontWeight.bold)

@@ -16,6 +16,11 @@ class NuevosDatosProvider extends ChangeNotifier {
     //
   }
 
+  int cantDatosOriginal(BuildContext context){
+    final datosProvider = context.read<DatosProvider>();
+    return datosProvider.resultadoEntrenamiento.codebook[0].length;
+  }
+
   // Map<String, String> {dato:bmu}
   Future<Map<String, String>> llamadaNuevosDatos(BuildContext context, String datosNuevos,
       String jsonResultEtiquetas) async {
@@ -49,7 +54,6 @@ class NuevosDatosProvider extends ChangeNotifier {
     //List<dynamic> decodedJson = json.decode(response.body);
 
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-    Map<String, dynamic> datos = jsonResponse['Resultado']['Dato'];
     Map<String, dynamic> bmu = jsonResponse['Resultado']['BMU'];
 
     // {dato:bmu}

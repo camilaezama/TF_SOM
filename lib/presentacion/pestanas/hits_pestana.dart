@@ -1,6 +1,4 @@
-import 'package:TF_SOM_UNMdP/config/tema.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/grilla_con_etiquetas.dart';
-import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/grilla_hexagonos.dart';
 import 'package:TF_SOM_UNMdP/providers/datos_provider.dart';
 import 'package:TF_SOM_UNMdP/utils/colores_hits.dart';
 import 'package:flutter/material.dart';
