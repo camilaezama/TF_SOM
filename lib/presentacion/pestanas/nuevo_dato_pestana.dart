@@ -147,14 +147,6 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ElevatedButton(
-                      onPressed: llamadaApi,
-                      child: cargando
-                          ? const CircularProgressIndicator()
-                          : const Text(
-                              "Devolver BMU datos",
-                              style: TextStyle(fontSize: 16),
-                            )),
                   Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: ElevatedButton(
