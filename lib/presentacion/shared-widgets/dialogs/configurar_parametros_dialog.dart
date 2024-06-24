@@ -24,7 +24,6 @@ class _ConfigurarParametrosDialogState
 
   late String funcionVecindad;
   late String inicializacion;
-  late String normalizacion;
 
   @override
   void initState() {
@@ -37,7 +36,6 @@ class _ConfigurarParametrosDialogState
         TextEditingController(text: parametrosProvider.finetuning);
     funcionVecindad = parametrosProvider.funcionVecindad;
     inicializacion = parametrosProvider.inicializacion;
-    normalizacion = parametrosProvider.normalizacion;
     super.initState();
   }
 
@@ -168,30 +166,6 @@ class _ConfigurarParametrosDialogState
                   const SizedBox(
                     width: 25,
                   ),
-                  Expanded(
-                    child: DropdownButtonFormField(
-                      decoration: const InputDecoration(
-                        label: Text("Normalizacion"),
-                      ),
-                      value: normalizacion, //valor default
-                      items: const [
-                        DropdownMenuItem(
-                          value: 'var',
-                          child: Text(" Var"),
-                        ),
-                        DropdownMenuItem(
-                          value: 'None',
-                          child: Text(" Ninguna"),
-                        ),
-                      ],
-                      onChanged: (value) {
-                        normalizacion = value!;
-                      },
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 25,
-                  ),
                 ],
               )
             ],
@@ -208,7 +182,7 @@ class _ConfigurarParametrosDialogState
                 finetuning: fineController.text,
                 funcionVecindad: funcionVecindad,
                 inicializacion: inicializacion,
-                normalizacion: normalizacion);
+                );
             Navigator.of(context).pop(); // Cerrar el cuadro de diálogo
           },
           child: const Text('Cerrar'),

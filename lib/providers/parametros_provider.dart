@@ -7,7 +7,6 @@ class ParametrosProvider extends ChangeNotifier {
   String finetuning = "";
   String funcionVecindad = 'gaussian';
   String inicializacion = 'random';
-  String normalizacion = 'var';
 
 
 
@@ -19,7 +18,6 @@ class ParametrosProvider extends ChangeNotifier {
     required String finetuning,
     required String funcionVecindad,
     required String inicializacion,
-    required String normalizacion,
   }) {
     this.filas = filas;
     this.columnas = columnas;
@@ -27,7 +25,6 @@ class ParametrosProvider extends ChangeNotifier {
     this.finetuning = finetuning;
     this.funcionVecindad = funcionVecindad;
     this.inicializacion = inicializacion;
-    this.normalizacion = normalizacion;
     //notifyListeners(); // No es necesario notificar cambios todavia
   }
 
@@ -42,7 +39,6 @@ class ParametrosProvider extends ChangeNotifier {
           'rough': rough != ""
               ? rough
               : 0, //si viene vacio, va a tomar valor óptimo de IntraSOM
-          'normalizacion': normalizacion,
           'finetuning': finetuning != ""
               ? finetuning
               : 0 //si viene vacio, va a tomar valor óptimo de IntraSOM

@@ -27,7 +27,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   // String funcionVecindad = 'gaussian';
   // String inicializacion = 'random';
-  // String normalizacion = 'var';
 
   List<List<dynamic>> csvData = [];
   List<List<dynamic>> csvDataOriginal = [];
