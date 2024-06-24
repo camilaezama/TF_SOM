@@ -130,7 +130,7 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       TextButton.icon(
-                        label: const Text('Columnas'),
+                        label: const Text('Features'),
                         icon: const Icon(Icons.list),
                         onPressed: () {
                           showDialog(
