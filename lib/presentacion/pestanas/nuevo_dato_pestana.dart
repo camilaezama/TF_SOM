@@ -315,6 +315,12 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
   }
 
   void procesarDatos(Map<String, String> resultado) {
+
+    //Limpiamos por si quedaron datos de un dataset anterior.
+    for(var i = 0;i<mapaBMUconEtiquetas.keys.length;i++){
+      mapaBMUconEtiquetas[i]!['Datos']!.clear();
+    }
+
     resultado.forEach((dato, bmu) {
       int bmuInt = int.parse(bmu);
       if (!mapaBMUconEtiquetas.containsKey(bmuInt)) {
