@@ -282,9 +282,9 @@ class _ComponentesPestanaState extends State<ComponentesPestana> {
 
       final blob = html.Blob([pngBytes]);
       final url = html.Url.createObjectUrlFromBlob(blob);
-      // ignore: unused_local_variable
+      DateTime now = new DateTime.now();
       final anchor = html.AnchorElement(href: url)
-        ..setAttribute('download', "MapaComponentes.png")
+        ..setAttribute('download', "MapaComponentes-$now.png")
         ..click();
 
       html.Url.revokeObjectUrl(url);

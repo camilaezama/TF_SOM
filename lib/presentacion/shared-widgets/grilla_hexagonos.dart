@@ -438,9 +438,9 @@ class GrillaHexagonos extends StatelessWidget {
 
     final blob = html.Blob([pngBytes]);
     final url = html.Url.createObjectUrlFromBlob(blob);
-    // ignore: unused_local_variable
+    DateTime now = new DateTime.now();
     final anchor = html.AnchorElement(href: url)
-      ..setAttribute('download', "$titulo.png")
+      ..setAttribute('download', "$titulo-$now.png")
       ..click();
 
     html.Url.revokeObjectUrl(url);
