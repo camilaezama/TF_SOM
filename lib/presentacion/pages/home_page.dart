@@ -199,7 +199,7 @@ class _HomePageState extends State<HomePage> {
                 //     : const SizedBox.shrink(),
                 (csvData.isNotEmpty) ? 
                   (csvData.length > 100) ? 
-                    Text(fileName) :
+                    Text("La cantidad de datos es muy grande, la vista previa del archivo $fileName ha sido deshabilitada.") :
                       TablaDatos(
                         csvData: csvData,
                         columnNames: listaNombresColumnasSeleccionadas,

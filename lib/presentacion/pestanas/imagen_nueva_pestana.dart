@@ -173,7 +173,7 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
                 ? (csvData.length > 100)
                     ? Padding(
                         padding: const EdgeInsets.symmetric(vertical: 20.0),
-                        child: Text(fileName),
+                        child: Text("La cantidad de datos es muy grande, la vista previa del archivo $fileName ha sido deshabilitada."),
                       )
                     : TablaDatos(
                         csvData: csvData,
