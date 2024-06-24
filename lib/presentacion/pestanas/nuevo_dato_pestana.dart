@@ -214,7 +214,7 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
               ),
               (csvData.isNotEmpty) ?
                   (csvData.length > 100) ? 
-                    Text(fileName) :
+                    Text("La cantidad de datos es muy grande, la vista previa del archivo $fileName ha sido deshabilitada.") :
                    SizedBox(
                       height: heightPestana * 0.7,
                       child: Row(
