@@ -209,20 +209,18 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
                     Text("La cantidad de datos es muy grande, la vista previa del archivo $fileName ha sido deshabilitada.") :
                    SizedBox(
                       height: heightPestana * 0.7,
-                      child: Row(
+                      child: Row(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          SizedBox(
-                            child: TablaDatos(
-                              csvData: csvDataIdentificadores,
-                              columnNames: const ['Dato'],
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 5.0,
-                          ),
                           TablaDatos(
-                            csvData: csvData,
-                            columnNames: listaNombresColumnasSeleccionadas,
+                            csvData: csvDataIdentificadores,
+                            columnNames: const ['Dato'],
+                          ),
+                  
+                          Expanded(
+                            child: TablaDatos(
+                              csvData: csvData,
+                              columnNames: listaNombresColumnasSeleccionadas,
+                            ),
                           ),
                         ],
                       ),

@@ -175,10 +175,12 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
                         padding: const EdgeInsets.symmetric(vertical: 20.0),
                         child: Text("La cantidad de datos es muy grande, la vista previa del archivo $fileName ha sido deshabilitada."),
                       )
-                    : TablaDatos(
-                        csvData: csvData,
-                        columnNames: listaNombresColumnasSeleccionadas,
-                      )
+                    : Expanded(
+                      child: TablaDatos(
+                          csvData: csvData,
+                          columnNames: listaNombresColumnasSeleccionadas,
+                        ),
+                    )
                 : const SizedBox.shrink(),
 
             /// CAMPO ANCHO EN PIXELES
