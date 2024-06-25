@@ -61,7 +61,7 @@ class DatosProvider extends ChangeNotifier {
     Map<String, dynamic> NeuronsJSON = decodedJson["Neurons"];
     List<dynamic> Codebook = decodedJson["Codebook"];
     List<dynamic> UmatJSON = decodedJson["UMat"];
-
+    List<dynamic> Datos = decodedJson["Datos"];
     Map<String, dynamic> HitsJSON = decodedJson["Hits"];
     //Map<String, dynamic> HitsLabelsJSON = decodedJson["HitsLabels"];
     Map<String, dynamic> etiquetasJSON = decodedJson["Etiquetas"];
@@ -84,6 +84,7 @@ class DatosProvider extends ChangeNotifier {
       filas: int.parse(parametros["filas"]),
       columnas: int.parse(parametros["columnas"]),
       etiquetas: etiquetas,
+      datos: Datos,
     );
 
     resultadoEntrenamiento = resultado;
