@@ -63,6 +63,7 @@ class GrillaHexagonos extends StatelessWidget {
   final Map<String, List<String>>? etiquetasMap;
   final Map<String, Color>? mapaColores;
   final String? selectedKey;
+  final bool grillaBlanca;
 
   GrillaHexagonos({
     super.key,
@@ -87,6 +88,7 @@ class GrillaHexagonos extends StatelessWidget {
     this.etiquetasMap,
     this.selectedKey,
     this.mapaColores,
+    this.grillaBlanca = false
   });
   late double _width, _height;
   final _widgetKey = GlobalKey();
@@ -141,10 +143,14 @@ class GrillaHexagonos extends StatelessWidget {
                                     valorDist.replaceAll(',', '.');
                                 double valor = double.parse(valorDistConPunto);
                                 return HexagonWidgetBuilder(
-                                  color: clusters == null
+                                  color: grillaBlanca ? Color.fromARGB(255, 211, 211, 211) :  clusters == null
                                       ? getInterpolatedColor(
                                           valor, gradiente, min!, max!)
                                       : getClusterColor(col, row, clusters),
+                                  // color: clusters == null
+                                  //     ? getInterpolatedColor(
+                                  //         valor, gradiente, min!, max!)
+                                  //     : getClusterColor(col, row, clusters),
                                   //color: getColorForValue(valor),
                                   //generarColorAleatorioEnEspectro(), //row.isEven ? Colors.yellow : Colors.orangeAccent,
                                   elevation: 0.0,
