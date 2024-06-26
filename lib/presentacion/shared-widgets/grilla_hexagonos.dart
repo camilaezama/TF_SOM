@@ -64,32 +64,33 @@ class GrillaHexagonos extends StatelessWidget {
   final Map<String, Color>? mapaColores;
   final String? selectedKey;
   final bool grillaBlanca;
+  final bool hitsPorMayoritario;
 
-  GrillaHexagonos({
-    super.key,
-    required this.gradiente,
-    this.dataMap,
-    required this.filas,
-    required this.columnas,
-    required this.titulo,
-    required this.codebook,
-    required this.nombreColumnas,
-    this.clusters,
-    this.paddingEntreHexagonos = 0.6,
-    this.hitsMap,
-    this.hits = false,
-    this.mostrarGradiente = true,
-    this.mostrarBotonImprimir = true,
-    required this.min,
-    required this.max,
-    this.expandida = false,
-    //this.etiquetas = const [],
-    this.mapaBMUconEtiquetas,
-    this.etiquetasMap,
-    this.selectedKey,
-    this.mapaColores,
-    this.grillaBlanca = false
-  });
+  GrillaHexagonos(
+      {super.key,
+      required this.gradiente,
+      this.dataMap,
+      required this.filas,
+      required this.columnas,
+      required this.titulo,
+      required this.codebook,
+      required this.nombreColumnas,
+      this.clusters,
+      this.paddingEntreHexagonos = 0.6,
+      this.hitsMap,
+      this.hits = false,
+      this.mostrarGradiente = true,
+      this.mostrarBotonImprimir = true,
+      required this.min,
+      required this.max,
+      this.expandida = false,
+      //this.etiquetas = const [],
+      this.mapaBMUconEtiquetas,
+      this.etiquetasMap,
+      this.selectedKey,
+      this.mapaColores,
+      this.grillaBlanca = false,
+      this.hitsPorMayoritario = false});
   late double _width, _height;
   final _widgetKey = GlobalKey();
 
@@ -100,25 +101,24 @@ class GrillaHexagonos extends StatelessWidget {
 
     return Column(
       children: [
-        Row(mainAxisAlignment: MainAxisAlignment.center,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(titulo, style: Theme.of(context).textTheme.headlineLarge),
             if (mostrarBotonImprimir)
-                Row(
-                  children: [
-                    const SizedBox(width: 20),
-                    ElevatedButton(
-                        onPressed: save, child: const Icon(Icons.download)),
-                  ],
-                ),
+              Row(
+                children: [
+                  const SizedBox(width: 20),
+                  ElevatedButton(
+                      onPressed: save, child: const Icon(Icons.download)),
+                ],
+              ),
           ],
         ),
         Expanded(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              
-
               // Container(
               //     height: 50.0,
               //     decoration: BoxDecoration(gradient: widget.gradiente)),
@@ -143,10 +143,12 @@ class GrillaHexagonos extends StatelessWidget {
                                     valorDist.replaceAll(',', '.');
                                 double valor = double.parse(valorDistConPunto);
                                 return HexagonWidgetBuilder(
-                                  color: grillaBlanca ? Color.fromARGB(255, 211, 211, 211) :  clusters == null
-                                      ? getInterpolatedColor(
-                                          valor, gradiente, min!, max!)
-                                      : getClusterColor(col, row, clusters),
+                                  color: grillaBlanca
+                                      ? Color.fromARGB(255, 211, 211, 211)
+                                      : clusters == null
+                                          ? getInterpolatedColor(
+                                              valor, gradiente, min!, max!)
+                                          : getClusterColor(col, row, clusters),
                                   // color: clusters == null
                                   //     ? getInterpolatedColor(
                                   //         valor, gradiente, min!, max!)
@@ -284,7 +286,7 @@ class GrillaHexagonos extends StatelessWidget {
                                                 );
                                               },
                                               child: hits
-                                                  ? widgetHits(bMU)
+                                                  ? widgetHits(bMU, mayoritario: hitsPorMayoritario)
                                                   : const Text(
                                                       '',
                                                       //'',
@@ -383,19 +385,14 @@ class GrillaHexagonos extends StatelessWidget {
   // }
 
   /// Multiples colores en cada circulo
-  Widget widgetHits(int bmu) {
+  Widget widgetHits(int bmu, {bool mayoritario = false}) {
     if (mapaBMUconEtiquetas!.containsKey(bmu)) {
       final etiquetas = mapaBMUconEtiquetas![bmu]![selectedKey];
+
       if (etiquetas != null && etiquetas.isNotEmpty) {
-        final List<Color> colores =
-            etiquetas.map((etiqueta) => mapaColores![etiqueta]!).toList();
-        if (colores.length > 1) {
-          return CustomPaint(
-            size: const Size(20, 20), // Tamaño del círculo
-            painter: MultipleCirclePainter(colores),
-          );
-        } else if (colores.length == 1) {
-          // Si solo hay un color, mostrar un círculo con ese color
+        if (mayoritario) {
+          String? etiquetaMayoritaria = obtenerEtiquetaMayoritaria(etiquetas);
+          Color color = mapaColores![etiquetaMayoritaria]!;
           return Container(
             decoration: BoxDecoration(
               shape: BoxShape.circle,
@@ -403,10 +400,32 @@ class GrillaHexagonos extends StatelessWidget {
                   Border.all(color: Colors.black, width: 1.0), // Borde negro
             ),
             child: CircleAvatar(
-              backgroundColor: colores[0],
+              backgroundColor: color,
               radius: 10, // Ajusta el tamaño del círculo según sea necesario
             ),
           );
+        } else {
+          final List<Color> colores =
+              etiquetas.map((etiqueta) => mapaColores![etiqueta]!).toList();
+          if (colores.length > 1) {
+            return CustomPaint(
+              size: const Size(20, 20), // Tamaño del círculo
+              painter: MultipleCirclePainter(colores),
+            );
+          } else if (colores.length == 1) {
+            // Si solo hay un color, mostrar un círculo con ese color
+            return Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border:
+                    Border.all(color: Colors.black, width: 1.0), // Borde negro
+              ),
+              child: CircleAvatar(
+                backgroundColor: colores[0],
+                radius: 10, // Ajusta el tamaño del círculo según sea necesario
+              ),
+            );
+          }
         }
       }
     }
@@ -514,4 +533,32 @@ class MultipleCirclePainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return true;
   }
+}
+
+String? obtenerEtiquetaMayoritaria(List<String>? etiquetas) {
+  if (etiquetas == null || etiquetas.isEmpty) {
+    return null;
+  }
+
+  Map<String, int> frecuencia = {};
+
+  for (var etiqueta in etiquetas) {
+    if (frecuencia.containsKey(etiqueta)) {
+      frecuencia[etiqueta] = frecuencia[etiqueta]! + 1;
+    } else {
+      frecuencia[etiqueta] = 1;
+    }
+  }
+
+  String? etiquetaMayoritaria;
+  int maxFrecuencia = 0;
+
+  frecuencia.forEach((key, value) {
+    if (value > maxFrecuencia) {
+      maxFrecuencia = value;
+      etiquetaMayoritaria = key;
+    }
+  });
+
+  return etiquetaMayoritaria;
 }

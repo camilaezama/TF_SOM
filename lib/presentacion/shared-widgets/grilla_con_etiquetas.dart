@@ -34,6 +34,7 @@ class _GrillaConEtiquetasState extends State<GrillaConEtiquetas> {
   late List<String> selectedValues;
   late Map<String, Color> mapaColores;
   bool _switchValue = false;
+  bool _switchValueMayoritario = false;
 
   @override
   void initState() {
@@ -117,10 +118,18 @@ class _GrillaConEtiquetasState extends State<GrillaConEtiquetas> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    const Text('Grilla detras'),
+                    _switchValue? const Text('Grilla gris') : const Text('Grilla detras'),
                     Switch(
+                      activeColor: AppTheme.colorScheme.primary,
                       value: _switchValue,
                       onChanged: _toggleSwitch,
+                    ),
+                    const SizedBox(width: 30.0,),
+                    _switchValueMayoritario ? const Text('Mayoritario') : const Text('Detallado'),
+                    Switch(
+                      activeColor: AppTheme.colorScheme.primary,
+                      value: _switchValueMayoritario,
+                      onChanged: _toggleSwitchMayoritario,
                     ),
                   ],
                 ),
@@ -145,6 +154,7 @@ class _GrillaConEtiquetasState extends State<GrillaConEtiquetas> {
                 selectedKey: selectedKey,
                 mapaColores: mapaColores,
                 grillaBlanca: _switchValue,
+                hitsPorMayoritario: _switchValueMayoritario,
               ),
             ),
           ],
@@ -156,6 +166,12 @@ class _GrillaConEtiquetasState extends State<GrillaConEtiquetas> {
   void _toggleSwitch(bool value) {
     setState(() {
       _switchValue = value;
+    });
+  }
+
+  void _toggleSwitchMayoritario(bool value) {
+    setState(() {
+      _switchValueMayoritario = value;
     });
   }
 }
