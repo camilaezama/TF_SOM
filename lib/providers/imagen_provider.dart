@@ -6,20 +6,18 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
 class ImagenProvider extends ChangeNotifier {
-
   /// mapaBmuCluster es un mapa BMU: cluster
   /// {1: 3, 2: 3, 3: 3, 4: 3, 5: 3, ...., 333: 2, 334: 2, 335: 2, 336: 2}
   Map<int, int> mapaBmuCluster = {};
 
-  bool cargando = false;  
+  bool cargando = false;
   bool mostarGrilla = false;
 
-  
   /// Devuelve mapa DATO: CLUSTER
   /// {0: 4, 1: 4, 2: 4, 3: 4, ... , 39274: 4, 39275: 4, 39276: 4}
   Future<Map<int, int>> llamadaImagen(
       BuildContext context, String cantidadClusters) async {
-    final datosProvider = context.read<DatosProvider>(); 
+    final datosProvider = context.read<DatosProvider>();
 
     /// mapaBmuCluster es un mapa BMU: cluster
     /// {1: 3, 2: 3, 3: 3, 4: 3, 5: 3, ...., 333: 2, 334: 2, 335: 2, 336: 2}
@@ -73,7 +71,8 @@ class ImagenProvider extends ChangeNotifier {
     var response = await http.post(url,
         headers: {'Accept': '/*'},
         body: jsonEncode({
-          "datos": datosProvider.resultadoEntrenamiento.codebook,
+          "datos": datosProvider.resultadoEntrenamiento.datos,
+          "codebook": datosProvider.resultadoEntrenamiento.codebook,
           "tipo": tipoLlamada,
           "params": parametros
         }));

@@ -17,8 +17,8 @@ class NuevosDatosProvider extends ChangeNotifier {
   }
 
   // Map<String, String> {dato:bmu}
-  Future<Map<String, String>> llamadaNuevosDatos(BuildContext context, String datosNuevos,
-      String jsonResultEtiquetas) async {
+  Future<Map<String, String>> llamadaNuevosDatos(BuildContext context,
+      String datosNuevos, String jsonResultEtiquetas) async {
     cargando = true;
     notifyListeners();
 
@@ -40,7 +40,8 @@ class NuevosDatosProvider extends ChangeNotifier {
         headers: {'Accept': '/*'},
         body: jsonEncode({
           "codebook": datosProvider.resultadoEntrenamiento.codebook,
-          "datos": datosNuevos,
+          "datos": datosProvider.resultadoEntrenamiento.datos,
+          "nuevosDatos": datosNuevos,
           "tipo": tipoLlamada,
           "params": parametros,
           "etiquetas": jsonResultEtiquetas
@@ -60,11 +61,11 @@ class NuevosDatosProvider extends ChangeNotifier {
     //   result[datos[key].toString()] = bmu[key].toString();
     // }
 
-    bmu.forEach((indice, bmu){
+    bmu.forEach((indice, bmu) {
       int numDato = int.parse(indice) + 1;
       result['Dato $numDato'] = bmu.toString();
     });
-    
+
     // print(result);
     // print('result.length ${result.length}');
 

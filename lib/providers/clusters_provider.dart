@@ -10,7 +10,6 @@ class ClustersProvider extends ChangeNotifier {
   bool cargando = false;
   bool mostarGrilla = false;
 
-
   void updateDatos({
     List<List<int>>? mapaRtaClusters,
   }) {
@@ -20,14 +19,13 @@ class ClustersProvider extends ChangeNotifier {
 
   Future<void> llamadaClustering(
       BuildContext context, String cantidadClusters) async {
-    
     cargando = true;
     notifyListeners();
 
     final datosProvider = context.read<DatosProvider>();
 
     String TIPO_LLAMADA = "clusters";
-      var url = Uri.parse('http://localhost:7777' + '/' + TIPO_LLAMADA);
+    var url = Uri.parse('http://localhost:7777' + '/' + TIPO_LLAMADA);
 
     final parametros = <String, dynamic>{
       'filas': datosProvider.resultadoEntrenamiento.filas.toString() != ""
@@ -42,7 +40,8 @@ class ClustersProvider extends ChangeNotifier {
     var response = await http.post(url,
         headers: {'Accept': '/*'},
         body: jsonEncode({
-          "datos": datosProvider.resultadoEntrenamiento.codebook,
+          "datos": datosProvider.resultadoEntrenamiento.datos,
+          "codebook": datosProvider.resultadoEntrenamiento.codebook,
           "tipo": TIPO_LLAMADA,
           "params": parametros
         }));
@@ -56,7 +55,7 @@ class ClustersProvider extends ChangeNotifier {
     }).toList();
 
     mapaRtaClusters = rtaClusters;
-    
+
     cargando = false;
     mostarGrilla = true;
     notifyListeners();

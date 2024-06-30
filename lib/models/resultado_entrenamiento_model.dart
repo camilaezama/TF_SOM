@@ -8,6 +8,7 @@ class ResultadoEntrenamientoModel {
   List<String> nombresColumnas = [];
   List<Map<String, dynamic>> etiquetas = [];
   Map<int, int> hitsMap = {};
+  List<dynamic> datos = [];
 
   ResultadoEntrenamientoModel(
       {Map<String, Map<String, String>>? mapaRta,
@@ -18,7 +19,8 @@ class ResultadoEntrenamientoModel {
       int? columnas,
       List<String>? nombresColumnas,
       List<Map<String, dynamic>>? etiquetas,
-      Map<int, int>? hitsMap}) {
+      Map<int, int>? hitsMap,
+      List<dynamic>? datos}) {
     if (mapaRta != null) this.mapaRta = mapaRta;
     if (dataUdist != null) this.dataUdist = dataUdist;
     if (mapaRtaUmat != null) this.mapaRtaUmat = mapaRtaUmat;
@@ -28,7 +30,8 @@ class ResultadoEntrenamientoModel {
     if (columnas != null) this.columnas = columnas;
     if (nombresColumnas != null) this.nombresColumnas = nombresColumnas;
     if (hitsMap != null) this.hitsMap = hitsMap;
+    if (datos != null) this.datos = datos;
+
     //notifyListeners(); // Notifica a los oyentes sobre los cambios
   }
-
 }
