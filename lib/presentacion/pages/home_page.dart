@@ -197,6 +197,7 @@ class _HomePageState extends State<HomePage> {
                 //         columnNames: listaNombresColumnasSeleccionadas,
                 //       )
                 //     : const SizedBox.shrink(),
+
                 (csvData.isNotEmpty) ? 
                   (csvData.length > 100) ? 
                     Text("La cantidad de datos es muy grande, la vista previa del archivo $fileName ha sido deshabilitada.") :
@@ -219,7 +220,7 @@ class _HomePageState extends State<HomePage> {
                             child: cargando
                                 ? const CircularProgressIndicator()
                                 : const Text(
-                                    "Devolver json archivo",
+                                    "Cargar archivo SOM",
                                     style: TextStyle(fontSize: 16),
                                   )),
                         const SizedBox(
@@ -301,8 +302,8 @@ class _HomePageState extends State<HomePage> {
         columnasATenerEnCuenta.add(true);
       }
     }
-    List<List<dynamic>> filteredData = filtrarCsvData(columnasATenerEnCuenta,
-        listaNombresColumnasOriginal, csvDataOriginal);
+    List<List<dynamic>> filteredData = filtrarCsvData(
+        columnasATenerEnCuenta, listaNombresColumnasOriginal, csvDataOriginal);
     return filteredData;
   }
 
@@ -311,15 +312,16 @@ class _HomePageState extends State<HomePage> {
     final datosProvider = context.read<DatosProvider>();
 
     if (csvData.isNotEmpty) {
-
       //TODO: Si hay columnas de string, preguntar si se quieren seleccionar como etiquetas o algo asi
-      
+
       List<List<dynamic>> filteredCsv = filtroColumnasSeleccionadasYEtiquetas();
       List<Map<String, String>> data = csvToData(filteredCsv);
       String jsonResult = jsonEncode(data);
 
-      List<List<dynamic>> filteredEtiquetas = filtrarCsvData(listaBoolEtiquetasSeleccionadas,
-        listaNombresColumnasOriginal, csvDataOriginal);
+      List<List<dynamic>> filteredEtiquetas = filtrarCsvData(
+          listaBoolEtiquetasSeleccionadas,
+          listaNombresColumnasOriginal,
+          csvDataOriginal);
       List<Map<String, String>> dataEtiquetas = csvToData(filteredEtiquetas);
       String jsonResultEtiquetas = jsonEncode(dataEtiquetas);
 
@@ -331,8 +333,9 @@ class _HomePageState extends State<HomePage> {
           cargando = true;
         });
 
-        ResultadoEntrenamientoModel resultadoEntrenamiento = await datosProvider
-            .entrenamiento(tipoLlamada, parametros, jsonResult, jsonResultEtiquetas);
+        ResultadoEntrenamientoModel resultadoEntrenamiento =
+            await datosProvider.entrenamiento(
+                tipoLlamada, parametros, jsonResult, jsonResultEtiquetas);
 
         setState(() {
           Navigator.pushNamed(
@@ -358,39 +361,41 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _llamadaAPIRapida() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
     final parametrosProvider = context.read<ParametrosProvider>();
     final datosProvider = context.read<DatosProvider>();
+    Uint8List? fileBytes = result!.files.first.bytes;
+    fileName = result.files.first.name;
 
-    try {
-      String tipoLlamada = "rapida";
+    if (fileName.endsWith('.json')) {
+      try {
+        setState(() {
+          cargando = true;
+        });
+        final contents = utf8.decode(fileBytes!);
+        final jsonData = jsonDecode(contents);
 
-      String jsonResult = "";
+        ResultadoEntrenamientoModel resultadoEntrenamiento =
+            datosProvider.procesarDatos(jsonData, "", jsonData["Parametros"]);
 
-      final parametros = parametrosProvider.mapaParametros();
-
-      setState(() {
-        cargando = true;
-      });
-
-      ResultadoEntrenamientoModel resultadoEntrenamiento = await datosProvider
-          .entrenamiento(tipoLlamada, parametros, jsonResult, "");
-
-      setState(() {
-        Navigator.pushNamed(
-          context,
-          '/grillas',
-          arguments: resultadoEntrenamiento,
-        );
-        cargando = false;
-      });
-    } catch (e) {
-      print('Error: $e');
-      setState(() {
-        cargando = false;
-        botonAceptar = "Entrenar";
-      });
+        setState(() {
+          Navigator.pushNamed(
+            context,
+            '/grillas',
+            arguments: resultadoEntrenamiento,
+          );
+          cargando = false;
+        });
+      } catch (e) {
+        mostrarDialogTexto(context, 'Error', 'Error en el archivo ingresado.');
+        setState(() {
+          cargando = false;
+          botonAceptar = "Entrenar";
+        });
+      }
+    } else {
+      mostrarDialogTexto(
+          context, 'Archivo Invalido', 'Debe seleccionar un archivo JSON.');
     }
   }
 }
-
-

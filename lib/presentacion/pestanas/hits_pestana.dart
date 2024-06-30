@@ -67,6 +67,7 @@ class _HitsPestanaState extends State<HitsPestana> {
   Widget build(BuildContext context) {
 
     return GrillaConEtiquetas(
+      opcionMostrarGrilla: true,
         mapaBMUconEtiquetas: mapaBMUconEtiquetas,
         etiquetasMap: etiquetasMap,
         gradiente: widget.gradiente,

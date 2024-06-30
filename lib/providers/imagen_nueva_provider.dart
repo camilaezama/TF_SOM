@@ -7,36 +7,36 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
 class ImagenNuevaProvider extends ChangeNotifier {
-
   /// mapaBmuCluster es un mapa BMU: cluster
   /// {1: 3, 2: 3, 3: 3, 4: 3, 5: 3, ...., 333: 2, 334: 2, 335: 2, 336: 2}
   Map<int, int> mapaBmuCluster = {};
 
-  bool cargando = false;  
+  bool cargando = false;
   bool mostarGrilla = false;
 
-  
   /// Devuelve mapa DATO: CLUSTER
   /// {0: 4, 1: 4, 2: 4, 3: 4, ... , 39274: 4, 39275: 4, 39276: 4}
   Future<Map<int, int>> llamadaImagen(
-      BuildContext context, String cantidadClusters, String datosNuevos, String jsonResultEtiquetas) async {
-
+      BuildContext context,
+      String cantidadClusters,
+      String datosNuevos,
+      String jsonResultEtiquetas) async {
     cargando = true;
     notifyListeners();
-  
-    final nuevosDatosProvider = context.read<NuevosDatosProvider>(); 
+
+    final nuevosDatosProvider = context.read<NuevosDatosProvider>();
 
     // Map<String, String> {'dato':bmu} 'DATO' es todo el dato
     Map<String, String> mapaDatoCompletoBmu = await nuevosDatosProvider
-          .llamadaNuevosDatos(context, datosNuevos, jsonResultEtiquetas);
+        .llamadaNuevosDatos(context, datosNuevos, jsonResultEtiquetas);
 
-    Map<int,int> mapaDatoBmu = {};
+    Map<int, int> mapaDatoBmu = {};
     int idDato = 1;
-    mapaDatoCompletoBmu.forEach((dato, bmu){
+    mapaDatoCompletoBmu.forEach((dato, bmu) {
       int bmuInt = int.parse(bmu);
       mapaDatoBmu[idDato] = bmuInt;
       idDato++;
-    });    
+    });
 
     /// mapaBmuCluster es un mapa BMU: cluster
     /// {1: 3, 2: 3, 3: 3, 4: 3, 5: 3, ...., 333: 2, 334: 2, 335: 2, 336: 2}
@@ -47,12 +47,11 @@ class ImagenNuevaProvider extends ChangeNotifier {
     /// {0: 4, 1: 4, 2: 4, 3: 4, ... , 39274: 4, 39275: 4, 39276: 4}
     Map<int, int> mapaDatoCluster = {};
 
-    mapaDatoBmu.forEach((dato, bmu){
+    mapaDatoBmu.forEach((dato, bmu) {
       int? cluster = mapaBmuCluster[bmu];
       if (cluster != null) {
         mapaDatoCluster[dato] = cluster;
       }
-
     });
 
     //print(mapaDatoCluster);
@@ -68,8 +67,6 @@ class ImagenNuevaProvider extends ChangeNotifier {
   /// {1: 3, 2: 3, 3: 3, 4: 3, 5: 3, ...., 333: 2, 334: 2, 335: 2, 336: 2}
   Future<Map<int, int>> llamadaClustering(
       BuildContext context, String cantidadClusters) async {
-    
-
     final datosProvider = context.read<DatosProvider>();
 
     String tipoLlamada = "clusters";
@@ -88,7 +85,8 @@ class ImagenNuevaProvider extends ChangeNotifier {
     var response = await http.post(url,
         headers: {'Accept': '/*'},
         body: jsonEncode({
-          "datos": datosProvider.resultadoEntrenamiento.codebook,
+          "datos": datosProvider.resultadoEntrenamiento.datos,
+          "codebook": datosProvider.resultadoEntrenamiento.codebook,
           "tipo": tipoLlamada,
           "params": parametros
         }));
@@ -108,7 +106,7 @@ class ImagenNuevaProvider extends ChangeNotifier {
         mapaBmuCluster[position] = value;
         position++;
       }
-    }    
+    }
 
     return mapaBmuCluster;
   }
