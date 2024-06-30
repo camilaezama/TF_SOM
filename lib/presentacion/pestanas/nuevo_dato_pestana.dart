@@ -57,7 +57,7 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     double appBarHeight = AppBar().preferredSize.height;
-    double tabBarHeight = TabBar(tabs: []).preferredSize.height;
+    double tabBarHeight = const TabBar(tabs: []).preferredSize.height;
 
     double ancho = 0.6;
 
@@ -147,14 +147,6 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ElevatedButton(
-                      onPressed: llamadaApi,
-                      child: cargando
-                          ? const CircularProgressIndicator()
-                          : const Text(
-                              "Devolver BMU datos",
-                              style: TextStyle(fontSize: 16),
-                            )),
                   Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: ElevatedButton(
@@ -170,7 +162,7 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             TextButton.icon(
-                              label: const Text('Columnas'),
+                              label: const Text('Features'),
                               icon: const Icon(Icons.list),
                               onPressed: () {
                                 showDialog(
@@ -214,23 +206,21 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
               ),
               (csvData.isNotEmpty) ?
                   (csvData.length > 100) ? 
-                    Text(fileName) :
+                    Text("La cantidad de datos es muy grande, la vista previa del archivo $fileName ha sido deshabilitada.") :
                    SizedBox(
                       height: heightPestana * 0.7,
-                      child: Row(
+                      child: Row(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          SizedBox(
-                            child: TablaDatos(
-                              csvData: csvDataIdentificadores,
-                              columnNames: const ['Dato'],
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 5.0,
-                          ),
                           TablaDatos(
-                            csvData: csvData,
-                            columnNames: listaNombresColumnasSeleccionadas,
+                            csvData: csvDataIdentificadores,
+                            columnNames: const ['Dato'],
+                          ),
+                  
+                          Expanded(
+                            child: TablaDatos(
+                              csvData: csvData,
+                              columnNames: listaNombresColumnasSeleccionadas,
+                            ),
                           ),
                         ],
                       ),
@@ -263,7 +253,7 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
 
   void llamadaApi() async {
     final nuevosDatosProvider = context.read<NuevosDatosProvider>();
-
+    int coderror=-1;
     List<List<dynamic>> filteredCsv = filtroColumnasSeleccionadasYEtiquetas();
     List<Map<String, String>> data = csvToData(filteredCsv);
     String jsonResult = jsonEncode(data);
@@ -279,6 +269,13 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
       setState(() {
         cargando = true;
       });
+      
+    //truquito: para contar la cantidad de columnas cuento la cantidad de separadores (;) y le sumo 1 por el ultimo que no tiene
+    //si no se cumple, lanzo una excepcion
+      if (((';'.allMatches(filteredCsv[0][0]).length) + 1 != nuevosDatosProvider.cantDatosOriginal(context))){
+        coderror = 1;
+        throw const FormatException('La cantidad de features no coincide con el archivo original!');
+      }
 
       Map<String, String> resultado = await nuevosDatosProvider
           .llamadaNuevosDatos(context, jsonResult, jsonResultEtiquetas);
@@ -292,8 +289,14 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
       });
     } catch (e) {
       print(e);
+      if (coderror == 1){
+        mostrarDialogTexto(
+          context, 'Error features', 'La cantidad de features no coincide con el archivo original!');
+      }
+      else{
       mostrarDialogTexto(
           context, 'Error', 'Error en la  llamada de servicio: $e');
+          }
       setState(() {
         cargando = false;
         mostrarGrilla = false;
@@ -302,6 +305,12 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
   }
 
   void procesarDatos(Map<String, String> resultado) {
+
+    //Limpiamos por si quedaron datos de un dataset anterior.
+    for(var i = 0;i<mapaBMUconEtiquetas.keys.length;i++){
+      mapaBMUconEtiquetas[i]!['Datos']!.clear();
+    }
+
     resultado.forEach((dato, bmu) {
       int bmuInt = int.parse(bmu);
       if (!mapaBMUconEtiquetas.containsKey(bmuInt)) {

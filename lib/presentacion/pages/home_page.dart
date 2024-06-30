@@ -27,7 +27,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   // String funcionVecindad = 'gaussian';
   // String inicializacion = 'random';
-  // String normalizacion = 'var';
 
   List<List<dynamic>> csvData = [];
   List<List<dynamic>> csvDataOriginal = [];
@@ -152,7 +151,7 @@ class _HomePageState extends State<HomePage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           TextButton.icon(
-                            label: const Text('Columnas'),
+                            label: const Text('Features'),
                             icon: const Icon(Icons.list),
                             onPressed: () {
                               showDialog(
@@ -198,14 +197,17 @@ class _HomePageState extends State<HomePage> {
                 //         columnNames: listaNombresColumnasSeleccionadas,
                 //       )
                 //     : const SizedBox.shrink(),
-                (csvData.isNotEmpty)
-                    ? (csvData.length > 100)
-                        ? Text(fileName)
-                        : TablaDatos(
-                            csvData: csvData,
-                            columnNames: listaNombresColumnasSeleccionadas,
-                          )
-                    : const SizedBox.shrink(),
+
+                (csvData.isNotEmpty) ? 
+                  (csvData.length > 100) ? 
+                    Text("La cantidad de datos es muy grande, la vista previa del archivo $fileName ha sido deshabilitada.") :
+                      Expanded(
+                        child: TablaDatos(
+                          csvData: csvData,
+                          columnNames: listaNombresColumnasSeleccionadas,
+                        ),
+                      ) : 
+                    const SizedBox.shrink(), 
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),

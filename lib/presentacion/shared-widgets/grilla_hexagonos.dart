@@ -19,7 +19,7 @@ List<TableRow> crearTablaDatos(
       Column(children: [
         Text(etiquetactual,
             style: etiquetactual == titulo
-                ? TextStyle(
+                ? const TextStyle(
                     fontSize: 20.0,
                     backgroundColor: Colors.yellow,
                     fontWeight: FontWeight.bold)
@@ -28,7 +28,7 @@ List<TableRow> crearTablaDatos(
       Column(children: [
         Text(codebook[j].toString(),
             style: etiquetactual == titulo
-                ? TextStyle(
+                ? const TextStyle(
                     fontSize: 20.0,
                     backgroundColor: Colors.yellow,
                     fontWeight: FontWeight.bold)
@@ -463,9 +463,9 @@ class GrillaHexagonos extends StatelessWidget {
 
     final blob = html.Blob([pngBytes]);
     final url = html.Url.createObjectUrlFromBlob(blob);
-    // ignore: unused_local_variable
+    DateTime now = new DateTime.now();
     final anchor = html.AnchorElement(href: url)
-      ..setAttribute('download', "$titulo.png")
+      ..setAttribute('download', "$titulo-$now.png")
       ..click();
 
     html.Url.revokeObjectUrl(url);

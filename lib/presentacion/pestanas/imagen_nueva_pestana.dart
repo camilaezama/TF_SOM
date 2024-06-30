@@ -130,7 +130,7 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       TextButton.icon(
-                        label: const Text('Columnas'),
+                        label: const Text('Features'),
                         icon: const Icon(Icons.list),
                         onPressed: () {
                           showDialog(
@@ -173,12 +173,14 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
                 ? (csvData.length > 100)
                     ? Padding(
                         padding: const EdgeInsets.symmetric(vertical: 20.0),
-                        child: Text(fileName),
+                        child: Text("La cantidad de datos es muy grande, la vista previa del archivo $fileName ha sido deshabilitada."),
                       )
-                    : TablaDatos(
-                        csvData: csvData,
-                        columnNames: listaNombresColumnasSeleccionadas,
-                      )
+                    : Expanded(
+                      child: TablaDatos(
+                          csvData: csvData,
+                          columnNames: listaNombresColumnasSeleccionadas,
+                        ),
+                    )
                 : const SizedBox.shrink(),
 
             /// CAMPO ANCHO EN PIXELES
