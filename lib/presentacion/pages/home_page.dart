@@ -315,6 +315,9 @@ class _HomePageState extends State<HomePage> {
       //TODO: Si hay columnas de string, preguntar si se quieren seleccionar como etiquetas o algo asi
 
       List<List<dynamic>> filteredCsv = filtroColumnasSeleccionadasYEtiquetas();
+
+      
+      
       List<Map<String, String>> data = csvToData(filteredCsv);
       String jsonResult = jsonEncode(data);
 
@@ -326,6 +329,11 @@ class _HomePageState extends State<HomePage> {
       String jsonResultEtiquetas = jsonEncode(dataEtiquetas);
 
       try {
+        for (int i=1; i<filteredCsv.length;i++){ //ignora el cero pues es el nombre de las columnas
+        if (filteredCsv[i][0].contains(RegExp('[a-zA-Z]'))){
+          throw const FormatException("Una de las columnas marcada como Features contiene datos no numéricos. Deseleccione la columna e intente nuevamente.");
+        }
+      }
         String tipoLlamada = "bmu";
         final parametros = parametrosProvider.mapaParametros();
 
