@@ -308,7 +308,9 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
 
     //Limpiamos por si quedaron datos de un dataset anterior.
     for(var i = 0;i<mapaBMUconEtiquetas.keys.length;i++){
-      mapaBMUconEtiquetas[i]!['Datos']!.clear();
+      if (mapaBMUconEtiquetas[i] != null){
+        mapaBMUconEtiquetas[i]!['Datos']!.clear();
+      }
     }
 
     resultado.forEach((dato, bmu) {
