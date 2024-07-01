@@ -373,6 +373,7 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
           listaBoolEtiquetasSeleccionadas.add(false);
         }
 
+        csvDataIdentificadores.clear();
         csvDataIdentificadores.add(['Dato']);
         for (int identificador_dato = 1;
             identificador_dato < csvData.length;
