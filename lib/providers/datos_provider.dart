@@ -5,6 +5,7 @@ import 'package:TF_SOM_UNMdP/models/resultado_entrenamiento_model.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 
 class DatosProvider extends ChangeNotifier {
@@ -43,16 +44,15 @@ class DatosProvider extends ChangeNotifier {
 
     //Descargar response.body para copiar en resultadoPrueba.json
     final bytes = utf8.encode(response.body);
+    DateTime now = DateTime.now();
     final blob = html.Blob([bytes]);
     final urlAux = html.Url.createObjectUrlFromBlob(blob);
     final anchor = html.AnchorElement(href: urlAux)
-      ..setAttribute("download", "response_body.json")
+      ..setAttribute("download", "train-$now.json")
       ..click();
     html.Url.revokeObjectUrl(urlAux);
 
     Map<String, dynamic> decodedJson = json.decode(response.body);
-    //print(response.body);
-
     return decodedJson;
   }
 
@@ -73,23 +73,56 @@ class DatosProvider extends ChangeNotifier {
     var tempCodebook = procesarCodebook(Codebook);
     var tempNombresColumnas = procesarNombresColumnas(tempMapaRta);
     var etiquetas = procesarEtiquetas(etiquetasJSON);
-
+    var parametrosEntrenamiento = procesarParametos(decodedJson["Parametros"]);
+    var erroresEntrenamiento = procesarErrores(decodedJson["Errores"]);
     ResultadoEntrenamientoModel resultado = ResultadoEntrenamientoModel(
-      codebook: tempCodebook,
-      mapaRta: tempMapaRta,
-      mapaRtaUmat: tempMapaRtaUmat,
-      dataUdist: tempDataUdist,
-      hitsMap: tempHitsMap,
-      nombresColumnas: tempNombresColumnas,
-      filas: int.parse(parametros["filas"]),
-      columnas: int.parse(parametros["columnas"]),
-      etiquetas: etiquetas,
-      datos: Datos,
-    );
+        codebook: tempCodebook,
+        mapaRta: tempMapaRta,
+        mapaRtaUmat: tempMapaRtaUmat,
+        dataUdist: tempDataUdist,
+        hitsMap: tempHitsMap,
+        nombresColumnas: tempNombresColumnas,
+        filas: int.parse(parametros["filas"]),
+        columnas: int.parse(parametros["columnas"]),
+        etiquetas: etiquetas,
+        datos: Datos,
+        parametros: parametrosEntrenamiento,
+        errores: erroresEntrenamiento);
 
     resultadoEntrenamiento = resultado;
-
+    //Descargar archivo de texto con resultado
+    DateTime now = DateTime.now();
+    downloadSummaryTxtFile(parametrosEntrenamiento, erroresEntrenamiento,
+        "ResumenEntrenamiento-$now.txt");
     return resultado;
+  }
+
+  void downloadSummaryTxtFile(Map<String, String> parametros,
+      Map<String, String> errores, String fileName) {
+    // Convert the map to a string with each key-value pair on a new line
+    StringBuffer buffer = StringBuffer();
+    buffer.writeln('Parametros:');
+    parametros.forEach((key, value) {
+      buffer.writeln('\t$key: $value');
+    });
+    buffer.writeln('--------------------');
+    buffer.writeln('Errores:');
+    errores.forEach((key, value) {
+      buffer.writeln('\t$key: $value');
+    });
+    // Convert the string buffer to a Blob
+    final blob = html.Blob([buffer.toString()], 'text/plain');
+
+    // Create a URL for the Blob
+    final url = html.Url.createObjectUrlFromBlob(blob);
+
+    // Create an anchor element and set the href attribute to the Blob URL
+    final anchor = html.AnchorElement(href: url)
+      ..setAttribute('download', fileName)
+      ..click();
+
+    // Clean up by revoking the Blob URL
+    html.Url.revokeObjectUrl(url);
   }
 
   List<Map<String, dynamic>> procesarEtiquetas(
@@ -115,6 +148,21 @@ class DatosProvider extends ChangeNotifier {
     }
 
     return listaDeMapas;
+  }
+
+  Map<String, String> procesarErrores(
+      Map<String, dynamic> erroresEntrenamiento) {
+    Map<String, String> errores = Map<String, String>.from(erroresEntrenamiento
+        .map((key, value) => MapEntry(key, value.toString())));
+    return errores;
+  }
+
+  Map<String, String> procesarParametos(
+      Map<String, dynamic> parametrosEntrenamiento) {
+    Map<String, String> parametros = Map<String, String>.from(
+        parametrosEntrenamiento
+            .map((key, value) => MapEntry(key, value.toString())));
+    return parametros;
   }
 
   Map<int, int> procesarHits(Map<String, dynamic> HitsJSON) {
