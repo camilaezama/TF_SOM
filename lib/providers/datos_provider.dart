@@ -101,12 +101,17 @@ class DatosProvider extends ChangeNotifier {
       Map<String, String> errores, String fileName) {
     // Convert the map to a string with each key-value pair on a new line
     StringBuffer buffer = StringBuffer();
-    buffer.writeln('Parametros:');
+    buffer.writeln('Parameters:');
+    var filas = parametros['filas'];
+    var columnas = parametros['columnas'];
+    parametros.remove('filas');
+    parametros.remove('columnas');
+    buffer.writeln('Map size: $columnas columns $filas rows');
     parametros.forEach((key, value) {
       buffer.writeln('\t$key: $value');
     });
     buffer.writeln('--------------------');
-    buffer.writeln('Errores:');
+    buffer.writeln('Errors:');
     errores.forEach((key, value) {
       buffer.writeln('\t$key: $value');
     });
