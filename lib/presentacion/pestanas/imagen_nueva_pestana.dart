@@ -15,7 +15,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
 
-enum TipoColoreado { clustering, jet }
+enum TipoColoreado { clustering, coloreadoContinuo }
 
 class ImagenNuevaPestana extends StatefulWidget {
   final Gradient gradiente;
@@ -60,7 +60,7 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
   List<List<dynamic>> csvDataIdentificadores = [];
   String fileName = '';
 
-  // Tipo de coloreado: Clustering o JET
+  // Tipo de coloreado: Clustering o coloreadoContinuo
   TipoColoreado tipoColoreado = TipoColoreado.clustering;
 
   @override
@@ -91,7 +91,7 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
             height: 5,
           ),
 
-          if (tipoColoreado == TipoColoreado.jet)
+          if (tipoColoreado == TipoColoreado.coloreadoContinuo)
             Padding(
               padding: const EdgeInsets.all(30.0),
               child: SizedBox(
@@ -138,7 +138,7 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            /// BOTON CLUSTERING / JET
+            /// BOTON CLUSTERING / ColoreadoContinuo
             SizedBox(
               width: anchoCampos,
               child: DropdownButtonFormField(
@@ -152,8 +152,8 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
                     child: Text(" Clustering"),
                   ),
                   DropdownMenuItem(
-                    value: TipoColoreado.jet,
-                    child: Text(" JET"),
+                    value: TipoColoreado.coloreadoContinuo,
+                    child: Text(" Coloreado Continuo "),
                   ),
                 ],
                 onChanged: (value) {
@@ -355,7 +355,10 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
       // print("mapaDatoBmu");
       // print(mapaDatoBmu);
 
-      Map<int, Color> pixelGroups = devolverMapaBmuColor(
+      // Map<int, Color> pixelGroups = devolverMapaBmuColor(
+      //     int.parse(parametrosProvider.filas),
+      //     int.parse(parametrosProvider.columnas));
+       Map<int, Color> pixelGroups = matrixToMap(
           int.parse(parametrosProvider.filas),
           int.parse(parametrosProvider.columnas));
       // print("pixelGroups");
