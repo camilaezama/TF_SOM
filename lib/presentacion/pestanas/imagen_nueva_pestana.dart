@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 import 'package:TF_SOM_UNMdP/config/tema.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/dialogs/seleccionar_opciones_dialog.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/tabla_datos.dart';
+import 'package:TF_SOM_UNMdP/providers/datos_provider.dart';
 import 'package:TF_SOM_UNMdP/providers/imagen_nueva_provider.dart';
 import 'package:TF_SOM_UNMdP/providers/parametros_provider.dart';
 import 'package:TF_SOM_UNMdP/utils/csv_to_data.dart';
@@ -14,6 +15,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
+
+import '../../utils/utils.dart';
 
 enum TipoColoreado { clustering, jet }
 
@@ -74,7 +77,7 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
   @override
   Widget build(BuildContext context) {
     final imagenNuevaProvider = context.watch<ImagenNuevaProvider>();
-
+    final datosProvider = context.watch<DatosProvider>();
     final parametrosProvider = context.watch<ParametrosProvider>();
 
     return Center(
@@ -86,7 +89,7 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
 
           /// COLUMNA DE CAMPOS
           _columnaLateralCampos(
-              context, imagenNuevaProvider, parametrosProvider),
+              context,datosProvider, imagenNuevaProvider, parametrosProvider),
           const SizedBox(
             height: 5,
           ),
@@ -129,6 +132,7 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
   /// Columna lateral con campos
   Container _columnaLateralCampos(
       BuildContext context,
+      DatosProvider datosProvider,
       ImagenNuevaProvider imagenNuevaProvider,
       ParametrosProvider parametrosProvider) {
     return Container(
@@ -291,8 +295,8 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
             /// BOTON ACEPTAR
             ElevatedButton(
                 onPressed: () async {
-                  _generarImagen(
-                      imagenNuevaProvider, parametrosProvider, tipoColoreado);
+                  _generarImagen(imagenNuevaProvider, datosProvider,
+                      parametrosProvider, tipoColoreado);
                 },
                 style: AppTheme.primaryButtonStyle,
                 child: imagenNuevaProvider.cargando
@@ -310,6 +314,7 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
   /// Funcion que crea imagen
   Future<void> _generarImagen(
       ImagenNuevaProvider imagenNuevaProvider,
+      DatosProvider datosProvider,
       ParametrosProvider parametrosProvider,
       TipoColoreado tipoColoreado) async {
     // Preparacion datos del csv
@@ -344,11 +349,18 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
       };
 
       /// Genera imagen a partir del clustering
-      customImage = await _generarImagenConDatos(
-          int.parse(anchoPixelesController.text),
-          int.parse(altoPixelesController.text),
-          mapaDatoCluster,
-          pixelGroups);
+      var val = datosProvider.cantDatosEntrenamiento();
+      if (validarColumnasDatos(int.parse(anchoPixelesController.text),
+          int.parse(altoPixelesController.text), val)) {
+        customImage = await _generarImagenConDatos(
+            int.parse(anchoPixelesController.text),
+            int.parse(altoPixelesController.text),
+            mapaDatoCluster,
+            pixelGroups);
+      } else {
+      mostrarDialogTexto(context, "Error de dimensiones",
+          "El ancho por alto debe coincidir con la cantidad de datos de entrada");
+    }
     } else {
       mapaDatoBmu = await imagenNuevaProvider.llamadaImagenDatoBMU(
           context, clustersController.text, jsonResult, jsonResultEtiquetas);
