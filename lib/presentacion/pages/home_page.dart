@@ -198,16 +198,17 @@ class _HomePageState extends State<HomePage> {
                 //       )
                 //     : const SizedBox.shrink(),
 
-                (csvData.isNotEmpty) ? 
-                  (csvData.length > 100) ? 
-                    Text("La cantidad de datos es muy grande, la vista previa del archivo $fileName ha sido deshabilitada.") :
-                      Expanded(
-                        child: TablaDatos(
-                          csvData: csvData,
-                          columnNames: listaNombresColumnasSeleccionadas,
-                        ),
-                      ) : 
-                    const SizedBox.shrink(), 
+                (csvData.isNotEmpty)
+                    ? (csvData.length > 100)
+                        ? Text(
+                            "La cantidad de datos es muy grande, la vista previa del archivo $fileName ha sido deshabilitada.")
+                        : Expanded(
+                            child: TablaDatos(
+                              csvData: csvData,
+                              columnNames: listaNombresColumnasSeleccionadas,
+                            ),
+                          )
+                    : const SizedBox.shrink(),
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
@@ -316,8 +317,6 @@ class _HomePageState extends State<HomePage> {
 
       List<List<dynamic>> filteredCsv = filtroColumnasSeleccionadasYEtiquetas();
 
-      
-      
       List<Map<String, String>> data = csvToData(filteredCsv);
       String jsonResult = jsonEncode(data);
 
@@ -329,23 +328,24 @@ class _HomePageState extends State<HomePage> {
       String jsonResultEtiquetas = jsonEncode(dataEtiquetas);
 
       try {
-        for (int i=1; i<filteredCsv.length;i++){ //ignora el cero pues es el nombre de las columnas
-        if (filteredCsv[i][0].contains(RegExp('[a-zA-Z]'))){
-          throw const FormatException("Una de las columnas marcada como Features contiene datos no numéricos. Deseleccione la columna e intente nuevamente.");
+        for (int i = 1; i < filteredCsv.length; i++) {
+          //ignora el cero pues es el nombre de las columnas
+          if (filteredCsv[i][0].contains(RegExp('[a-zA-Z]'))) {
+            throw const FormatException(
+                "Una de las columnas marcada como Features contiene datos no numéricos. Deseleccione la columna e intente nuevamente.");
+          }
         }
-      }
         String tipoLlamada = "bmu";
         final parametros = parametrosProvider.mapaParametros();
 
         setState(() {
           cargando = true;
         });
-
-        ResultadoEntrenamientoModel resultadoEntrenamiento =
-            await datosProvider.entrenamiento(
-                tipoLlamada, parametros, jsonResult, jsonResultEtiquetas);
-
-        setState(() {
+        try {
+          ResultadoEntrenamientoModel resultadoEntrenamiento =
+              await datosProvider.entrenamiento(
+                  tipoLlamada, parametros, jsonResult, jsonResultEtiquetas);
+          setState(() {
           Navigator.pushNamed(
             context,
             '/grillas',
@@ -353,6 +353,13 @@ class _HomePageState extends State<HomePage> {
           );
           cargando = false;
         });
+        } catch (e) {
+          setState(() {
+            mostrarDialogTexto(context, "Error en el servidor", "$e");
+            cargando = false;
+          });
+        }
+        
       } catch (e) {
         print(e);
         mostrarDialogTexto(

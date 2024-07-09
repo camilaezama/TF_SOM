@@ -41,7 +41,10 @@ class DatosProvider extends ChangeNotifier {
           "params": parametros,
           "etiquetas": jsonResultEtiquetas
         }));
-
+    if (response.statusCode != 200) {
+      var error = json.decode(response.body);
+      throw Exception(error["error"]);
+    }
     //Descargar response.body para copiar en resultadoPrueba.json
     final bytes = utf8.encode(response.body);
     DateTime now = DateTime.now();
