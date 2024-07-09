@@ -10,8 +10,9 @@ import 'package:TF_SOM_UNMdP/providers/datos_provider.dart';
 import 'package:TF_SOM_UNMdP/providers/gradiente_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:hexagon/hexagon.dart';
-
 import 'package:provider/provider.dart';
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html;
 
 class GrillasPage extends StatefulWidget {
   const GrillasPage({super.key});
@@ -53,6 +54,20 @@ class _GrillasPageState extends State<GrillasPage>
     tabController.addListener(_onTabChange);
     final gradienteProvider = context.read<GradienteProvider>();
     gradiente = gradienteProvider.gradienteElegido();
+    // Check if the page is being reloaded
+    if (html.window.localStorage['isReloading'] == 'true') {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        // Navigate to HomePage after the initial build
+        Navigator.pushReplacementNamed(context, '/');
+      });
+      // Clear the flag
+      html.window.localStorage.remove('isReloading');
+    }
+
+    // Set a flag indicating that the page is about to be reloaded
+    html.window.onBeforeUnload.listen((event) {
+      html.window.localStorage['isReloading'] = 'true';
+    });
   }
 
   void _onTabChange() {
@@ -136,7 +151,9 @@ class _GrillasPageState extends State<GrillasPage>
                   gradiente: gradiente,
                 ),
                 HitsPestana(gradiente: gradiente),
-                ClustersPestana(gradiente: gradiente,),
+                ClustersPestana(
+                  gradiente: gradiente,
+                ),
                 NuevoDatoPestana(gradiente: gradiente),
                 ImagenPestana(gradiente: gradiente),
                 ImagenNuevaPestana(gradiente: gradiente)
