@@ -11,6 +11,7 @@ import 'dart:html' as html;
 class DatosProvider extends ChangeNotifier {
   ResultadoEntrenamientoModel resultadoEntrenamiento =
       ResultadoEntrenamientoModel();
+  String responseBody = '';
 
   Future<ResultadoEntrenamientoModel> entrenamiento(
       String tipoLlamada,
@@ -43,14 +44,15 @@ class DatosProvider extends ChangeNotifier {
         }));
 
     //Descargar response.body para copiar en resultadoPrueba.json
-    final bytes = utf8.encode(response.body);
-    DateTime now = DateTime.now();
-    final blob = html.Blob([bytes]);
-    final urlAux = html.Url.createObjectUrlFromBlob(blob);
-    final anchor = html.AnchorElement(href: urlAux)
-      ..setAttribute("download", "train-$now.json")
-      ..click();
-    html.Url.revokeObjectUrl(urlAux);
+    // final bytes = utf8.encode(response.body);
+    // DateTime now = DateTime.now();
+    // final blob = html.Blob([bytes]);
+    // final urlAux = html.Url.createObjectUrlFromBlob(blob);
+    // final anchor = html.AnchorElement(href: urlAux)
+    //   ..setAttribute("download", "train-$now.json")
+    //   ..click();
+    // html.Url.revokeObjectUrl(urlAux);
+    responseBody = response.body;
 
     Map<String, dynamic> decodedJson = json.decode(response.body);
     return decodedJson;
@@ -91,10 +93,32 @@ class DatosProvider extends ChangeNotifier {
 
     resultadoEntrenamiento = resultado;
     //Descargar archivo de texto con resultado
-    DateTime now = DateTime.now();
-    downloadSummaryTxtFile(parametrosEntrenamiento, erroresEntrenamiento,
-        "ResumenEntrenamiento-$now.txt");
+    // DateTime now = DateTime.now();
+    // downloadSummaryTxtFile(parametrosEntrenamiento, erroresEntrenamiento,
+    //     "ResumenEntrenamiento-$now.txt");
     return resultado;
+  }
+
+  void descargarResultadoEntrenamiento(){
+    final bytes = utf8.encode(responseBody);
+    DateTime now = DateTime.now();
+    final blob = html.Blob([bytes]);
+    final urlAux = html.Url.createObjectUrlFromBlob(blob);
+    final anchor = html.AnchorElement(href: urlAux)
+      ..setAttribute("download", "train-$now.json")
+      ..click();
+    html.Url.revokeObjectUrl(urlAux);
+  }
+
+    void descargarCodebook(){
+    final bytes = utf8.encode(resultadoEntrenamiento.codebook.toString());
+    DateTime now = DateTime.now();
+    final blob = html.Blob([bytes]);
+    final urlAux = html.Url.createObjectUrlFromBlob(blob);
+    final anchor = html.AnchorElement(href: urlAux)
+      ..setAttribute("download", "codebook-$now.json")
+      ..click();
+    html.Url.revokeObjectUrl(urlAux);
   }
 
   void downloadSummaryTxtFile(Map<String, String> parametros,
