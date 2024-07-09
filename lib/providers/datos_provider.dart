@@ -133,6 +133,10 @@ class DatosProvider extends ChangeNotifier {
     html.Url.revokeObjectUrl(url);
   }
 
+  int cantDatosEntrenamiento() {
+    return resultadoEntrenamiento.datos.length;
+  }
+
   List<Map<String, dynamic>> procesarEtiquetas(
       Map<String, dynamic> etiquetasJSON) {
     //print('Etiquetas');
