@@ -16,9 +16,21 @@ class NuevosDatosProvider extends ChangeNotifier {
     //
   }
 
-  int cantDatosOriginal(BuildContext context){
+  int cantDatosOriginal(BuildContext context) {
     final datosProvider = context.read<DatosProvider>();
     return datosProvider.resultadoEntrenamiento.codebook[0].length;
+  }
+
+  bool validarColumnas(BuildContext context, String columnas) {
+    List<String> columnasNuevosDatos = columnas.split(";");
+    List<String> columnasEntrenamiento = context
+        .read<DatosProvider>()
+        .resultadoEntrenamiento
+        .datos[0]
+        .keys
+        .toList();
+
+    return columnasNuevosDatos == columnasEntrenamiento;
   }
 
   // Map<String, String> {dato:bmu}

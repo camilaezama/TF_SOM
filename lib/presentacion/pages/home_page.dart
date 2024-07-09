@@ -84,8 +84,9 @@ class _HomePageState extends State<HomePage> {
 
   void _selectFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
-
-    _loadCSVData(result!);
+    if (result != null) {
+      _loadCSVData(result);
+    }
   }
 
   @override
@@ -198,16 +199,17 @@ class _HomePageState extends State<HomePage> {
                 //       )
                 //     : const SizedBox.shrink(),
 
-                (csvData.isNotEmpty) ? 
-                  (csvData.length > 100) ? 
-                    Text("La cantidad de datos es muy grande, la vista previa del archivo $fileName ha sido deshabilitada.") :
-                      Expanded(
-                        child: TablaDatos(
-                          csvData: csvData,
-                          columnNames: listaNombresColumnasSeleccionadas,
-                        ),
-                      ) : 
-                    const SizedBox.shrink(), 
+                (csvData.isNotEmpty)
+                    ? (csvData.length > 100)
+                        ? Text(
+                            "La cantidad de datos es muy grande, la vista previa del archivo $fileName ha sido deshabilitada.")
+                        : Expanded(
+                            child: TablaDatos(
+                              csvData: csvData,
+                              columnNames: listaNombresColumnasSeleccionadas,
+                            ),
+                          )
+                    : const SizedBox.shrink(),
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
@@ -316,8 +318,6 @@ class _HomePageState extends State<HomePage> {
 
       List<List<dynamic>> filteredCsv = filtroColumnasSeleccionadasYEtiquetas();
 
-      
-      
       List<Map<String, String>> data = csvToData(filteredCsv);
       String jsonResult = jsonEncode(data);
 
@@ -329,11 +329,13 @@ class _HomePageState extends State<HomePage> {
       String jsonResultEtiquetas = jsonEncode(dataEtiquetas);
 
       try {
-        for (int i=1; i<filteredCsv.length;i++){ //ignora el cero pues es el nombre de las columnas
-        if (filteredCsv[i][0].contains(RegExp('[a-zA-Z]'))){
-          throw const FormatException("Una de las columnas marcada como Features contiene datos no numéricos. Deseleccione la columna e intente nuevamente.");
+        for (int i = 1; i < filteredCsv.length; i++) {
+          //ignora el cero pues es el nombre de las columnas
+          if (filteredCsv[i][0].contains(RegExp('[a-zA-Z]'))) {
+            throw const FormatException(
+                "Una de las columnas marcada como Features contiene datos no numéricos. Deseleccione la columna e intente nuevamente.");
+          }
         }
-      }
         String tipoLlamada = "bmu";
         final parametros = parametrosProvider.mapaParametros();
 
@@ -372,38 +374,41 @@ class _HomePageState extends State<HomePage> {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
     final parametrosProvider = context.read<ParametrosProvider>();
     final datosProvider = context.read<DatosProvider>();
-    Uint8List? fileBytes = result!.files.first.bytes;
-    fileName = result.files.first.name;
+    if (result != null) {
+      Uint8List? fileBytes = result!.files.first.bytes;
+      fileName = result.files.first.name;
 
-    if (fileName.endsWith('.json')) {
-      try {
-        setState(() {
-          cargando = true;
-        });
-        final contents = utf8.decode(fileBytes!);
-        final jsonData = jsonDecode(contents);
+      if (fileName.endsWith('.json')) {
+        try {
+          setState(() {
+            cargando = true;
+          });
+          final contents = utf8.decode(fileBytes!);
+          final jsonData = jsonDecode(contents);
 
-        ResultadoEntrenamientoModel resultadoEntrenamiento =
-            datosProvider.procesarDatos(jsonData, "", jsonData["Parametros"]);
+          ResultadoEntrenamientoModel resultadoEntrenamiento =
+              datosProvider.procesarDatos(jsonData, "", jsonData["Parametros"]);
 
-        setState(() {
-          Navigator.pushNamed(
-            context,
-            '/grillas',
-            arguments: resultadoEntrenamiento,
-          );
-          cargando = false;
-        });
-      } catch (e) {
-        mostrarDialogTexto(context, 'Error', 'Error en el archivo ingresado.');
-        setState(() {
-          cargando = false;
-          botonAceptar = "Entrenar";
-        });
+          setState(() {
+            Navigator.pushNamed(
+              context,
+              '/grillas',
+              arguments: resultadoEntrenamiento,
+            );
+            cargando = false;
+          });
+        } catch (e) {
+          mostrarDialogTexto(
+              context, 'Error', 'Error en el archivo ingresado.');
+          setState(() {
+            cargando = false;
+            botonAceptar = "Entrenar";
+          });
+        }
+      } else {
+        mostrarDialogTexto(
+            context, 'Archivo Invalido', 'Debe seleccionar un archivo JSON.');
       }
-    } else {
-      mostrarDialogTexto(
-          context, 'Archivo Invalido', 'Debe seleccionar un archivo JSON.');
     }
   }
 }

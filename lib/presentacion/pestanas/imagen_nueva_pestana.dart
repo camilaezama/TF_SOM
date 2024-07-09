@@ -441,8 +441,9 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
 
   void _selectFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
-
-    _loadCSVData(result!);
+    if (result != null) {
+      _loadCSVData(result);
+    }
   }
 
   // junto ambas listas de bool y filtro csv data origin //TODO: USAR LA MISMA QUE HOME PAGE
