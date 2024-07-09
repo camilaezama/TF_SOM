@@ -16,7 +16,7 @@ class ImagenNuevaProvider extends ChangeNotifier {
 
   /// Devuelve mapa DATO: CLUSTER
   /// {0: 4, 1: 4, 2: 4, 3: 4, ... , 39274: 4, 39275: 4, 39276: 4}
-  Future<Map<int, int>> llamadaImagen(
+  Future<Map<int, int>> llamadaImagenDatoCluster(
       BuildContext context,
       String cantidadClusters,
       String datosNuevos,
@@ -61,6 +61,37 @@ class ImagenNuevaProvider extends ChangeNotifier {
     notifyListeners();
 
     return mapaDatoCluster;
+  }
+
+  /// Devuelve mapa DATO: BMU
+  /// {0: 26, 1: 336, 2: 45, 3: 4, ... , 39274: 45, 39275: 48, 39276: 200}
+  Future<Map<int, int>> llamadaImagenDatoBMU(
+      BuildContext context,
+      String cantidadClusters,
+      String datosNuevos,
+      String jsonResultEtiquetas) async {
+    cargando = true;
+    notifyListeners();
+
+    final nuevosDatosProvider = context.read<NuevosDatosProvider>();
+
+    // Map<String, String> {'dato':bmu} 'DATO' es todo el dato
+    Map<String, String> mapaDatoCompletoBmu = await nuevosDatosProvider
+        .llamadaNuevosDatos(context, datosNuevos, jsonResultEtiquetas);
+
+    Map<int, int> mapaDatoBmu = {};
+    int idDato = 1;
+    mapaDatoCompletoBmu.forEach((dato, bmu) {
+      int bmuInt = int.parse(bmu);
+      mapaDatoBmu[idDato] = bmuInt;
+      idDato++;
+    });
+
+    cargando = false;
+    mostarGrilla = true;
+    notifyListeners();
+
+    return mapaDatoBmu;
   }
 
   /// Devuelve un mapa BMU: cluster

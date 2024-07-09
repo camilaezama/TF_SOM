@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'dart:ui';
+import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/dialogs/hit_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:TF_SOM_UNMdP/utils/utils.dart';
@@ -23,7 +24,7 @@ List<TableRow> crearTablaDatos(
                     fontSize: 20.0,
                     backgroundColor: Colors.yellow,
                     fontWeight: FontWeight.bold)
-                : TextStyle(fontSize: 20.0))
+                : const TextStyle(fontSize: 20.0))
       ]), //etiqueta
       Column(children: [
         Text(codebook[j].toString(),
@@ -32,7 +33,7 @@ List<TableRow> crearTablaDatos(
                     fontSize: 20.0,
                     backgroundColor: Colors.yellow,
                     fontWeight: FontWeight.bold)
-                : TextStyle(fontSize: 20.0))
+                : const TextStyle(fontSize: 20.0))
       ]), //valor
     ]);
     listaTablita.add(filita);
@@ -144,7 +145,7 @@ class GrillaHexagonos extends StatelessWidget {
                                 double valor = double.parse(valorDistConPunto);
                                 return HexagonWidgetBuilder(
                                   color: grillaBlanca
-                                      ? Color.fromARGB(255, 211, 211, 211)
+                                      ? const Color.fromARGB(255, 211, 211, 211)
                                       : clusters == null
                                           ? getInterpolatedColor(
                                               valor, gradiente, min!, max!)
@@ -222,71 +223,22 @@ class GrillaHexagonos extends StatelessWidget {
                                                   context: context,
                                                   builder:
                                                       (BuildContext context) {
-                                                    return AlertDialog(
-                                                      title: const Text(
-                                                          'Información'),
-                                                      content: SizedBox(
-                                                        width: _width / 3,
-                                                        child:
-                                                            SingleChildScrollView(
-                                                          child: ListBody(
-                                                            children: [
-                                                              const Text(
-                                                                  'Este es un cuadro de diálogo de ejemplo.'),
-                                                              Text(
-                                                                  'BMU = $bMU'),
-                                                              Text(
-                                                                  'Udist = $valorDist'),
-                                                              const Text(
-                                                                "Codebook",
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                                style: TextStyle(
-                                                                    color: Color
-                                                                        .fromARGB(
-                                                                            255,
-                                                                            52,
-                                                                            56,
-                                                                            253),
-                                                                    fontSize:
-                                                                        30.0),
-                                                              ),
-                                                              Table(
-                                                                border: TableBorder.all(
-                                                                    color: Colors
-                                                                        .black,
-                                                                    style: BorderStyle
-                                                                        .solid,
-                                                                    width: 1),
-                                                                children: crearTablaDatos(
-                                                                    nombreColumnas,
-                                                                    (codebook[
-                                                                        bMU -
-                                                                            1]),
-                                                                    titulo),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      actions: [
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop(); // Cerrar el cuadro de diálogo
-                                                          },
-                                                          child: const Text(
-                                                              'Cerrar'),
-                                                        ),
-                                                      ],
-                                                    );
+                                                    return hits
+                                                        ? dialogBotonHits(
+                                                            context,
+                                                            bMU,
+                                                            valorDist)
+                                                        : dialogBotonBMUS(
+                                                            context,
+                                                            bMU,
+                                                            valorDist);
                                                   },
                                                 );
                                               },
                                               child: hits
-                                                  ? widgetHits(bMU, mayoritario: hitsPorMayoritario)
+                                                  ? widgetHits(bMU,
+                                                      mayoritario:
+                                                          hitsPorMayoritario)
                                                   : const Text(
                                                       '',
                                                       //'',
@@ -384,6 +336,68 @@ class GrillaHexagonos extends StatelessWidget {
   //   return SizedBox(); // Retorna un widget vacío si el BMU no tiene etiquetas o no existe en el mapa
   // }
 
+  Widget dialogBotonBMUS(BuildContext context, int bMU, String valorDist) {
+    return AlertDialog(
+      title: const Text('Información'),
+      content: SizedBox(
+        width: _width / 3,
+        child: SingleChildScrollView(
+          child: ListBody(
+            children: [
+              const Text('Este es un cuadro de diálogo de ejemplo.'),
+              Text('BMU = $bMU'),
+              Text('Udist = $valorDist'),
+              const Text(
+                "Codebook",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: Color.fromARGB(255, 52, 56, 253), fontSize: 30.0),
+              ),
+              Table(
+                border: TableBorder.all(
+                    color: Colors.black, style: BorderStyle.solid, width: 1),
+                children: crearTablaDatos(
+                    nombreColumnas, (codebook[bMU - 1]), titulo),
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop(); // Cerrar el cuadro de diálogo
+          },
+          child: const Text('Cerrar'),
+        ),
+      ],
+    );
+  }
+
+  Widget dialogBotonHits(BuildContext context, int bmu, String valorDist) {
+    bool tieneEtiquetas = mapaBMUconEtiquetas!.containsKey(bmu);
+
+    if (!tieneEtiquetas) {
+      return dialogBotonBMUS(context, bmu, valorDist);
+    } else {
+      final etiquetas = mapaBMUconEtiquetas![bmu]![selectedKey];
+      final List<Color> colores =
+          etiquetas!.map((etiqueta) => mapaColores![etiqueta]!).toList();
+      return HitDialog(
+          bmu: bmu,
+          etiquetas: etiquetas,
+          colores: colores,
+          tablaDatos: Table(
+            border: TableBorder.all(
+                color: Colors.black, style: BorderStyle.solid, width: 1),
+            children:
+                crearTablaDatos(nombreColumnas, (codebook[bmu - 1]), titulo),
+          ),
+          selectedKey: selectedKey!,
+        );
+    }
+  }
+
   /// Multiples colores en cada circulo
   Widget widgetHits(int bmu, {bool mayoritario = false}) {
     if (mapaBMUconEtiquetas!.containsKey(bmu)) {
@@ -429,7 +443,7 @@ class GrillaHexagonos extends StatelessWidget {
         }
       }
     }
-    return SizedBox(); // Retorna un widget vacío si el BMU no tiene etiquetas o no existe en el mapa
+    return const SizedBox(); // Retorna un widget vacío si el BMU no tiene etiquetas o no existe en el mapa
   }
 
   String tooltipHits(int bmu) {
@@ -472,40 +486,29 @@ class GrillaHexagonos extends StatelessWidget {
   }
 }
 
-// class MultipleCirclePainter extends CustomPainter {
-//   final List<Color> colores;
-
-//   MultipleCirclePainter(this.colores);
-
-//   @override
-//   void paint(Canvas canvas, Size size) {
-//     double startAngle = 0;
-//     double sweepAngle = (2 * pi) / colores.length;
-//     double radius = size.width / 2;
-
-//     for (int i = 0; i < colores.length; i++) {
-//       Paint paint = Paint()..color = colores[i];
-
-//       Rect rect = Rect.fromCircle(center: Offset(radius, radius), radius: radius);
-//       canvas.drawArc(rect, startAngle, sweepAngle, true, paint);
-
-//       startAngle += sweepAngle;
-//     }
-//   }
-
-//   @override
-//   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-//     return true;
-//   }
-// }
-
 class MultipleCirclePainter extends CustomPainter {
-  final List<Color> colores;
+  final List<Color> coloresDes;
 
-  MultipleCirclePainter(this.colores);
+  MultipleCirclePainter(this.coloresDes);
 
   @override
   void paint(Canvas canvas, Size size) {
+    // Ordeno lista para que me queden los colores consecutivos
+    // Crear un mapa para agrupar los colores por tipo
+    Map<Color, List<Color>> colorMap = {};
+    coloresDes.forEach((color) {
+      if (!colorMap.containsKey(color)) {
+        colorMap[color] = [];
+      }
+      colorMap[color]!.add(color);
+    });
+
+    // Crear una lista ordenada con los colores agrupados
+    List<Color> colores = [];
+    colorMap.values.forEach((lista) {
+      colores.addAll(lista);
+    });
+
     double startAngle = 0;
     double sweepAngle = (2 * pi) / colores.length;
     double radius = size.width / 2;
