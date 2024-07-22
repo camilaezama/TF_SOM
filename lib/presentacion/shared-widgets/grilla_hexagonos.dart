@@ -344,7 +344,6 @@ class GrillaHexagonos extends StatelessWidget {
         child: SingleChildScrollView(
           child: ListBody(
             children: [
-              const Text('Este es un cuadro de diálogo de ejemplo.'),
               Text('BMU = $bMU'),
               Text('Udist = $valorDist'),
               const Text(
@@ -384,17 +383,17 @@ class GrillaHexagonos extends StatelessWidget {
       final List<Color> colores =
           etiquetas!.map((etiqueta) => mapaColores![etiqueta]!).toList();
       return HitDialog(
-          bmu: bmu,
-          etiquetas: etiquetas,
-          colores: colores,
-          tablaDatos: Table(
-            border: TableBorder.all(
-                color: Colors.black, style: BorderStyle.solid, width: 1),
-            children:
-                crearTablaDatos(nombreColumnas, (codebook[bmu - 1]), titulo),
-          ),
-          selectedKey: selectedKey!,
-        );
+        bmu: bmu,
+        etiquetas: etiquetas,
+        colores: colores,
+        tablaDatos: Table(
+          border: TableBorder.all(
+              color: Colors.black, style: BorderStyle.solid, width: 1),
+          children:
+              crearTablaDatos(nombreColumnas, (codebook[bmu - 1]), titulo),
+        ),
+        selectedKey: selectedKey!,
+      );
     }
   }
 

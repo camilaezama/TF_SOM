@@ -20,7 +20,8 @@ class _ClustersPestanaState extends State<ClustersPestana> {
 
   @override
   void initState() {
-    clustersController = TextEditingController(text: "10");
+    context.read<ClustersProvider>().mostarGrilla = false;
+    clustersController = TextEditingController(text: "5");
     super.initState();
   }
 

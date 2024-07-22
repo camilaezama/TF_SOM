@@ -46,15 +46,14 @@ List<Map<String, String>> convertRowsToMap(List<List<dynamic>> rows) {
 
 List<Map<String, String>> csvToData(List<List<dynamic>> csvData) {
   ByteData byteData = csvToByteData(csvData);
-  String content = String.fromCharCodes(byteData.buffer.asUint8List());
-
+  //String content = String.fromCharCodes(byteData.buffer.asUint8List());
+  String content = utf8.decode(byteData.buffer.asUint8List());
   // Parsear el contenido CSV con el delimitador ';'
   List<List<dynamic>> rows =
       const CsvToListConverter(eol: '\n', fieldDelimiter: ';').convert(content);
   List<Map<String, String>> result = convertRowsToMap(rows);
   return result;
 }
-
 
 /// A partir de la lista de bool con las columnas seleccionadas, filtra csv data para que contenga las columnas seleccionadas
 List<List<dynamic>> filtrarCsvData(List<bool> listaBoolColumnasSeleccionadas,
