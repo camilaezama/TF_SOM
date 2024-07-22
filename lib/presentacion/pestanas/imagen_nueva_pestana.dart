@@ -218,14 +218,6 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
             width: 20.0,
           ),
           const Spacer(),
-
-          /// BOTON JET
-          ElevatedButton(
-              onPressed: () {
-                listaIdClusterColor = mapaConJet(listaIdClusterColor);
-                colorPickerKey.currentState!.updateColors(listaIdClusterColor);
-              },
-              child: const Text('Usar jet'))
         ],
       ),
       actions: [
@@ -241,10 +233,55 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
             },
             child: const Text('Guardar'))
       ],
-      content: ListaColorPicker(
-        key: colorPickerKey,
-        listaIdColor: listaIdClusterColor,
-        onColorsChanged: _updatePixelGroups,
+      content: SizedBox(
+        height: heightPantalla * 0.7,
+        width: widthPantalla * 0.3,
+        child: Column(
+          children: [
+            Row(
+              children: [
+                /// BOTON JET
+                ElevatedButton(
+                    onPressed: () {
+                      listaIdClusterColor = mapaConJet(listaIdClusterColor);
+                      colorPickerKey.currentState!
+                          .updateColors(listaIdClusterColor);
+                    },
+                    child: const Text('Usar jet')),
+                const SizedBox(
+                  width: 20.0,
+                ),
+
+                /// Boton descargar mapa
+                ElevatedButton(
+                    onPressed: () {
+                      final valuesList = mapaDatoCluster.values.toList();
+                      final valuesString = valuesList.join(' ');
+                      final bytes = utf8.encode(valuesString);
+                      DateTime now = DateTime.now();
+                      final blob = html.Blob([bytes]);
+                      final urlAux = html.Url.createObjectUrlFromBlob(blob);
+                      final anchor = html.AnchorElement(href: urlAux)
+                        ..setAttribute("download", "Clusters.txt")
+                        ..click();
+                      html.Url.revokeObjectUrl(urlAux);
+                    },
+                    child: const Text('Descargar')),
+              ],
+            ),
+            const SizedBox(
+              height: 20.0,
+            ),
+            SizedBox(
+              height: heightPantalla * 0.6,
+              child: ListaColorPicker(
+                key: colorPickerKey,
+                listaIdColor: listaIdClusterColor,
+                onColorsChanged: _updatePixelGroups,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -27,34 +27,37 @@ class ListaColorPickerState extends State<ListaColorPicker> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: tempListaIdColor.entries.map((entry) {
-          int index = entry.key;
-          Color color = entry.value;
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  height: 50,
-                  width: 100,
-                  color: color,
-                ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    _openColorPicker(index);
-                  },
-                  child: const Text('Cambiar'),
-                ),
-              ],
-            ),
-          );
-        }).toList(),
+    return Scrollbar(
+      thumbVisibility: true,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: tempListaIdColor.entries.map((entry) {
+            int index = entry.key;
+            Color color = entry.value;
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    height: 50,
+                    width: 100,
+                    color: color,
+                  ),
+                  const SizedBox(width: 10),
+                  ElevatedButton(
+                    onPressed: () {
+                      _openColorPicker(index);
+                    },
+                    child: const Text('Cambiar'),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+        ),
       ),
     );
   }
