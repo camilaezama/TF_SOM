@@ -141,4 +141,67 @@ class ImagenNuevaProvider extends ChangeNotifier {
 
     return mapaBmuCluster;
   }
+
+  ///
+  ///
+  /// DATOS ORIGINALES: DATOS DE TRAIN / DE ENTRADA
+  /// 
+  /// 
+  
+  /// Devuelve mapa DATO: CLUSTER
+  /// {0: 4, 1: 4, 2: 4, 3: 4, ... , 39274: 4, 39275: 4, 39276: 4}
+  Future<Map<int, int>> datoClusterImagenOriginal(
+      BuildContext context, String cantidadClusters) async {
+    final datosProvider = context.read<DatosProvider>();
+
+    /// mapaBmuCluster es un mapa BMU: cluster
+    /// {1: 3, 2: 3, 3: 3, 4: 3, 5: 3, ...., 333: 2, 334: 2, 335: 2, 336: 2}
+    Map<int, int> mapaBmuCluster = await llamadaClustering(context, cantidadClusters);
+
+    /// Creamos el mapaDatoCluster que machea dato -> bmu en que cayo -> cluster asociado al bmu
+    /// Es un mapa DATO: CLUSTER
+    /// {0: 4, 1: 4, 2: 4, 3: 4, ... , 39274: 4, 39275: 4, 39276: 4}
+    Map<int, int> mapaDatoCluster = {};
+
+    /// Iteramos sobre la lista de etiquetas
+    ///  datosProvider.resultadoEntrenamiento.etiquetas contiene mapa con dato, su bmu, sus etiquetas
+    /// [{Dato: 0, BMU: 336, Identificador: Dato 1}, {Dato: 1, BMU: 336, Identificador: Dato 2}, ...
+    for (var etiqueta in datosProvider.resultadoEntrenamiento.etiquetas) {
+      int dato = etiqueta['Dato'];
+      int bmu = etiqueta['BMU'];
+      int? cluster = mapaBmuCluster[bmu];
+
+      if (cluster != null) {
+        mapaDatoCluster[dato] = cluster;
+      } else {
+        // Si no se encuentra el BMU en el mapaBmuCluster
+      }
+    }
+
+    return mapaDatoCluster;
+  }
+
+
+  /// Devuelve mapa DATO: BMU
+  /// {0: 334, 1: 334, 2: 14, 3: 4, ... , 39274: 14, 39275: 40, 39276: 300}
+  Future<Map<int, int>> datoBmuImagenOriginal(
+      BuildContext context, String cantidadClusters) async {
+    final datosProvider = context.read<DatosProvider>();
+
+    /// Es un mapa DATO: BMU
+    Map<int, int> mapaDatoBMU = {};
+
+    /// Iteramos sobre la lista de etiquetas
+    ///  datosProvider.resultadoEntrenamiento.etiquetas contiene mapa con dato, su bmu, sus etiquetas
+    /// [{Dato: 0, BMU: 336, Identificador: Dato 1}, {Dato: 1, BMU: 336, Identificador: Dato 2}, ...
+    for (var etiqueta in datosProvider.resultadoEntrenamiento.etiquetas) {
+      int dato = etiqueta['Dato'];
+      int bmu = etiqueta['BMU'];
+      mapaDatoBMU[dato] = bmu;
+    }
+
+    return mapaDatoBMU;
+  }
+
+  
 }
