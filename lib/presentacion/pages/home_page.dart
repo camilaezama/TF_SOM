@@ -320,7 +320,7 @@ class _HomePageState extends State<HomePage> {
 
       List<Map<String, String>> data = csvToData(filteredCsv);
       String jsonResult = jsonEncode(data);
-
+      jsonResult = jsonResult.replaceAll('\\r', '');
       List<List<dynamic>> filteredEtiquetas = filtrarCsvData(
           listaBoolEtiquetasSeleccionadas,
           listaNombresColumnasOriginal,

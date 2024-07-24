@@ -29,8 +29,12 @@ class NuevosDatosProvider extends ChangeNotifier {
         .datos[0]
         .keys
         .toList();
-
-    return columnasNuevosDatos == columnasEntrenamiento;
+    for (int i = 0; i < columnasNuevosDatos.length; i++) {
+      if (columnasNuevosDatos[i] != columnasEntrenamiento[i]) {
+        return false;
+      }
+    }
+    return true;
   }
 
   // Map<String, String> {dato:bmu}
