@@ -180,8 +180,9 @@ class _GrillasPageState extends State<GrillasPage>
                   gradiente: gradiente,
                 ),
                 NuevoDatoPestana(gradiente: gradiente),
-                ImagenPestana(gradiente: gradiente),
-                ImagenNuevaPestana(gradiente: gradiente)
+                //ImagenPestana(gradiente: gradiente),
+                ImagenNuevaPestana(gradiente: gradiente, usarDatosTrain: true,),
+                ImagenNuevaPestana(gradiente: gradiente, usarDatosTrain: false,)
               ],
             ),
           ),
