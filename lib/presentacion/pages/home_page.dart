@@ -34,7 +34,6 @@ class _HomePageState extends State<HomePage> {
   String botonParam = 'Modificar Parametros';
 
   bool cargando = false;
-  bool deteccionAutomaticaFeatures = true;
 
   /// Lista con todos los nombres de las columnas, seleccionados o no
   List<String> listaNombresColumnasOriginal = [];
@@ -73,10 +72,7 @@ class _HomePageState extends State<HomePage> {
         for (int i = 0; i < listaNombresColumnasOriginal.length; i++) {
           listaBoolEtiquetasSeleccionadas.add(false);
         }
-        if (deteccionAutomaticaFeatures) {
-          deteccionAutomatica(csvData, listaBoolColumnasSeleccionadas,
-              listaBoolEtiquetasSeleccionadas);
-        }
+        // Para probar !!!!! TODO: BORRAR
         // listaBoolEtiquetasSeleccionadas[0] = true;
         // listaBoolEtiquetasSeleccionadas[1] = true;
       });
@@ -122,52 +118,33 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: ElevatedButton(
-                            onPressed: _selectFile,
-                            child: const Text(
-                              'Seleccionar Archivo CSV',
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          ),
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: ElevatedButton(
+                        onPressed: _selectFile,
+                        child: const Text(
+                          'Seleccionar Archivo CSV',
+                          style: TextStyle(fontSize: 16),
                         ),
-                        IconButton(
-                            tooltip: 'Elegir gradiente',
-                            onPressed: () {
-                              showDialog<void>(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return ConfigurarGradienteDialog(
-                                    widthPantalla: _width,
-                                    heightPantalla: _height,
-                                  );
-                                },
+                      ),
+                    ),
+                    IconButton(
+                        tooltip: 'Elegir gradiente',
+                        onPressed: () {
+                          showDialog<void>(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return ConfigurarGradienteDialog(
+                                widthPantalla: _width,
+                                heightPantalla: _height,
                               );
                             },
-                            icon: const Icon(Icons.gradient_outlined))
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(width: 10),
-                        const Text("Deteccion automática de features"),
-                        Checkbox(
-                          value: deteccionAutomaticaFeatures,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              deteccionAutomaticaFeatures = value!;
-                            });
-                          },
-                        ),
-                      ],
-                    )
+                          );
+                        },
+                        icon: const Icon(Icons.gradient_outlined))
                   ],
                 ),
                 (csvData.isNotEmpty)
@@ -432,23 +409,6 @@ class _HomePageState extends State<HomePage> {
         mostrarDialogTexto(
             context, 'Archivo Invalido', 'Debe seleccionar un archivo JSON.');
       }
-    }
-  }
-}
-
-void deteccionAutomatica(
-    List<List> csvData,
-    List<bool> listaBoolColumnasSeleccionadas,
-    List<bool> listaBoolEtiquetasSeleccionadas) {
-  List<String> primeraFilaValores = csvData[1][0].toString().split(';');
-  double x;
-  for (int i = 0; i < primeraFilaValores.length; i++) {
-    try {
-      x = double.parse(primeraFilaValores[i]);
-    } catch (e) {
-      //si no pudo parsear entonces son letras, es etiqueta
-      listaBoolColumnasSeleccionadas[i] = false;
-      listaBoolEtiquetasSeleccionadas[i] = true;
     }
   }
 }
