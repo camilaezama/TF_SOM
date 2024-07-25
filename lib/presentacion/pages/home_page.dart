@@ -73,9 +73,9 @@ class _HomePageState extends State<HomePage> {
         for (int i = 0; i < listaNombresColumnasOriginal.length; i++) {
           listaBoolEtiquetasSeleccionadas.add(false);
         }
-        if(deteccionAutomaticaFeatures){
+        if (deteccionAutomaticaFeatures) {
           deteccionAutomatica(csvData, listaBoolColumnasSeleccionadas,
-            listaBoolEtiquetasSeleccionadas);
+              listaBoolEtiquetasSeleccionadas);
         }
         // listaBoolEtiquetasSeleccionadas[0] = true;
         // listaBoolEtiquetasSeleccionadas[1] = true;
@@ -153,18 +153,19 @@ class _HomePageState extends State<HomePage> {
                             icon: const Icon(Icons.gradient_outlined))
                       ],
                     ),
-                    Row(mainAxisAlignment: MainAxisAlignment.center,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const SizedBox(width: 10)
-                            ,const Text("Deteccion automática de features"),
-                            Checkbox(
-                                value: deteccionAutomaticaFeatures,
-                                onChanged: (bool? value) {
-                                  setState(() {
-                                    deteccionAutomaticaFeatures = value!;
-                                  });
-                                },
-                              ),
+                        const SizedBox(width: 10),
+                        const Text("Deteccion automática de features"),
+                        Checkbox(
+                          value: deteccionAutomaticaFeatures,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              deteccionAutomaticaFeatures = value!;
+                            });
+                          },
+                        ),
                       ],
                     )
                   ],
