@@ -32,7 +32,7 @@ class DatosProvider extends ChangeNotifier {
       Map<String, dynamic> parametros,
       String jsonResult,
       String jsonResultEtiquetas) async {
-    var url = Uri.parse('https://201.179.142.253.nip.io:7777/$tipoLlamada');
+    var url = Uri.parse('http://localhost:7777/$tipoLlamada');
 
     var response = await http.post(url,
         headers: {'Accept': '/*'},

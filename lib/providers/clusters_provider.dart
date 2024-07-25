@@ -25,7 +25,7 @@ class ClustersProvider extends ChangeNotifier {
     final datosProvider = context.read<DatosProvider>();
 
     String TIPO_LLAMADA = "clusters";
-    var url = Uri.parse('https://201.179.142.253.nip.io:7777' + '/' + TIPO_LLAMADA);
+    var url = Uri.parse('http://localhost:7777' + '/' + TIPO_LLAMADA);
 
     final parametros = <String, dynamic>{
       'filas': datosProvider.resultadoEntrenamiento.filas.toString() != ""
