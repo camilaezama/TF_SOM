@@ -315,18 +315,16 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20.0),
-            child: Expanded(
-              child: Container(
-                constraints: const BoxConstraints(
-                  maxHeight: 400.0, // Ajusta este valor según sea necesario
-                  maxWidth: double.infinity,
-                ),
-                child: InteractiveViewer(
-                  boundaryMargin: const EdgeInsets.all(20.0),
-                  minScale: 0.1,
-                  maxScale: 4.0,
-                  child: RawImage(image: customImage),
-                ),
+            child: Container(
+              constraints: const BoxConstraints(
+                maxHeight: 400.0, // Ajusta este valor según sea necesario
+                maxWidth: double.infinity,
+              ),
+              child: InteractiveViewer(
+                boundaryMargin: const EdgeInsets.all(20.0),
+                minScale: 0.1,
+                maxScale: 4.0,
+                child: RawImage(image: customImage),
               ),
             ),
           ),
