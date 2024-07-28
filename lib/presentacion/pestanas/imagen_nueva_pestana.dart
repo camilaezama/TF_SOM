@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'dart:ui' as ui;
+import 'dart:html' as html;
 
 import 'package:TF_SOM_UNMdP/config/tema.dart';
+import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/color_picker.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/dialogs/seleccionar_opciones_dialog.dart';
+import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/grilla_hexagonos.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/tabla_datos.dart';
 import 'package:TF_SOM_UNMdP/providers/datos_provider.dart';
 import 'package:TF_SOM_UNMdP/providers/imagen_nueva_provider.dart';
@@ -15,14 +18,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
-
 import '../../utils/utils.dart';
 
-enum TipoColoreado { clustering, jet }
+enum TipoColoreado { clustering, coloreadoContinuo }
 
 class ImagenNuevaPestana extends StatefulWidget {
   final Gradient gradiente;
-  const ImagenNuevaPestana({super.key, required this.gradiente});
+  final bool? usarDatosTrain;
+  const ImagenNuevaPestana(
+      {super.key, required this.gradiente, this.usarDatosTrain = true});
 
   @override
   State<ImagenNuevaPestana> createState() => _ImagenNuevaPestanaState();
@@ -33,6 +37,9 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
   late TextEditingController clustersController;
   late TextEditingController anchoPixelesController;
   late TextEditingController altoPixelesController;
+
+  /// Generar imagen lisa con dimensiones pedidas
+  bool imagenDePrueba = false;
 
   /// Texto boton aceptar
   String botonAceptar = 'Generar Imagen';
@@ -63,14 +70,37 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
   List<List<dynamic>> csvDataIdentificadores = [];
   String fileName = '';
 
-  // Tipo de coloreado: Clustering o JET
+  // Tipo de coloreado: Clustering o coloreadoContinuo
   TipoColoreado tipoColoreado = TipoColoreado.clustering;
+
+  ///listaIdClusterColor es un mapa de {idCluster : Color}
+  late Map<int, Color> listaIdClusterColor;
+  final GlobalKey<ListaColorPickerState> colorPickerKey =
+      GlobalKey<ListaColorPickerState>();
+
+  late double widthPantalla;
+  late double heightPantalla;
+
+  Map<int, Color> coloresIniciales = {
+    1: Colors.red,
+    2: Colors.green,
+    3: Colors.blue,
+    4: Colors.yellow,
+    5: const Color.fromARGB(255, 255, 71, 132),
+    6: Colors.grey,
+    7: const Color(0xFF01D0FF),
+    8: const Color(0xFF0E4CA1),
+    9: const Color(0xFF788231),
+    10: const Color(0xFFE56FFE),
+  };
 
   @override
   void initState() {
     clustersController = TextEditingController(text: "4");
     anchoPixelesController = TextEditingController(text: "217");
     altoPixelesController = TextEditingController(text: "181");
+    listaIdClusterColor = Map.fromEntries(
+        coloresIniciales.entries.take(int.parse(clustersController.text)));
     super.initState();
   }
 
@@ -79,6 +109,11 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
     final imagenNuevaProvider = context.watch<ImagenNuevaProvider>();
     final datosProvider = context.watch<DatosProvider>();
     final parametrosProvider = context.watch<ParametrosProvider>();
+
+    final datosProvider = context.watch<DatosProvider>();
+
+    widthPantalla = MediaQuery.of(context).size.width;
+    heightPantalla = MediaQuery.of(context).size.height;
 
     return Center(
       child: Row(
@@ -94,35 +129,213 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
             height: 5,
           ),
 
-          if (tipoColoreado == TipoColoreado.jet)
-            Padding(
-              padding: const EdgeInsets.all(30.0),
-              child: SizedBox(
-                  height: 400.0,
-                  width: 400.0,
-                  child: ColorMatrixWidget(
-                      rows: int.parse(parametrosProvider.filas),
-                      cols: int.parse(parametrosProvider.columnas))),
-            ),
+          /// BOTON DE CONFIGURACION
+          customImage == null
+              ? const SizedBox.shrink()
+              : Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: ElevatedButton(
+                          onPressed: () {
+                            showDialog<void>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                switch (tipoColoreado) {
+                                  case TipoColoreado.coloreadoContinuo:
+                                    return dialogColoreadoDinamico(
+                                        parametrosProvider.filas,
+                                        parametrosProvider.columnas,
+                                        datosProvider);
+                                  case TipoColoreado.clustering:
+                                    return dialogClustering();
+                                  default:
+                                    return const AlertDialog(
+                                      title:
+                                          Text('Definir coloreado de imagen'),
+                                    );
+                                }
+                              },
+                            );
+                          },
+                          child: const Icon(Icons.settings)),
+                    )
+                  ],
+                ),
 
+          /// IMAGEN
           customImage == null ? const SizedBox.shrink() : _imagenWidget(),
         ],
       ),
     );
   }
 
+  /// CONFIG DIALOG: Dialog que muestra grilla con colores usados para COLOREADO DINAMICO
+  Widget dialogColoreadoDinamico(
+      String filas, String columnas, DatosProvider datosProvider) {
+    return AlertDialog(
+      title: const Text('Colores Utilizados'),
+      actions: [
+        TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Guardar'))
+      ],
+      content: Padding(
+        padding: const EdgeInsets.all(30.0),
+        child: SizedBox(
+          height: heightPantalla * 0.7,
+          width: widthPantalla * 0.6,
+          child: GrillaHexagonos(
+            titulo: "Colores",
+            gradiente: widget.gradiente,
+            dataMap: datosProvider.resultadoEntrenamiento.dataUdist,
+            nombreColumnas:
+                datosProvider.resultadoEntrenamiento.nombresColumnas,
+            codebook: datosProvider.resultadoEntrenamiento.codebook,
+            clusters: null,
+            filas: datosProvider.resultadoEntrenamiento.filas,
+            columnas: datosProvider.resultadoEntrenamiento.columnas,
+            min: 0,
+            max: 1,
+            mostrarGradiente: false,
+            deshabilitarBotonesHexagonos: true,
+            mostrarBotonImprimir: false,
+            mapaBmuColor: matrixToMap(int.parse(filas), int.parse(columnas)),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// CONFIG DIALOG: Dialog que muestra lista de colores para configurar en CLUSTERING
+  Widget dialogClustering() {
+    return AlertDialog(
+      title: Row(
+        children: [
+          const Text('Colores en la imagen'),
+          const SizedBox(
+            width: 20.0,
+          ),
+          const Spacer(),
+        ],
+      ),
+      actions: [
+        TextButton(
+            onPressed: () async {
+              Navigator.of(context).pop();
+              customImage = await _generarImagenConDatos(
+                  int.parse(anchoPixelesController.text),
+                  int.parse(altoPixelesController.text),
+                  mapaDatoCluster,
+                  listaIdClusterColor);
+              setState(() {});
+            },
+            child: const Text('Guardar'))
+      ],
+      content: SizedBox(
+        height: heightPantalla * 0.7,
+        width: widthPantalla * 0.3,
+        child: Column(
+          children: [
+            Row(
+              children: [
+                /// BOTON JET
+                ElevatedButton(
+                    onPressed: () {
+                      listaIdClusterColor = mapaConJet(listaIdClusterColor);
+                      colorPickerKey.currentState!
+                          .updateColors(listaIdClusterColor);
+                    },
+                    child: const Text('Usar jet')),
+                const SizedBox(
+                  width: 20.0,
+                ),
+
+                /// Boton descargar mapa
+                ElevatedButton(
+                    onPressed: () {
+                      final valuesList = mapaDatoCluster.values.toList();
+                      final valuesString = valuesList.join(' ');
+                      final bytes = utf8.encode(valuesString);
+                      DateTime now = DateTime.now();
+                      final blob = html.Blob([bytes]);
+                      final urlAux = html.Url.createObjectUrlFromBlob(blob);
+                      final anchor = html.AnchorElement(href: urlAux)
+                        ..setAttribute("download", "Clusters.txt")
+                        ..click();
+                      html.Url.revokeObjectUrl(urlAux);
+                    },
+                    child: const Text('Descargar')),
+              ],
+            ),
+            const SizedBox(
+              height: 20.0,
+            ),
+            SizedBox(
+              height: heightPantalla * 0.6,
+              child: ListaColorPicker(
+                key: colorPickerKey,
+                listaIdColor: listaIdClusterColor,
+                onColorsChanged: _updatePixelGroups,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   /// Columna que muestra imagen y boton
+  // Widget _imagenWidget() {
+  //   return Expanded(
+  //     child: Column(
+  //       children: [
+  //         Padding(
+  //           padding: const EdgeInsets.symmetric(vertical: 100.0),
+  //           child: RawImage(image: customImage),
+  //         ),
+  //         ElevatedButton(
+  //           onPressed: () {
+  //             if (customImage != null) {
+  //               _downloadImage(customImage!);
+  //             }
+  //           },
+  //           child: const Text('Descargar Imagen'),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
   Widget _imagenWidget() {
     return Expanded(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 100.0),
-            child: RawImage(image: customImage),
+            padding: const EdgeInsets.symmetric(vertical: 20.0),
+            child: Container(
+              constraints: const BoxConstraints(
+                maxHeight: 400.0, // Ajusta este valor según sea necesario
+                maxWidth: double.infinity,
+              ),
+              child: InteractiveViewer(
+                boundaryMargin: const EdgeInsets.all(20.0),
+                minScale: 0.1,
+                maxScale: 4.0,
+                child: RawImage(image: customImage),
+              ),
+            ),
           ),
-          const ElevatedButton(
-            onPressed: _downloadImage,
-            child: Text('Descargar Imagen (TO DO)'),
+          ElevatedButton(
+            onPressed: () {
+              if (customImage != null) {
+                _downloadImage(customImage!);
+              }
+            },
+            child: const Text('Descargar Imagen'),
           ),
         ],
       ),
@@ -142,7 +355,7 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            /// BOTON CLUSTERING / JET
+            /// BOTON CLUSTERING / ColoreadoContinuo
             SizedBox(
               width: anchoCampos,
               child: DropdownButtonFormField(
@@ -156,89 +369,104 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
                     child: Text(" Clustering"),
                   ),
                   DropdownMenuItem(
-                    value: TipoColoreado.jet,
-                    child: Text(" JET"),
+                    value: TipoColoreado.coloreadoContinuo,
+                    child: Text(" Coloreado Continuo "),
                   ),
                 ],
                 onChanged: (value) {
                   setState(() {
+                    customImage = null;
                     tipoColoreado = value!;
                   });
                 },
               ),
             ),
-
-            /// BOTON SELECCIONAR ARCHIVO
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: ElevatedButton(
-                onPressed: _selectFile,
-                child: const Text(
-                  'Seleccionar Archivo CSV',
-                  style: TextStyle(fontSize: 16),
-                ),
-              ),
+            const SizedBox(
+              height: 20.0,
             ),
 
-            /// BOTONES COLUMNAS Y ETIQUETAS
-            (csvData.isNotEmpty)
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      TextButton.icon(
-                        label: const Text('Features'),
-                        icon: const Icon(Icons.list),
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return DialogOpciones(
-                                opciones: listaNombresColumnasOriginal,
-                                seleccionadas: listaBoolColumnasSeleccionadas,
-                                actualizarOpciones: actualizarOpciones,
-                              );
-                            },
-                          );
-                        },
-                        //onPressed: () => {_mostrarListaOpciones(context)},
-                      ),
-                      TextButton.icon(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return DialogOpciones(
-                                tituloDialog:
-                                    'Seleccionar columnas que son etiquetas',
-                                opciones: listaNombresColumnasOriginal,
-                                seleccionadas: listaBoolEtiquetasSeleccionadas,
-                                actualizarOpciones: actualizarOpcionesEtiquetas,
-                              );
-                            },
-                          );
-                        },
-                        icon: const Icon(Icons.sell_outlined),
-                        label: const Text('Etiquetas'),
-                      )
-                    ],
-                  )
-                : const SizedBox.shrink(),
+            if (widget.usarDatosTrain == false)
 
-            /// NOMBRE ARCHIVO / TABLA
-            (csvData.isNotEmpty)
-                ? (csvData.length > 100)
-                    ? Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 20.0),
-                        child: Text(
-                            "La cantidad de datos es muy grande,\n la vista previa del archivo\n $fileName\n ha sido deshabilitada."),
-                      )
-                    : Expanded(
-                        child: TablaDatos(
-                          csvData: csvData,
-                          columnNames: listaNombresColumnasSeleccionadas,
-                        ),
-                      )
-                : const SizedBox.shrink(),
+              /// La parte de seleccionar archivo la mustro si no se usan los datos de train
+              Column(
+                children: [
+                  /// BOTON SELECCIONAR ARCHIVO
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: ElevatedButton(
+                      onPressed: _selectFile,
+                      child: const Text(
+                        'Seleccionar Archivo CSV',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ),
+
+                  /// BOTONES COLUMNAS Y ETIQUETAS
+                  (csvData.isNotEmpty)
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextButton.icon(
+                              label: const Text('Features'),
+                              icon: const Icon(Icons.list),
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return DialogOpciones(
+                                      opciones: listaNombresColumnasOriginal,
+                                      seleccionadas:
+                                          listaBoolColumnasSeleccionadas,
+                                      actualizarOpciones: actualizarOpciones,
+                                    );
+                                  },
+                                );
+                              },
+                              //onPressed: () => {_mostrarListaOpciones(context)},
+                            ),
+                            TextButton.icon(
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return DialogOpciones(
+                                      tituloDialog:
+                                          'Seleccionar columnas que son etiquetas',
+                                      opciones: listaNombresColumnasOriginal,
+                                      seleccionadas:
+                                          listaBoolEtiquetasSeleccionadas,
+                                      actualizarOpciones:
+                                          actualizarOpcionesEtiquetas,
+                                    );
+                                  },
+                                );
+                              },
+                              icon: const Icon(Icons.sell_outlined),
+                              label: const Text('Etiquetas'),
+                            )
+                          ],
+                        )
+                      : const SizedBox.shrink(),
+
+                  /// NOMBRE ARCHIVO / TABLA
+                  (csvData.isNotEmpty)
+                      ? (csvData.length > 100)
+                          ? Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 20.0),
+                              child: Text(
+                                  "La cantidad de datos es muy grande,\n la vista previa del archivo\n $fileName\n ha sido deshabilitada."),
+                            )
+                          : Expanded(
+                              child: TablaDatos(
+                                csvData: csvData,
+                                columnNames: listaNombresColumnasSeleccionadas,
+                              ),
+                            )
+                      : const SizedBox.shrink(),
+                ],
+              ),
 
             /// CAMPO ANCHO EN PIXELES
             SizedBox(
@@ -282,6 +510,15 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
                   controller: clustersController,
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  onChanged: (value) {
+                    if (customImage != null) {
+                      setState(() {
+                        customImage = null;
+                      });
+                    }
+                    listaIdClusterColor = Map.fromEntries(
+                        coloresIniciales.entries.take(int.parse(value)));
+                  },
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Cantidad de clusters',
@@ -295,8 +532,21 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
             /// BOTON ACEPTAR
             ElevatedButton(
                 onPressed: () async {
-                  _generarImagen(imagenNuevaProvider, datosProvider,
-                      parametrosProvider, tipoColoreado);
+                  if (imagenDePrueba == true) {
+                    customImage = await _generarImagenPrueba(
+                      int.parse(anchoPixelesController.text),
+                      int.parse(altoPixelesController.text),
+                    );
+                    setState(() {});
+                  } else {
+                    if (widget.usarDatosTrain! == true) {
+                      _generarImagenConDatosTrain(imagenNuevaProvider,
+                          parametrosProvider, tipoColoreado);
+                    } else {
+                      _generarImagen(imagenNuevaProvider, parametrosProvider,
+                          tipoColoreado);
+                    }
+                  }
                 },
                 style: AppTheme.primaryButtonStyle,
                 child: imagenNuevaProvider.cargando
@@ -309,6 +559,11 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
         ),
       ),
     );
+  }
+
+  /// Update del mapa {idCluster : Color} con colores elegidos
+  void _updatePixelGroups(Map<int, Color> updatedPixelGroups) {
+    listaIdClusterColor = updatedPixelGroups;
   }
 
   /// Funcion que crea imagen
@@ -334,21 +589,10 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
       mapaDatoCluster = await imagenNuevaProvider.llamadaImagenDatoCluster(
           context, clustersController.text, jsonResult, jsonResultEtiquetas);
 
-      /// pixelGroups es un mapa de {idCluster : Color}
-      Map<int, Color> pixelGroups = {
-        1: Colors.red,
-        2: Colors.green,
-        3: Colors.blue,
-        4: Colors.yellow,
-        5: const ui.Color.fromARGB(255, 255, 71, 132),
-        6: Colors.grey,
-        7: const Color(0xFF01D0FF),
-        8: const Color(0xFF0E4CA1),
-        9: const Color(0xFF788231),
-        10: const Color(0xFFE56FFE),
-      };
+      /// listaIdClusterColor es un mapa de {idCluster : Color}
 
       /// Genera imagen a partir del clustering
+
       var val = datosProvider.cantDatosEntrenamiento();
       if (validarColumnasDatos(int.parse(anchoPixelesController.text),
           int.parse(altoPixelesController.text), val)) {
@@ -356,28 +600,63 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
             int.parse(anchoPixelesController.text),
             int.parse(altoPixelesController.text),
             mapaDatoCluster,
-            pixelGroups);
+            listaIdClusterColor);
       } else {
       mostrarDialogTexto(context, "Error de dimensiones",
           "El ancho por alto debe coincidir con la cantidad de datos de entrada");
-    }
+      }
     } else {
       mapaDatoBmu = await imagenNuevaProvider.llamadaImagenDatoBMU(
           context, clustersController.text, jsonResult, jsonResultEtiquetas);
-      // print("mapaDatoBmu");
-      // print(mapaDatoBmu);
 
-      Map<int, Color> pixelGroups = devolverMapaBmuColor(
+      /// Mapa {BMU : Color} (Le paso cada BMU como un cluster diferente)
+      Map<int, Color> listaBMUColor = matrixToMap(
           int.parse(parametrosProvider.filas),
           int.parse(parametrosProvider.columnas));
-      // print("pixelGroups");
-      // print(pixelGroups);
 
       customImage = await _generarImagenConDatos(
           int.parse(anchoPixelesController.text),
           int.parse(altoPixelesController.text),
           mapaDatoBmu,
-          pixelGroups);
+          listaBMUColor);
+    }
+
+    setState(() {});
+  }
+
+  // Funcion que crea imagen con los datos de TRAIN
+  Future<void> _generarImagenConDatosTrain(
+      ImagenNuevaProvider imagenNuevaProvider,
+      ParametrosProvider parametrosProvider,
+      TipoColoreado tipoColoreado) async {
+    if (tipoColoreado == TipoColoreado.clustering) {
+      /// Llama a clustering (con datos de entrenamiento) y a nuevos datos (con los nuevos datos)
+      /// mapaDatoCluster tiene idPixel(dato) : idCluster  {0: 3, 1: 3, 2: 3, 3: 3, ... , 39274: 3, 39275: 3, 39276: 3}
+      mapaDatoCluster = await imagenNuevaProvider.datoClusterImagenOriginal(
+          context, clustersController.text);
+
+      /// listaIdClusterColor es un mapa de {idCluster : Color}
+
+      /// Genera imagen a partir del clustering
+      customImage = await _generarImagenConDatos(
+          int.parse(anchoPixelesController.text),
+          int.parse(altoPixelesController.text),
+          mapaDatoCluster,
+          listaIdClusterColor);
+    } else {
+      mapaDatoBmu = await imagenNuevaProvider.datoBmuImagenOriginal(
+          context, clustersController.text);
+
+      /// Mapa {BMU : Color} (Le paso cada BMU como un cluster diferente)
+      Map<int, Color> listaBMUColor = matrixToMap(
+          int.parse(parametrosProvider.filas),
+          int.parse(parametrosProvider.columnas));
+
+      customImage = await _generarImagenConDatos(
+          int.parse(anchoPixelesController.text),
+          int.parse(altoPixelesController.text),
+          mapaDatoBmu,
+          listaBMUColor);
     }
 
     setState(() {});
@@ -453,8 +732,9 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
 
   void _selectFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
-
-    _loadCSVData(result!);
+    if (result != null) {
+      _loadCSVData(result);
+    }
   }
 
   // junto ambas listas de bool y filtro csv data origin //TODO: USAR LA MISMA QUE HOME PAGE
@@ -474,6 +754,7 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
   }
 }
 
+/// Generacion de la imagen
 Future<ui.Image> _generarImagenConDatos(int widthImagen, int heightImagen,
     Map<int, int> mapaDatoCluster, Map<int, Color> pixelGroups) async {
   /// pixelGroups es un mapa de {idCluster : Color}
@@ -518,55 +799,150 @@ Future<ui.Image> _generarImagenConDatos(int widthImagen, int heightImagen,
   return frameInfo.image;
 }
 
-Future<void> _downloadImage() async {
-  ///TODO: Que se pueda descargar imagen generada
+/// Generar datos de la imagen en formato PNG
+Future<Uint8List> _generatePngData(ui.Image image) async {
+  final ByteData? byteData =
+      await image.toByteData(format: ui.ImageByteFormat.png);
+  if (byteData != null) {
+    return byteData.buffer.asUint8List();
+  }
+  throw Exception('Unable to generate PNG data');
+}
+
+/// Descargar la imagen
+Future<void> _downloadImage(ui.Image image) async {
+  final Uint8List pngBytes = await _generatePngData(image);
+
+  final blob = html.Blob([pngBytes], 'image/png');
+  final url = html.Url.createObjectUrlFromBlob(blob);
+  final anchor = html.AnchorElement(href: url)
+    ..setAttribute("download", "generated_image.png")
+    ..click();
+  html.Url.revokeObjectUrl(url);
 }
 
 /// Funcion para que el color mayoritario sea negro y los demas dependan de un gradiente
-Map<int, Color> generatePixelGroups(List<int> pixelIds) {
-  // Contar la frecuencia de cada pixelId
-  Map<int, int> frequencyMap = {};
-  for (int id in pixelIds) {
-    if (!frequencyMap.containsKey(id)) {
-      frequencyMap[id] = 0;
+// Map<int, Color> generatePixelGroups(List<int> pixelIds) {
+//   // Contar la frecuencia de cada pixelId
+//   Map<int, int> frequencyMap = {};
+//   for (int id in pixelIds) {
+//     if (!frequencyMap.containsKey(id)) {
+//       frequencyMap[id] = 0;
+//     }
+//     frequencyMap[id] = frequencyMap[id]! + 1;
+//   }
+
+//   // Ordenar los pixelIds por frecuencia
+//   List<int> sortedPixelIds = frequencyMap.keys.toList()
+//     ..sort((a, b) => frequencyMap[b]!.compareTo(frequencyMap[a]!));
+
+//   List<Color> gradientColors = [
+//     Colors.red,
+//     Colors.orange,
+//     Colors.yellow,
+//     Colors.green,
+//     Colors.blue,
+//     Colors.indigo,
+//     Colors.purple,
+//     Colors.pink,
+//     Colors.teal,
+//     Colors.cyan,
+//     Colors.lime,
+//     Colors.amber,
+//     Colors.brown,
+//     Colors.grey,
+//     Colors.lightBlue,
+//     Colors.lightGreen,
+//   ];
+
+//   // Asegurar que haya suficientes colores en el gradiente
+//   while (gradientColors.length < sortedPixelIds.length - 1) {
+//     gradientColors.addAll(gradientColors);
+//   }
+
+//   // Crear el Map<int, Color> asignando colores a cada pixelId
+//   Map<int, Color> pixelGroups = {};
+//   for (int i = 0; i < sortedPixelIds.length; i++) {
+//     int pixelId = sortedPixelIds[i];
+//     pixelGroups[pixelId] = (i == 0) ? Colors.black : gradientColors[i - 1];
+//   }
+
+//   return pixelGroups;
+// }
+
+/// Devuelve mapa del mismo tamaño pero con colores usando JET
+Map<int, Color> mapaConJet(Map<int, Color> listaIdClusterColor) {
+  Color jet(double value) {
+    assert(0.0 <= value && value <= 1.0);
+
+    double r, g, b;
+
+    if (value < 0.25) {
+      r = 0;
+      g = 4 * value;
+      b = 1;
+    } else if (value < 0.5) {
+      r = 0;
+      g = 1;
+      b = 1 + 4 * (0.25 - value);
+    } else if (value < 0.75) {
+      r = 4 * (value - 0.5);
+      g = 1;
+      b = 0;
+    } else {
+      r = 1;
+      g = 1 + 4 * (0.75 - value);
+      b = 0;
     }
-    frequencyMap[id] = frequencyMap[id]! + 1;
+
+    return Color.fromARGB(
+        255, (r * 255).toInt(), (g * 255).toInt(), (b * 255).toInt());
   }
 
-  // Ordenar los pixelIds por frecuencia
-  List<int> sortedPixelIds = frequencyMap.keys.toList()
-    ..sort((a, b) => frequencyMap[b]!.compareTo(frequencyMap[a]!));
+  int cantidadClusters = listaIdClusterColor.length;
+  List<double> valores = List<double>.generate(
+      cantidadClusters, (index) => index / (cantidadClusters - 1));
 
-  List<Color> gradientColors = [
-    Colors.red,
-    Colors.orange,
-    Colors.yellow,
-    Colors.green,
-    Colors.blue,
-    Colors.indigo,
-    Colors.purple,
-    Colors.pink,
-    Colors.teal,
-    Colors.cyan,
-    Colors.lime,
-    Colors.amber,
-    Colors.brown,
-    Colors.grey,
-    Colors.lightBlue,
-    Colors.lightGreen,
-  ];
+  int i = 0;
+  listaIdClusterColor.updateAll((key, value) {
+    return jet(valores[i++]);
+  });
 
-  // Asegurar que haya suficientes colores en el gradiente
-  while (gradientColors.length < sortedPixelIds.length - 1) {
-    gradientColors.addAll(gradientColors);
+  return listaIdClusterColor;
+}
+
+/// Imagen de prueba para probar dimensiones
+Future<ui.Image> _generarImagenPrueba(int widthImagen, int heightImagen) async {
+  final Uint8List pixels = Uint8List(widthImagen * heightImagen * 4);
+
+  for (int y = 0; y < heightImagen; y++) {
+    for (int x = 0; x < widthImagen; x++) {
+      /// id del pixel
+      int index = y * widthImagen + x;
+
+      /// Obtengo el color con el id de cluster
+      Color color = (x + y) % 2 == 0 ? Colors.red : Colors.blue;
+
+      /// Lleno el buffer con los datos del color
+      int offset = index * 4;
+      pixels[offset] = color.red;
+      pixels[offset + 1] = color.green;
+      pixels[offset + 2] = color.blue;
+      pixels[offset + 3] = color.alpha;
+    }
   }
 
-  // Crear el Map<int, Color> asignando colores a cada pixelId
-  Map<int, Color> pixelGroups = {};
-  for (int i = 0; i < sortedPixelIds.length; i++) {
-    int pixelId = sortedPixelIds[i];
-    pixelGroups[pixelId] = (i == 0) ? Colors.black : gradientColors[i - 1];
-  }
+  /// Genero imagen
+  final ui.ImmutableBuffer buffer =
+      await ui.ImmutableBuffer.fromUint8List(pixels);
+  final ui.ImageDescriptor descriptor = ui.ImageDescriptor.raw(
+    buffer,
+    width: widthImagen,
+    height: heightImagen,
+    pixelFormat: ui.PixelFormat.rgba8888,
+  );
+  final ui.Codec codec = await descriptor.instantiateCodec();
+  final ui.FrameInfo frameInfo = await codec.getNextFrame();
 
-  return pixelGroups;
+  return frameInfo.image;
 }

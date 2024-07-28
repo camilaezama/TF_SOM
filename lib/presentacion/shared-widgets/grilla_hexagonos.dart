@@ -66,6 +66,8 @@ class GrillaHexagonos extends StatelessWidget {
   final String? selectedKey;
   final bool grillaBlanca;
   final bool hitsPorMayoritario;
+  final Map<int, Color>? mapaBmuColor;
+  final bool deshabilitarBotonesHexagonos;
 
   GrillaHexagonos(
       {super.key,
@@ -91,7 +93,9 @@ class GrillaHexagonos extends StatelessWidget {
       this.selectedKey,
       this.mapaColores,
       this.grillaBlanca = false,
-      this.hitsPorMayoritario = false});
+      this.hitsPorMayoritario = false,
+      this.mapaBmuColor,
+      this.deshabilitarBotonesHexagonos = false});
   late double _width, _height;
   final _widgetKey = GlobalKey();
 
@@ -144,12 +148,14 @@ class GrillaHexagonos extends StatelessWidget {
                                     valorDist.replaceAll(',', '.');
                                 double valor = double.parse(valorDistConPunto);
                                 return HexagonWidgetBuilder(
-                                  color: grillaBlanca
-                                      ? const Color.fromARGB(255, 211, 211, 211)
-                                      : clusters == null
-                                          ? getInterpolatedColor(
-                                              valor, gradiente, min!, max!)
-                                          : getClusterColor(col, row, clusters),
+                                  color: colorHexagono(valor, bmu, row, col),
+                                  // color: grillaBlanca
+                                  //     ? const Color.fromARGB(255, 211, 211, 211)
+                                  //     : clusters == null
+                                  //         ? getInterpolatedColor(
+                                  //             valor, gradiente, min!, max!)
+                                  //         : getClusterColor(col, row, clusters),
+                                  //antes
                                   // color: clusters == null
                                   //     ? getInterpolatedColor(
                                   //         valor, gradiente, min!, max!)
@@ -191,7 +197,7 @@ class GrillaHexagonos extends StatelessWidget {
                                 }
                               }
 
-                              return valorDist == '-1'
+                              return deshabilitarBotonesHexagonos == true ? const Text('') : valorDist == '-1'
                                   ? const Text("")
                                   : (((row + 1) % 2 == 0 ||
                                               (columna + 1) % 2 == 0) &&
@@ -320,6 +326,21 @@ class GrillaHexagonos extends StatelessWidget {
     );
   }
 
+  /// Funcion que devuelve el color del hexagono
+  Color colorHexagono(double valor, int bmu, int row,int col){
+    if (grillaBlanca){
+      return const Color.fromARGB(255, 211, 211, 211);
+    }
+    if (clusters != null){
+      return getClusterColor(col, row, clusters);
+    }
+    if (mapaBmuColor != null){
+      return mapaBmuColor![bmu]!;
+    }
+    
+    return getInterpolatedColor(valor, gradiente, min!, max!);
+  }
+
   // Un solo color para cada circulo
   // Widget widgetHits(int bmu) {
   //   if (mapaBMUconEtiquetas!.containsKey(bmu)) {
@@ -344,7 +365,6 @@ class GrillaHexagonos extends StatelessWidget {
         child: SingleChildScrollView(
           child: ListBody(
             children: [
-              const Text('Este es un cuadro de diálogo de ejemplo.'),
               Text('BMU = $bMU'),
               Text('Udist = $valorDist'),
               const Text(
@@ -384,17 +404,17 @@ class GrillaHexagonos extends StatelessWidget {
       final List<Color> colores =
           etiquetas!.map((etiqueta) => mapaColores![etiqueta]!).toList();
       return HitDialog(
-          bmu: bmu,
-          etiquetas: etiquetas,
-          colores: colores,
-          tablaDatos: Table(
-            border: TableBorder.all(
-                color: Colors.black, style: BorderStyle.solid, width: 1),
-            children:
-                crearTablaDatos(nombreColumnas, (codebook[bmu - 1]), titulo),
-          ),
-          selectedKey: selectedKey!,
-        );
+        bmu: bmu,
+        etiquetas: etiquetas,
+        colores: colores,
+        tablaDatos: Table(
+          border: TableBorder.all(
+              color: Colors.black, style: BorderStyle.solid, width: 1),
+          children:
+              crearTablaDatos(nombreColumnas, (codebook[bmu - 1]), titulo),
+        ),
+        selectedKey: selectedKey!,
+      );
     }
   }
 

@@ -6,6 +6,7 @@ import 'package:TF_SOM_UNMdP/presentacion/pestanas/imagen_nueva_pestana.dart';
 import 'package:TF_SOM_UNMdP/presentacion/pestanas/imagen_pestana.dart';
 import 'package:TF_SOM_UNMdP/presentacion/pestanas/nuevo_dato_pestana.dart';
 import 'package:TF_SOM_UNMdP/presentacion/pestanas/umat_pestana.dart';
+import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/dialogs/info_errores_dialog.dart';
 import 'package:TF_SOM_UNMdP/providers/datos_provider.dart';
 import 'package:TF_SOM_UNMdP/providers/gradiente_provider.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +44,8 @@ class _GrillasPageState extends State<GrillasPage>
   // Map<String, String> dataComponente = {};
   // late List<String> nombresColumnas = [];
   // late List<List<double>> codebook;
+
+  late double _width, _height;
 
   Map<int, int> hitsMap = {};
   String title = "";
@@ -109,8 +112,30 @@ class _GrillasPageState extends State<GrillasPage>
 
     final datosProvider = context.read<DatosProvider>();
 
+    _width = MediaQuery.of(context).size.width;
+    _height = MediaQuery.of(context).size.height;
+
     return Scaffold(
         appBar: AppBar(
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                child: Icon(Icons.info),
+                onPressed: () {
+                  showDialog<void>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return InfoErroresDialog(
+                        widthPantalla: _width,
+                        heightPantalla: _height,
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
           title: const Text('Grillas'),
         ),
         body: DefaultTabController(
@@ -155,8 +180,9 @@ class _GrillasPageState extends State<GrillasPage>
                   gradiente: gradiente,
                 ),
                 NuevoDatoPestana(gradiente: gradiente),
-                ImagenPestana(gradiente: gradiente),
-                ImagenNuevaPestana(gradiente: gradiente)
+                //ImagenPestana(gradiente: gradiente),
+                ImagenNuevaPestana(gradiente: gradiente, usarDatosTrain: true,),
+                ImagenNuevaPestana(gradiente: gradiente, usarDatosTrain: false,)
               ],
             ),
           ),

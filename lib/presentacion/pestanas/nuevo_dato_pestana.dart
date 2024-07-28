@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/dialogs/seleccionar_opciones_dialog.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/grilla_con_etiquetas.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/tabla_datos.dart';
+import 'package:TF_SOM_UNMdP/providers/datos_provider.dart';
 import 'package:TF_SOM_UNMdP/providers/nuevos_datos_provider.dart';
 import 'package:TF_SOM_UNMdP/utils/colores_hits.dart';
 import 'package:TF_SOM_UNMdP/utils/csv_to_data.dart';
@@ -204,27 +205,30 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
                       : const SizedBox.shrink(),
                 ],
               ),
-              (csvData.isNotEmpty) ?
-                  (csvData.length > 100) ? 
-                    Text("La cantidad de datos es muy grande, la vista previa del archivo $fileName ha sido deshabilitada.") :
-                   SizedBox(
-                      height: heightPestana * 0.7,
-                      child: Row(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          TablaDatos(
-                            csvData: csvDataIdentificadores,
-                            columnNames: const ['Dato'],
+              (csvData.isNotEmpty)
+                  ? (csvData.length > 100)
+                      ? Text(
+                          "La cantidad de datos es muy grande, la vista previa del archivo $fileName ha sido deshabilitada.")
+                      : SizedBox(
+                          height: heightPestana * 0.7,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              TablaDatos(
+                                csvData: csvDataIdentificadores,
+                                columnNames: const ['Dato'],
+                              ),
+                              Expanded(
+                                child: TablaDatos(
+                                  csvData: csvData,
+                                  columnNames:
+                                      listaNombresColumnasSeleccionadas,
+                                ),
+                              ),
+                            ],
                           ),
-                  
-                          Expanded(
-                            child: TablaDatos(
-                              csvData: csvData,
-                              columnNames: listaNombresColumnasSeleccionadas,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
+                        )
                   : const SizedBox.shrink(),
               Center(
                 child: Padding(
@@ -253,7 +257,7 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
 
   void llamadaApi() async {
     final nuevosDatosProvider = context.read<NuevosDatosProvider>();
-    int coderror=-1;
+    int coderror = -1;
     List<List<dynamic>> filteredCsv = filtroColumnasSeleccionadasYEtiquetas();
     List<Map<String, String>> data = csvToData(filteredCsv);
     String jsonResult = jsonEncode(data);
@@ -269,12 +273,19 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
       setState(() {
         cargando = true;
       });
-      
-    //truquito: para contar la cantidad de columnas cuento la cantidad de separadores (;) y le sumo 1 por el ultimo que no tiene
-    //si no se cumple, lanzo una excepcion
-      if (((';'.allMatches(filteredCsv[0][0]).length) + 1 != nuevosDatosProvider.cantDatosOriginal(context))){
+
+      //truquito: para contar la cantidad de columnas cuento la cantidad de separadores (;) y le sumo 1 por el ultimo que no tiene
+      //si no se cumple, lanzo una excepcion
+      if (((';'.allMatches(filteredCsv[0][0]).length) + 1 !=
+          nuevosDatosProvider.cantDatosOriginal(context))) {
         coderror = 1;
-        throw const FormatException('La cantidad de features no coincide con el archivo original!');
+        throw const FormatException(
+            'La cantidad de features no coincide con el archivo original!');
+      }
+
+      if (!nuevosDatosProvider.validarColumnas(context, filteredCsv[0][0])) {
+        throw const FormatException(
+            'Los nombres de las features no coincide las del  archivo original!');
       }
 
       Map<String, String> resultado = await nuevosDatosProvider
@@ -289,14 +300,13 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
       });
     } catch (e) {
       print(e);
-      if (coderror == 1){
+      if (coderror == 1) {
+        mostrarDialogTexto(context, 'Error features',
+            'La cantidad de features no coincide con el archivo original!');
+      } else {
         mostrarDialogTexto(
-          context, 'Error features', 'La cantidad de features no coincide con el archivo original!');
+            context, 'Error', 'Error en la  llamada de servicio: $e');
       }
-      else{
-      mostrarDialogTexto(
-          context, 'Error', 'Error en la  llamada de servicio: $e');
-          }
       setState(() {
         cargando = false;
         mostrarGrilla = false;
@@ -305,10 +315,9 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
   }
 
   void procesarDatos(Map<String, String> resultado) {
-
     //Limpiamos por si quedaron datos de un dataset anterior.
-    for(var i = 0;i<mapaBMUconEtiquetas.keys.length;i++){
-      if (mapaBMUconEtiquetas[i] != null){
+    for (var i = 0; i < mapaBMUconEtiquetas.keys.length; i++) {
+      if (mapaBMUconEtiquetas[i] != null) {
         mapaBMUconEtiquetas[i]!['Datos']!.clear();
       }
     }
@@ -395,8 +404,9 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
 
   void _selectFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
-
-    _loadCSVData(result!);
+    if (result != null) {
+      _loadCSVData(result);
+    }
   }
 
   void actualizarOpciones(List<bool> opcionesSeleccionadasBool) {

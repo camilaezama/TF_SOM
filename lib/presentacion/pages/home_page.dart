@@ -84,8 +84,9 @@ class _HomePageState extends State<HomePage> {
 
   void _selectFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
-
-    _loadCSVData(result!);
+    if (result != null) {
+      _loadCSVData(result);
+    }
   }
 
   @override
@@ -319,7 +320,7 @@ class _HomePageState extends State<HomePage> {
 
       List<Map<String, String>> data = csvToData(filteredCsv);
       String jsonResult = jsonEncode(data);
-
+      jsonResult = jsonResult.replaceAll('\\r', '');
       List<List<dynamic>> filteredEtiquetas = filtrarCsvData(
           listaBoolEtiquetasSeleccionadas,
           listaNombresColumnasOriginal,
@@ -379,38 +380,41 @@ class _HomePageState extends State<HomePage> {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
     final parametrosProvider = context.read<ParametrosProvider>();
     final datosProvider = context.read<DatosProvider>();
-    Uint8List? fileBytes = result!.files.first.bytes;
-    fileName = result.files.first.name;
+    if (result != null) {
+      Uint8List? fileBytes = result!.files.first.bytes;
+      fileName = result.files.first.name;
 
-    if (fileName.endsWith('.json')) {
-      try {
-        setState(() {
-          cargando = true;
-        });
-        final contents = utf8.decode(fileBytes!);
-        final jsonData = jsonDecode(contents);
+      if (fileName.endsWith('.json')) {
+        try {
+          setState(() {
+            cargando = true;
+          });
+          final contents = utf8.decode(fileBytes!);
+          final jsonData = jsonDecode(contents);
 
-        ResultadoEntrenamientoModel resultadoEntrenamiento =
-            datosProvider.procesarDatos(jsonData, "", jsonData["Parametros"]);
+          ResultadoEntrenamientoModel resultadoEntrenamiento =
+              datosProvider.procesarDatos(jsonData, "", jsonData["Parametros"]);
 
-        setState(() {
-          Navigator.pushNamed(
-            context,
-            '/grillas',
-            arguments: resultadoEntrenamiento,
-          );
-          cargando = false;
-        });
-      } catch (e) {
-        mostrarDialogTexto(context, 'Error', 'Error en el archivo ingresado.');
-        setState(() {
-          cargando = false;
-          botonAceptar = "Entrenar";
-        });
+          setState(() {
+            Navigator.pushNamed(
+              context,
+              '/grillas',
+              arguments: resultadoEntrenamiento,
+            );
+            cargando = false;
+          });
+        } catch (e) {
+          mostrarDialogTexto(
+              context, 'Error', 'Error en el archivo ingresado.');
+          setState(() {
+            cargando = false;
+            botonAceptar = "Entrenar";
+          });
+        }
+      } else {
+        mostrarDialogTexto(
+            context, 'Archivo Invalido', 'Debe seleccionar un archivo JSON.');
       }
-    } else {
-      mostrarDialogTexto(
-          context, 'Archivo Invalido', 'Debe seleccionar un archivo JSON.');
     }
   }
 }
