@@ -163,3 +163,7 @@ Future<Map<String, String>> loadData(
 
   return dataMap;
 }
+
+bool validarColumnasDatos(int f, int c, int cantDatos) {
+  return (f * c == cantDatos);
+}

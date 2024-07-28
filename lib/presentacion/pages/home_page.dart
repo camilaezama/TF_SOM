@@ -342,12 +342,11 @@ class _HomePageState extends State<HomePage> {
         setState(() {
           cargando = true;
         });
-
-        ResultadoEntrenamientoModel resultadoEntrenamiento =
-            await datosProvider.entrenamiento(
-                tipoLlamada, parametros, jsonResult, jsonResultEtiquetas);
-
-        setState(() {
+        try {
+          ResultadoEntrenamientoModel resultadoEntrenamiento =
+              await datosProvider.entrenamiento(
+                  tipoLlamada, parametros, jsonResult, jsonResultEtiquetas);
+          setState(() {
           Navigator.pushNamed(
             context,
             '/grillas',
@@ -355,6 +354,13 @@ class _HomePageState extends State<HomePage> {
           );
           cargando = false;
         });
+        } catch (e) {
+          setState(() {
+            mostrarDialogTexto(context, "Error en el servidor", "$e");
+            cargando = false;
+          });
+        }
+        
       } catch (e) {
         print(e);
         mostrarDialogTexto(

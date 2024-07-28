@@ -1,7 +1,10 @@
 import 'dart:ui' as ui;
 
 import 'package:TF_SOM_UNMdP/config/tema.dart';
+import 'package:TF_SOM_UNMdP/providers/datos_provider.dart';
 import 'package:TF_SOM_UNMdP/providers/imagen_provider.dart';
+import 'package:TF_SOM_UNMdP/utils/mostrar_dialog_texto.dart';
+import 'package:TF_SOM_UNMdP/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +18,6 @@ class ImagenPestana extends StatefulWidget {
 }
 
 class _ImagenPestanaState extends State<ImagenPestana> {
-
   /// Controladores de campos
   late TextEditingController clustersController;
   late TextEditingController anchoPixelesController;
@@ -44,7 +46,7 @@ class _ImagenPestanaState extends State<ImagenPestana> {
   @override
   Widget build(BuildContext context) {
     final imagenProvider = context.watch<ImagenProvider>();
-
+    final datosProvider = context.watch<DatosProvider>();
     return Center(
       child: Row(
         children: [
@@ -53,7 +55,7 @@ class _ImagenPestanaState extends State<ImagenPestana> {
           ),
 
           /// COLUMNA DE CAMPOS
-          _columnaLateralCampos(context, imagenProvider),
+          _columnaLateralCampos(context, imagenProvider, datosProvider),
           const SizedBox(
             height: 5,
           ),
@@ -65,20 +67,27 @@ class _ImagenPestanaState extends State<ImagenPestana> {
   }
 
   /// Funcion que crea imagen
-  Future<void> _generarImagen(ImagenProvider imagenProvider) async {
-
+  Future<void> _generarImagen(
+      ImagenProvider imagenProvider, DatosProvider datosProvider) async {
     /// Llama a clustering (con datos de entrenamiento)
     /// mapaDatoCluster tiene idPixel(dato) : idCluster  {0: 3, 1: 3, 2: 3, 3: 3, ... , 39274: 3, 39275: 3, 39276: 3}
     mapaDatoCluster =
         await imagenProvider.llamadaImagen(context, clustersController.text);
 
-    /// Genera imagen a partir del clustering 
-    customImage = await _generarImagenConDatos(
-        int.parse(anchoPixelesController.text),
-        int.parse(altoPixelesController.text),
-        mapaDatoCluster);
-    
-    setState(() {});
+    /// Genera imagen a partir del clustering
+    var val = datosProvider.cantDatosEntrenamiento();
+    if (validarColumnasDatos(int.parse(anchoPixelesController.text),
+        int.parse(altoPixelesController.text), val)) {
+      customImage = await _generarImagenConDatos(
+          int.parse(anchoPixelesController.text),
+          int.parse(altoPixelesController.text),
+          mapaDatoCluster);
+
+      setState(() {});
+    } else {
+      mostrarDialogTexto(context, "Error de dimensiones",
+          "El ancho por alto debe coincidir con la cantidad de datos de entrada");
+    }
   }
 
   /// Columna que muestra imagen y boton
@@ -100,8 +109,8 @@ class _ImagenPestanaState extends State<ImagenPestana> {
   }
 
   /// Columna lateral con campos
-  Container _columnaLateralCampos(
-      BuildContext context, ImagenProvider imagenProvider) {
+  Container _columnaLateralCampos(BuildContext context,
+      ImagenProvider imagenProvider, DatosProvider datosProvider) {
     return Container(
       color: AppTheme.colorFondoGris,
       child: Padding(
@@ -163,7 +172,7 @@ class _ImagenPestanaState extends State<ImagenPestana> {
             /// BOTON ACEPTAR
             ElevatedButton(
                 onPressed: () async {
-                  _generarImagen(imagenProvider);
+                  _generarImagen(imagenProvider, datosProvider);
                 },
                 style: AppTheme.primaryButtonStyle,
                 child: imagenProvider.cargando
