@@ -110,8 +110,6 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
     final datosProvider = context.watch<DatosProvider>();
     final parametrosProvider = context.watch<ParametrosProvider>();
 
-    final datosProvider = context.watch<DatosProvider>();
-
     widthPantalla = MediaQuery.of(context).size.width;
     heightPantalla = MediaQuery.of(context).size.height;
 
@@ -124,7 +122,7 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
 
           /// COLUMNA DE CAMPOS
           _columnaLateralCampos(
-              context,datosProvider, imagenNuevaProvider, parametrosProvider),
+              context, datosProvider, imagenNuevaProvider, parametrosProvider),
           const SizedBox(
             height: 5,
           ),
@@ -543,8 +541,8 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
                       _generarImagenConDatosTrain(imagenNuevaProvider,
                           parametrosProvider, tipoColoreado);
                     } else {
-                      _generarImagen(imagenNuevaProvider, parametrosProvider,
-                          tipoColoreado);
+                      _generarImagen(imagenNuevaProvider, datosProvider,
+                          parametrosProvider, tipoColoreado);
                     }
                   }
                 },
@@ -602,8 +600,8 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
             mapaDatoCluster,
             listaIdClusterColor);
       } else {
-      mostrarDialogTexto(context, "Error de dimensiones",
-          "El ancho por alto debe coincidir con la cantidad de datos de entrada");
+        mostrarDialogTexto(context, "Error de dimensiones",
+            "El ancho por alto debe coincidir con la cantidad de datos de entrada");
       }
     } else {
       mapaDatoBmu = await imagenNuevaProvider.llamadaImagenDatoBMU(

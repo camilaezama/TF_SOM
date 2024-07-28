@@ -32,7 +32,7 @@ class DatosProvider extends ChangeNotifier {
       Map<String, dynamic> parametros,
       String jsonResult,
       String jsonResultEtiquetas) async {
-    var url = Uri.parse('https://201.179.142.253.nip.io:7777/$tipoLlamada');
+    var url = Uri.parse('http://localhost:7777/$tipoLlamada');
 
     var response = await http.post(url,
         headers: {'Accept': '/*'},
@@ -102,7 +102,7 @@ class DatosProvider extends ChangeNotifier {
     return resultado;
   }
 
-  void descargarResultadoEntrenamiento(){
+  void descargarResultadoEntrenamiento() {
     final bytes = utf8.encode(responseBody);
     DateTime now = DateTime.now();
     final blob = html.Blob([bytes]);
@@ -113,7 +113,7 @@ class DatosProvider extends ChangeNotifier {
     html.Url.revokeObjectUrl(urlAux);
   }
 
-    void descargarCodebook(){
+  void descargarCodebook() {
     final bytes = utf8.encode(resultadoEntrenamiento.codebook.toString());
     DateTime now = DateTime.now();
     final blob = html.Blob([bytes]);

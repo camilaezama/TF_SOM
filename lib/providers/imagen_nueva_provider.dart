@@ -101,7 +101,7 @@ class ImagenNuevaProvider extends ChangeNotifier {
     final datosProvider = context.read<DatosProvider>();
 
     String tipoLlamada = "clusters";
-    var url = Uri.parse('https://201.179.142.253.nip.io:7777/$tipoLlamada');
+    var url = Uri.parse('http://localhost:7777/$tipoLlamada');
 
     final parametros = <String, dynamic>{
       'filas': datosProvider.resultadoEntrenamiento.filas.toString() != ""
@@ -145,9 +145,9 @@ class ImagenNuevaProvider extends ChangeNotifier {
   ///
   ///
   /// DATOS ORIGINALES: DATOS DE TRAIN / DE ENTRADA
-  /// 
-  /// 
-  
+  ///
+  ///
+
   /// Devuelve mapa DATO: CLUSTER
   /// {0: 4, 1: 4, 2: 4, 3: 4, ... , 39274: 4, 39275: 4, 39276: 4}
   Future<Map<int, int>> datoClusterImagenOriginal(
@@ -156,7 +156,8 @@ class ImagenNuevaProvider extends ChangeNotifier {
 
     /// mapaBmuCluster es un mapa BMU: cluster
     /// {1: 3, 2: 3, 3: 3, 4: 3, 5: 3, ...., 333: 2, 334: 2, 335: 2, 336: 2}
-    Map<int, int> mapaBmuCluster = await llamadaClustering(context, cantidadClusters);
+    Map<int, int> mapaBmuCluster =
+        await llamadaClustering(context, cantidadClusters);
 
     /// Creamos el mapaDatoCluster que machea dato -> bmu en que cayo -> cluster asociado al bmu
     /// Es un mapa DATO: CLUSTER
@@ -181,7 +182,6 @@ class ImagenNuevaProvider extends ChangeNotifier {
     return mapaDatoCluster;
   }
 
-
   /// Devuelve mapa DATO: BMU
   /// {0: 334, 1: 334, 2: 14, 3: 4, ... , 39274: 14, 39275: 40, 39276: 300}
   Future<Map<int, int>> datoBmuImagenOriginal(
@@ -202,6 +202,4 @@ class ImagenNuevaProvider extends ChangeNotifier {
 
     return mapaDatoBMU;
   }
-
-  
 }
