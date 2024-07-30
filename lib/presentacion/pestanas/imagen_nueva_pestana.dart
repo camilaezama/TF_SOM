@@ -32,7 +32,8 @@ class ImagenNuevaPestana extends StatefulWidget {
   State<ImagenNuevaPestana> createState() => _ImagenNuevaPestanaState();
 }
 
-class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
+class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana>
+    with AutomaticKeepAliveClientMixin {
   /// Controladores de campos
   late TextEditingController clustersController;
   late TextEditingController anchoPixelesController;
@@ -750,6 +751,10 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana> {
         columnasATenerEnCuenta, listaNombresColumnasOriginal, csvDataOriginal);
     return filteredData;
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
 
 /// Generacion de la imagen

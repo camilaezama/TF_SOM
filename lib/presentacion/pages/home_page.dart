@@ -370,20 +370,19 @@ class _HomePageState extends State<HomePage> {
               await datosProvider.entrenamiento(
                   tipoLlamada, parametros, jsonResult, jsonResultEtiquetas);
           setState(() {
-          Navigator.pushNamed(
-            context,
-            '/grillas',
-            arguments: resultadoEntrenamiento,
-          );
-          cargando = false;
-        });
+            Navigator.pushNamed(
+              context,
+              'grillas',
+              arguments: resultadoEntrenamiento,
+            );
+            cargando = false;
+          });
         } catch (e) {
           setState(() {
             mostrarDialogTexto(context, "Error en el servidor", "$e");
             cargando = false;
           });
         }
-        
       } catch (e) {
         print(e);
         mostrarDialogTexto(
@@ -421,7 +420,7 @@ class _HomePageState extends State<HomePage> {
           setState(() {
             Navigator.pushNamed(
               context,
-              '/grillas',
+              'grillas',
               arguments: resultadoEntrenamiento,
             );
             cargando = false;

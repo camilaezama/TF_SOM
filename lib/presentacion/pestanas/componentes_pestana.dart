@@ -28,7 +28,8 @@ class ComponentesPestana extends StatefulWidget {
   State<ComponentesPestana> createState() => _ComponentesPestanaState();
 }
 
-class _ComponentesPestanaState extends State<ComponentesPestana> {
+class _ComponentesPestanaState extends State<ComponentesPestana>
+    with AutomaticKeepAliveClientMixin {
   List<String> opciones = [];
   List<bool> seleccionadas = [];
   List<String> opcionesSeleccionadas = [];
@@ -294,4 +295,8 @@ class _ComponentesPestanaState extends State<ComponentesPestana> {
           'Debe seleccionar dos o mas componentes.');
     }
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }

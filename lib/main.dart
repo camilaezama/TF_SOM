@@ -25,35 +25,24 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          lazy: false,
-          create: (_) => ParametrosProvider()),
+            lazy: false, create: (_) => ParametrosProvider()),
+        ChangeNotifierProvider(lazy: false, create: (_) => DatosProvider()),
+        ChangeNotifierProvider(lazy: false, create: (_) => ClustersProvider()),
+        ChangeNotifierProvider(lazy: false, create: (_) => GradienteProvider()),
+        ChangeNotifierProvider(lazy: false, create: (_) => ImagenProvider()),
         ChangeNotifierProvider(
-          lazy: false,
-          create: (_) => DatosProvider()),
+            lazy: false, create: (_) => ImagenNuevaProvider()),
         ChangeNotifierProvider(
-          lazy: false,
-          create: (_) => ClustersProvider()),
-        ChangeNotifierProvider(
-          lazy: false,
-          create: (_) => GradienteProvider()),
-        ChangeNotifierProvider(
-          lazy: false,
-          create: (_) => ImagenProvider()),
-        ChangeNotifierProvider(
-          lazy: false,
-          create: (_) => ImagenNuevaProvider()),
-        ChangeNotifierProvider(
-          lazy: false,
-          create: (_) => NuevosDatosProvider())
+            lazy: false, create: (_) => NuevosDatosProvider())
       ],
       child: MaterialApp(
         title: 'TF SOM - UNMdP',
-        initialRoute: '/', 
+        initialRoute: '/',
         debugShowCheckedModeBanner: false,
         theme: AppTheme().getTheme(),
         routes: {
           '/': (context) => const HomePage(),
-          '/grillas': (context) => const GrillasPage(),
+          'grillas': (context) => const GrillasPage(),
         },
       ),
     );
