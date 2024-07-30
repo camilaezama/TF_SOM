@@ -219,7 +219,7 @@ class _GrillasPageState extends State<GrillasPage>
               },
             ),
             ListTile(
-              leading: Icon(Icons.image),
+              leading: Icon(Icons.image_search),
               title: Text('Imagen Nueva'),
               onTap: () {
                 setState(() {
