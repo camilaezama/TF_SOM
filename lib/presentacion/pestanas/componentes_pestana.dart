@@ -40,7 +40,6 @@ class _ComponentesPestanaState extends State<ComponentesPestana>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     //Ignora las primeras 6 (i = 7) porque son BMU, Udist, etc etc, me quedo con las que son componentes
 
@@ -55,7 +54,7 @@ class _ComponentesPestanaState extends State<ComponentesPestana>
   final _widgetKey = GlobalKey();
   @override
   Widget build(BuildContext context) {
-    print((widget.nombrecolumnas.length / 2).ceil());
+    super.build(context);
     double sizeWidth = MediaQuery.of(context).size.width;
     double sizeHeight = MediaQuery.of(context).size.height;
 

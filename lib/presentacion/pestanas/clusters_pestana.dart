@@ -28,6 +28,7 @@ class _ClustersPestanaState extends State<ClustersPestana>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final datosProvider = context.read<DatosProvider>();
     final clustersProvider = context.watch<ClustersProvider>();
 

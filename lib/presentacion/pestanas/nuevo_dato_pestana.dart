@@ -57,6 +57,7 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     Size size = MediaQuery.of(context).size;
     double appBarHeight = AppBar().preferredSize.height;
     double tabBarHeight = const TabBar(tabs: []).preferredSize.height;

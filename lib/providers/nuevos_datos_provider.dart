@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:TF_SOM_UNMdP/utils/mostrar_dialog_texto.dart';
 import 'package:TF_SOM_UNMdP/providers/datos_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -56,39 +56,34 @@ class NuevosDatosProvider extends ChangeNotifier {
           ? datosProvider.resultadoEntrenamiento.columnas
           : 31,
     };
-
-    var response = await http.post(url,
-        headers: {'Accept': '/*'},
-        body: jsonEncode({
-          "codebook": datosProvider.resultadoEntrenamiento.codebook,
-          "datos": datosProvider.resultadoEntrenamiento.datos,
-          "nuevosDatos": datosNuevos,
-          "tipo": tipoLlamada,
-          "params": parametros,
-          "etiquetas": jsonResultEtiquetas
-        }));
-
-    //List<dynamic> decodedJson = json.decode(response.body);
-
-    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-    Map<String, dynamic> bmu = jsonResponse['Resultado']['BMU'];
-
-    // {dato:bmu}
     Map<String, String> result = {};
+    try {
+      var response = await http.post(url,
+          headers: {'Accept': '/*'},
+          body: jsonEncode({
+            "codebook": datosProvider.resultadoEntrenamiento.codebook,
+            "datos": datosProvider.resultadoEntrenamiento.datos,
+            "nuevosDatos": datosNuevos,
+            "tipo": tipoLlamada,
+            "params": parametros,
+            "etiquetas": jsonResultEtiquetas
+          }));
 
-    /// ESTO HACE QUE LOS DATOS QUE SON IGUALES SOLO SE CARGUEN UNA VEZ
-    // for (var key in datos.keys) {
-    //   result[datos[key].toString()] = bmu[key].toString();
-    // }
+      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        Map<String, dynamic> bmu = jsonResponse['Resultado']['BMU'];
 
-    bmu.forEach((indice, bmu) {
-      int numDato = int.parse(indice) + 1;
-      result['Dato $numDato'] = bmu.toString();
-    });
-
-    // print(result);
-    // print('result.length ${result.length}');
-
+        bmu.forEach((indice, bmu) {
+          int numDato = int.parse(indice) + 1;
+          result['Dato $numDato'] = bmu.toString();
+        });
+      } else {
+        throw Exception(jsonResponse['error']);
+      }
+    } catch (e) {
+      // ignore: use_build_context_synchronously
+      mostrarDialogTexto(context, "Error", "$e");
+    }
     return result;
   }
 }

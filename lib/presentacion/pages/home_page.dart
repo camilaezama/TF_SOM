@@ -385,26 +385,18 @@ class _HomePageState extends State<HomePage> {
         setState(() {
           cargando = true;
         });
-        try {
-          ResultadoEntrenamientoModel resultadoEntrenamiento =
-              await datosProvider.entrenamiento(
-                  tipoLlamada, parametros, jsonResult, jsonResultEtiquetas);
-          setState(() {
-            Navigator.pushNamed(
-              context,
-              'grillas',
-              arguments: resultadoEntrenamiento,
-            );
-            cargando = false;
-          });
-        } catch (e) {
-          setState(() {
-            mostrarDialogTexto(context, "Error en el servidor", "$e");
-            cargando = false;
-          });
-        }
+        ResultadoEntrenamientoModel resultadoEntrenamiento =
+            await datosProvider.entrenamiento(
+                tipoLlamada, parametros, jsonResult, jsonResultEtiquetas);
+        setState(() {
+          Navigator.pushNamed(
+            context,
+            'grillas',
+            arguments: resultadoEntrenamiento,
+          );
+          cargando = false;
+        });
       } catch (e) {
-        print(e);
         mostrarDialogTexto(
             context, 'Error', 'Error en la  llamada de servicio: $e');
         setState(() {

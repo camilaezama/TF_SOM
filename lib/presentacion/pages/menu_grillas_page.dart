@@ -34,17 +34,6 @@ class _GrillasPageState extends State<GrillasPage>
   bool showControls = true;
   late TabController tabController;
   late Gradient gradiente;
-  //static final clustersController = TextEditingController(text: "10");
-  // Map<String, String> dataUdist = {};
-  // Map<String, Object> respuesta = {};
-  // Map<String, dynamic> mapaRta = {};
-  // Map<String, dynamic> parametros = {};
-  // Map<String, String> mapaRtaUmat = {};
-  // late List<List<int>> mapaRtaClusters;
-  // Map<String, String> dataComponente = {};
-  // late List<String> nombresColumnas = [];
-  // late List<List<double>> codebook;
-
   late double _width, _height;
 
   Map<int, int> hitsMap = {};
