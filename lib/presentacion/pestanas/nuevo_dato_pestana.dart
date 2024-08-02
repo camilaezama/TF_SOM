@@ -22,7 +22,8 @@ class NuevoDatoPestana extends StatefulWidget {
   State<NuevoDatoPestana> createState() => _NuevoDatoPestanaState();
 }
 
-class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
+class _NuevoDatoPestanaState extends State<NuevoDatoPestana>
+    with AutomaticKeepAliveClientMixin {
   List<List<dynamic>> csvData = [];
   List<List<dynamic>> csvDataOriginal = [];
 
@@ -56,6 +57,7 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     Size size = MediaQuery.of(context).size;
     double appBarHeight = AppBar().preferredSize.height;
     double tabBarHeight = const TabBar(tabs: []).preferredSize.height;
@@ -435,4 +437,8 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana> {
 
     setState(() {});
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }

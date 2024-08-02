@@ -101,7 +101,27 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppTheme.colorFondoPrimary,
-        title: const Text('Carga de datos'),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              child: Image.asset(
+                'assets/logo.png', // replace with your image path
+                height: 50.0, // adjust the height as needed
+                fit: BoxFit
+                    .contain, // ensures the image scales to fit within the available space
+              ),
+            ),
+            const SizedBox(width: 10),
+            const Text(
+              'VisualiSOM',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 24,
+              ),
+            ),
+          ],
+        ),
       ),
       body: Container(
         color: AppTheme.colorFondoPrimary,
@@ -365,27 +385,18 @@ class _HomePageState extends State<HomePage> {
         setState(() {
           cargando = true;
         });
-        try {
-          ResultadoEntrenamientoModel resultadoEntrenamiento =
-              await datosProvider.entrenamiento(
-                  tipoLlamada, parametros, jsonResult, jsonResultEtiquetas);
-          setState(() {
+        ResultadoEntrenamientoModel resultadoEntrenamiento =
+            await datosProvider.entrenamiento(
+                tipoLlamada, parametros, jsonResult, jsonResultEtiquetas);
+        setState(() {
           Navigator.pushNamed(
             context,
-            '/grillas',
+            'grillas',
             arguments: resultadoEntrenamiento,
           );
           cargando = false;
         });
-        } catch (e) {
-          setState(() {
-            mostrarDialogTexto(context, "Error en el servidor", "$e");
-            cargando = false;
-          });
-        }
-        
       } catch (e) {
-        print(e);
         mostrarDialogTexto(
             context, 'Error', 'Error en la  llamada de servicio: $e');
         setState(() {
@@ -421,7 +432,7 @@ class _HomePageState extends State<HomePage> {
           setState(() {
             Navigator.pushNamed(
               context,
-              '/grillas',
+              'grillas',
               arguments: resultadoEntrenamiento,
             );
             cargando = false;

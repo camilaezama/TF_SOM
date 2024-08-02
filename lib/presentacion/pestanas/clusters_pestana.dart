@@ -14,7 +14,8 @@ class ClustersPestana extends StatefulWidget {
   State<ClustersPestana> createState() => _ClustersPestanaState();
 }
 
-class _ClustersPestanaState extends State<ClustersPestana> {
+class _ClustersPestanaState extends State<ClustersPestana>
+    with AutomaticKeepAliveClientMixin {
   late TextEditingController clustersController;
   String botonAceptar = 'Aceptar';
 
@@ -27,6 +28,7 @@ class _ClustersPestanaState extends State<ClustersPestana> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final datosProvider = context.read<DatosProvider>();
     final clustersProvider = context.watch<ClustersProvider>();
 
@@ -85,4 +87,8 @@ class _ClustersPestanaState extends State<ClustersPestana> {
       ),
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
