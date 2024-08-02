@@ -1,5 +1,6 @@
 import 'package:TF_SOM_UNMdP/config/tema.dart';
 import 'package:TF_SOM_UNMdP/providers/clusters_provider.dart';
+import 'package:TF_SOM_UNMdP/providers/config_provider.dart';
 import 'package:TF_SOM_UNMdP/providers/datos_provider.dart';
 import 'package:TF_SOM_UNMdP/providers/gradiente_provider.dart';
 import 'package:TF_SOM_UNMdP/providers/imagen_nueva_provider.dart';
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
             lazy: false, create: (_) => ParametrosProvider()),
         ChangeNotifierProvider(lazy: false, create: (_) => DatosProvider()),
         ChangeNotifierProvider(lazy: false, create: (_) => ClustersProvider()),
+        ChangeNotifierProvider(lazy: false, create: (_) => ConfigProvider()), 
         ChangeNotifierProvider(lazy: false, create: (_) => GradienteProvider()),
         ChangeNotifierProvider(lazy: false, create: (_) => ImagenProvider()),
         ChangeNotifierProvider(

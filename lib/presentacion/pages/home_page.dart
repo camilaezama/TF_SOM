@@ -1,5 +1,6 @@
 import 'package:TF_SOM_UNMdP/config/tema.dart';
 import 'package:TF_SOM_UNMdP/models/resultado_entrenamiento_model.dart';
+import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/dialogs/configuraciones_dialog.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/dialogs/configurar_gradiente_dialog.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/dialogs/configurar_parametros_dialog.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/dialogs/seleccionar_opciones_dialog.dart';
@@ -101,16 +102,29 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppTheme.colorFondoPrimary,
+        actions:  [
+          IconButton(onPressed: () {
+                showDialog<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return ConfiguracionesDialog(
+                      widthPantalla: _width,
+                      heightPantalla: _height,
+                    );
+                  },
+                );
+              } , icon: const Icon(Icons.settings)),
+         const SizedBox(width: 15)
+        ],
         title: Row(
-          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          //mainAxisSize: MainAxisSize.min,
           children: [
-            Flexible(
-              child: Image.asset(
-                'assets/logo.png', // replace with your image path
-                height: 50.0, // adjust the height as needed
-                fit: BoxFit
-                    .contain, // ensures the image scales to fit within the available space
-              ),
+            Image.asset(
+              'assets/logo.png', // replace with your image path
+              height: 50.0, // adjust the height as needed
+              fit: BoxFit
+                  .contain, // ensures the image scales to fit within the available space
             ),
             const SizedBox(width: 10),
             const Text(
