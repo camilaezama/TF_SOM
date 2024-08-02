@@ -107,6 +107,7 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final imagenNuevaProvider = context.watch<ImagenNuevaProvider>();
     final datosProvider = context.watch<DatosProvider>();
     final parametrosProvider = context.watch<ParametrosProvider>();
@@ -450,19 +451,11 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana>
 
                   /// NOMBRE ARCHIVO / TABLA
                   (csvData.isNotEmpty)
-                      ? (csvData.length > 100)
-                          ? Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 20.0),
-                              child: Text(
-                                  "La cantidad de datos es muy grande,\n la vista previa del archivo\n $fileName\n ha sido deshabilitada."),
-                            )
-                          : Expanded(
-                              child: TablaDatos(
-                                csvData: csvData,
-                                columnNames: listaNombresColumnasSeleccionadas,
-                              ),
-                            )
+                      ? Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20.0),
+                          child: Text(
+                              "El archivo $fileName\n cargó correctamente."),
+                        )
                       : const SizedBox.shrink(),
                 ],
               ),
@@ -818,8 +811,9 @@ Future<void> _downloadImage(ui.Image image) async {
 
   final blob = html.Blob([pngBytes], 'image/png');
   final url = html.Url.createObjectUrlFromBlob(blob);
+  var now = DateTime.now();
   final anchor = html.AnchorElement(href: url)
-    ..setAttribute("download", "generated_image.png")
+    ..setAttribute("download", "Imgen-$now.png")
     ..click();
   html.Url.revokeObjectUrl(url);
 }
