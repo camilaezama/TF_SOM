@@ -4,14 +4,18 @@ class TablaDatos extends StatelessWidget {
 
   final List<String>? columnNames;
   final List<List<dynamic>> csvData;
+  final ScrollController? scrollVertical;
 
-  TablaDatos({super.key, required this.columnNames, required this.csvData});
+  TablaDatos({super.key, required this.columnNames, required this.csvData, this.scrollVertical});
 
   final ScrollController horizontal = ScrollController();
-  final ScrollController vertical = ScrollController();
+  late ScrollController vertical;
 
   @override
   Widget build(BuildContext context) {
+
+    vertical = scrollVertical == null ? ScrollController() : scrollVertical!;
+
     return Scrollbar(
       controller: vertical,
       thumbVisibility: true,

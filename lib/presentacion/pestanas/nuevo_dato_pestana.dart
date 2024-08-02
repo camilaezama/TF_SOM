@@ -55,6 +55,21 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana>
 
   String fileName = '';
 
+  final List<ScrollController> _controllers = [];
+
+  void _scrollControllerListener(ScrollController sourceController) {
+    _controllers.forEach((element) {
+      //print(element.offset);
+    });
+    //print(sourceController.offset);
+    final double offset = sourceController.offset;
+    for (var controller in _controllers) {
+      if (controller != sourceController && controller.offset != offset) {
+        controller.jumpTo(offset);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -67,6 +82,21 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana>
     double widthPestana = abierto ? size.width * ancho : 0;
     double heightPestana =
         abierto ? (size.height - appBarHeight - tabBarHeight) : 0;
+
+    ScrollController scrollTabla1 = ScrollController();
+    ScrollController scrollTabla2 = ScrollController();
+
+    scrollTabla1.addListener(() {
+      _scrollControllerListener(scrollTabla1);
+    });
+
+    scrollTabla2.addListener(() {
+      _scrollControllerListener(scrollTabla2);
+    });
+
+    _controllers.clear();
+    _controllers.add(scrollTabla1);
+    _controllers.add(scrollTabla2);
 
     return Stack(
       children: [
@@ -122,12 +152,12 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana>
             height: heightPestana,
             child: Visibility(
                 visible: abierto,
-                child: pestanaLateral(context, heightPestana))),
+                child: pestanaLateral(context, heightPestana,  scrollTabla1, scrollTabla2))),
       ],
     );
   }
 
-  Container pestanaLateral(BuildContext context, double heightPestana) {
+  Container pestanaLateral(BuildContext context, double heightPestana,  ScrollController scrollTabla1,  ScrollController scrollTabla2) {
     return Container(
       //color: AppTheme.colorFondoPrimary,
       child: Padding(
@@ -220,12 +250,14 @@ class _NuevoDatoPestanaState extends State<NuevoDatoPestana>
                               TablaDatos(
                                 csvData: csvDataIdentificadores,
                                 columnNames: const ['Dato'],
+                                scrollVertical: scrollTabla1,
                               ),
                               Expanded(
                                 child: TablaDatos(
                                   csvData: csvData,
                                   columnNames:
                                       listaNombresColumnasSeleccionadas,
+                                  scrollVertical: scrollTabla2,
                                 ),
                               ),
                             ],
