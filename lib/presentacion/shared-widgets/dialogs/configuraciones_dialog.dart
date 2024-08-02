@@ -31,7 +31,9 @@ class _ConfiguracionesDialogState extends State<ConfiguracionesDialog> {
   }
 
   void changeHosteado(String hostValue) {
-    hosteado = hostValue;
+    setState(() {
+      hosteado = hostValue;
+    });
   }
 
   @override
@@ -58,6 +60,7 @@ class _ConfiguracionesDialogState extends State<ConfiguracionesDialog> {
                 children: [
                   Expanded(
                     child: TextField(
+                        enabled: hosteado!='host',
                         controller: IPController,
                         keyboardType: TextInputType.url,
                         //inputFormatters: [
@@ -72,6 +75,7 @@ class _ConfiguracionesDialogState extends State<ConfiguracionesDialog> {
                   ),
                   Expanded(
                     child: TextField(
+                      enabled: hosteado!='host',
                       controller: puertoController,
                       keyboardType: TextInputType.number,
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
