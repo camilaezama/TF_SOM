@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:TF_SOM_UNMdP/providers/config_provider.dart';
 import 'package:TF_SOM_UNMdP/utils/mostrar_dialog_texto.dart';
 import 'package:TF_SOM_UNMdP/providers/datos_provider.dart';
 import 'package:flutter/material.dart';
@@ -23,9 +24,17 @@ class ClustersProvider extends ChangeNotifier {
     notifyListeners();
 
     final datosProvider = context.read<DatosProvider>();
+    final configurationProvider = context.read<ConfigProvider>();
+    String urlX = "";
+    if (configurationProvider.getStatus() == 'host'){
+      urlX = 'http://${configurationProvider.getIP()}:${configurationProvider.getPuerto()}';
+    } else { // esto es necesario para diferenciar entre HTTP y HTTPS
+      urlX = 'https://${configurationProvider.getIP()}:${configurationProvider.getPuerto()}';
+    }
 
     String TIPO_LLAMADA = "clusters";
-    var url = Uri.parse('http://localhost:7777' + '/' + TIPO_LLAMADA);
+
+    var url = Uri.parse('$urlX/$TIPO_LLAMADA');
 
     final parametros = <String, dynamic>{
       'filas': datosProvider.resultadoEntrenamiento.filas.toString() != ""

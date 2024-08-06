@@ -2,11 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:TF_SOM_UNMdP/models/resultado_entrenamiento_model.dart';
+import 'package:TF_SOM_UNMdP/providers/config_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
+
+import 'package:provider/provider.dart';
 
 class DatosProvider extends ChangeNotifier {
   ResultadoEntrenamientoModel resultadoEntrenamiento =
@@ -14,12 +16,13 @@ class DatosProvider extends ChangeNotifier {
   String responseBody = '';
 
   Future<ResultadoEntrenamientoModel> entrenamiento(
+      BuildContext context,
       String tipoLlamada,
       Map<String, dynamic> parametros,
       String jsonResult,
       String jsonResultEtiquetas) async {
     Map<String, dynamic> decodedJson = await llamadaApiEntrenamiento(
-        tipoLlamada, parametros, jsonResult, jsonResultEtiquetas);
+        context ,tipoLlamada, parametros, jsonResult, jsonResultEtiquetas);
 
     ResultadoEntrenamientoModel resultado =
         procesarDatos(decodedJson, tipoLlamada, parametros);
@@ -28,11 +31,20 @@ class DatosProvider extends ChangeNotifier {
   }
 
   Future<Map<String, dynamic>> llamadaApiEntrenamiento(
+      BuildContext context,
       String tipoLlamada,
       Map<String, dynamic> parametros,
-      String jsonResult,
+      String jsonResult, 
       String jsonResultEtiquetas) async {
-    var url = Uri.parse('http://localhost:7777/$tipoLlamada');
+
+    final configurationProvider = context.read<ConfigProvider>();
+    String urlX = "";
+    if (configurationProvider.getStatus() == 'host'){
+      urlX = 'http://${configurationProvider.getIP()}:${configurationProvider.getPuerto()}';
+    } else { // esto es necesario para diferenciar entre HTTP y HTTPS
+      urlX = 'https://${configurationProvider.getIP()}:${configurationProvider.getPuerto()}';
+    }   
+    var url = Uri.parse('$urlX/$tipoLlamada');
 
     var response = await http.post(url,
         headers: {'Accept': '/*'},
