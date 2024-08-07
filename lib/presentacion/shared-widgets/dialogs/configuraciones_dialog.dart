@@ -1,6 +1,5 @@
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/radioButtonsConfig.dart';
 import 'package:TF_SOM_UNMdP/providers/config_provider.dart';
-import 'package:TF_SOM_UNMdP/providers/parametros_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -39,7 +38,7 @@ class _ConfiguracionesDialogState extends State<ConfiguracionesDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Configuracion'),
+      title: const Text('Configuración'),
       content: SizedBox(
         width: widget.widthPantalla * 0.5,
         height: widget.heightPantalla * 0.5,
