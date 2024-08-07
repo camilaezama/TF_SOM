@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
         title: 'TF SOM - UNMdP',
         initialRoute: '/',
         debugShowCheckedModeBanner: false,
-        theme: AppTheme().getTheme(),
+        theme: AppTheme.getTheme(),
         routes: {
           '/': (context) => const HomePage(),
           'grillas': (context) => const GrillasPage(),

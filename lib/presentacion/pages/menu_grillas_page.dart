@@ -86,21 +86,25 @@ class _GrillasPageState extends State<GrillasPage>
     return Scaffold(
       appBar: AppBar(
         actions: [
+          /// BOTON DE INFORMACION
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-              child: Icon(Icons.info),
-              onPressed: () {
-                showDialog<void>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return InfoErroresDialog(
-                      widthPantalla: _width,
-                      heightPantalla: _height,
-                    );
-                  },
-                );
-              },
+            child: Tooltip(
+              message: 'Información',
+              child: ElevatedButton(
+                child: Icon(Icons.info),
+                onPressed: () {
+                  showDialog<void>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return InfoErroresDialog(
+                        widthPantalla: _width,
+                        heightPantalla: _height,
+                      );
+                    },
+                  );
+                },
+              ),
             ),
           ),
         ],
@@ -112,7 +116,7 @@ class _GrillasPageState extends State<GrillasPage>
           children: [
             DrawerHeader(
                 decoration: BoxDecoration(
-                  color: Colors.blue,
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
                 child: Column(
                   children: [

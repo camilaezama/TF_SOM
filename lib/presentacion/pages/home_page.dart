@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
   List<List<dynamic>> csvData = [];
   List<List<dynamic>> csvDataOriginal = [];
   String botonAceptar = 'Entrenar';
-  String botonParam = 'Modificar Parametros';
+  String botonParam = 'Parametros';
 
   bool cargando = false;
   bool deteccionAutomaticaFeatures = true;
@@ -101,32 +101,31 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppTheme.colorFondoPrimary,
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Flexible(
-              child: Image.asset(
-                'assets/logo.png', // replace with your image path
-                height: 50.0, // adjust the height as needed
-                fit: BoxFit
-                    .contain, // ensures the image scales to fit within the available space
+        title: Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              /// LOGO APP
+              Flexible(
+                child: Image.asset(
+                  'assets/logo.png', // replace with your image path
+                  height: 50.0, // adjust the height as needed
+                  fit: BoxFit
+                      .contain, // ensures the image scales to fit within the available space
+                ),
               ),
-            ),
-            const SizedBox(width: 10),
-            const Text(
-              'VisualiSOM',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 24,
-              ),
-            ),
-          ],
+              const SizedBox(width: 10),
+              /// TITULO APP
+              const Text('VisualiSOM', style: TituloStyleLarge()),
+            ],
+          ),
         ),
       ),
       body: Container(
         color: AppTheme.colorFondoPrimary,
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
           child: Container(
             decoration: BoxDecoration(
               color: Colors.grey[200], // Color de fondo medio claro
@@ -147,6 +146,10 @@ class _HomePageState extends State<HomePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        const SizedBox(
+                          width: 100.0,
+                        ),
+                        /// BOTON SELECCIONAR ARCHIVO
                         Padding(
                           padding: const EdgeInsets.all(20.0),
                           child: ElevatedButton(
@@ -157,37 +160,43 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                         ),
-                        IconButton(
-                            tooltip: 'Elegir gradiente',
-                            onPressed: () {
-                              showDialog<void>(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return ConfigurarGradienteDialog(
-                                    widthPantalla: _width,
-                                    heightPantalla: _height,
-                                  );
-                                },
-                              );
-                            },
-                            icon: const Icon(Icons.gradient_outlined))
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(width: 10),
-                        const Text("Deteccion automática de features"),
-                        Checkbox(
-                          value: deteccionAutomaticaFeatures,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              deteccionAutomaticaFeatures = value!;
-                            });
-                          },
+                        SizedBox(
+                          width: 100.0,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              /// BOTON GRADIENTE
+                              IconButton(
+                                  tooltip: 'Elegir gradiente',
+                                  onPressed: () {
+                                    showDialog<void>(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return ConfigurarGradienteDialog(
+                                          widthPantalla: _width,
+                                          heightPantalla: _height,
+                                        );
+                                      },
+                                    );
+                                  },
+                                  icon: const Icon(Icons.gradient_outlined)),
+                              /// CHECK FEATURES
+                              Tooltip(
+                                message: "Deteccion automática de features",
+                                child: Checkbox(
+                                  value: deteccionAutomaticaFeatures,
+                                  onChanged: (bool? value) {
+                                    setState(() {
+                                      deteccionAutomaticaFeatures = value!;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
-                    )
+                    ),
                   ],
                 ),
                 (csvData.isNotEmpty)
@@ -259,44 +268,70 @@ class _HomePageState extends State<HomePage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        ElevatedButton(
-                            onPressed: _llamadaAPIRapida,
+                        SizedBox(
+                          width: 180.0,
+                          child: ElevatedButton(
+                              onPressed: _llamadaAPIRapida,
+                              style: AppTheme.secondaryButtonStyle,
+                              child: cargando
+                                  ? const CircularProgressIndicator()
+                                  : const Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.attach_file),
+                                        SizedBox(
+                                          width: 4.0,
+                                        ),
+                                        Text(
+                                          "Cargar archivo",
+                                          style: TextStyle(fontSize: 16),
+                                        ),
+                                      ],
+                                    )),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                          child: ElevatedButton(
+                              onPressed: _llamadaAPI,
+                              style: AppTheme.primaryButtonStyle,
+                              child: cargando
+                                  ? const CircularProgressIndicator()
+                                  : Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 14.0),
+                                      child: Text(
+                                        botonAceptar,
+                                        style: const TextStyle(fontSize: 16),
+                                      ),
+                                    )),
+                        ),
+                        SizedBox(
+                          width: 180.0,
+                          child: ElevatedButton(
                             style: AppTheme.secondaryButtonStyle,
-                            child: cargando
-                                ? const CircularProgressIndicator()
-                                : const Text(
-                                    "Cargar archivo SOM",
-                                    style: TextStyle(fontSize: 16),
-                                  )),
-                        const SizedBox(
-                          width: 30.0,
-                        ),
-                        ElevatedButton(
-                            onPressed: _llamadaAPI,
-                            style: AppTheme.primaryButtonStyle,
-                            child: cargando
-                                ? const CircularProgressIndicator()
-                                : Text(
-                                    botonAceptar,
-                                    style: const TextStyle(fontSize: 16),
-                                  )),
-                        const SizedBox(
-                          width: 30.0,
-                        ),
-                        ElevatedButton(
-                            onPressed: () {
-                              //loadData();
-                              showDialog<void>(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return ConfigurarParametrosDialog(
-                                    widthPantalla: _width,
-                                    heightPantalla: _height,
-                                  );
-                                },
-                              );
-                            },
-                            child: Text(botonParam))
+                              onPressed: () {
+                                //loadData();
+                                showDialog<void>(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return ConfigurarParametrosDialog(
+                                      widthPantalla: _width,
+                                      heightPantalla: _height,
+                                    );
+                                  },
+                                );
+                              },
+                              child: Row(
+                                 mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(Icons.tune),
+                                  const SizedBox(
+                                    width: 4.0,
+                                  ),
+                                  Text(botonParam)
+                                ],
+                              )),
+                        )
                       ],
                     ),
                   ),

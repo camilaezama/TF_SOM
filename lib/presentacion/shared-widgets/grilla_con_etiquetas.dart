@@ -79,7 +79,7 @@ class _GrillaConEtiquetasState extends State<GrillaConEtiquetas> {
                   const SizedBox(height: 20),
                   Center(
                       child: Text(widget.tituloColumnaEtiquetas,
-                          style: AppTheme.titulo1)),
+                          style: const TitleStyleMedium())),
                   const SizedBox(height: 20),
                   Center(
                     child: DropdownButton<String>(
@@ -128,14 +128,14 @@ class _GrillaConEtiquetasState extends State<GrillaConEtiquetas> {
                     children: [
                       _switchValue? const Text('Grilla gris') : const Text('Grilla detras'),
                       Switch(
-                        activeColor: AppTheme.colorScheme.primary,
+                        activeColor: Theme.of(context).colorScheme.primary,
                         value: _switchValue,
                         onChanged: _toggleSwitch,
                       ),
                       const SizedBox(width: 30.0,),
                       _switchValueMayoritario ? const Text('Mayoritario') : const Text('Detallado'),
                       Switch(
-                        activeColor: AppTheme.colorScheme.primary,
+                        activeColor: Theme.of(context).colorScheme.primary,
                         value: _switchValueMayoritario,
                         onChanged: _toggleSwitchMayoritario,
                       ),
