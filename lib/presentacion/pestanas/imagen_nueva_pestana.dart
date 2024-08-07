@@ -532,8 +532,11 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana>
                     setState(() {});
                   } else {
                     if (widget.usarDatosTrain! == true) {
-                      _generarImagenConDatosTrain(imagenNuevaProvider,
-                          parametrosProvider, tipoColoreado);
+                      _generarImagenConDatosTrain(
+                          datosProvider,
+                          imagenNuevaProvider,
+                          parametrosProvider,
+                          tipoColoreado);
                     } else {
                       _generarImagen(imagenNuevaProvider, datosProvider,
                           parametrosProvider, tipoColoreado);
@@ -576,18 +579,17 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana>
     String jsonResultEtiquetas = jsonEncode(dataEtiquetas);
 
     if (tipoColoreado == TipoColoreado.clustering) {
-      /// Llama a clustering (con datos de entrenamiento) y a nuevos datos (con los nuevos datos)
-      /// mapaDatoCluster tiene idPixel(dato) : idCluster  {0: 3, 1: 3, 2: 3, 3: 3, ... , 39274: 3, 39275: 3, 39276: 3}
-      mapaDatoCluster = await imagenNuevaProvider.llamadaImagenDatoCluster(
-          context, clustersController.text, jsonResult, jsonResultEtiquetas);
-
-      /// listaIdClusterColor es un mapa de {idCluster : Color}
-
       /// Genera imagen a partir del clustering
 
       var val = datosProvider.cantDatosEntrenamiento();
       if (validarColumnasDatos(int.parse(anchoPixelesController.text),
           int.parse(altoPixelesController.text), val)) {
+        /// Llama a clustering (con datos de entrenamiento) y a nuevos datos (con los nuevos datos)
+        /// mapaDatoCluster tiene idPixel(dato) : idCluster  {0: 3, 1: 3, 2: 3, 3: 3, ... , 39274: 3, 39275: 3, 39276: 3}
+        mapaDatoCluster = await imagenNuevaProvider.llamadaImagenDatoCluster(
+            context, clustersController.text, jsonResult, jsonResultEtiquetas);
+
+        /// listaIdClusterColor es un mapa de {idCluster : Color}
         customImage = await _generarImagenConDatos(
             int.parse(anchoPixelesController.text),
             int.parse(altoPixelesController.text),
@@ -618,23 +620,30 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana>
 
   // Funcion que crea imagen con los datos de TRAIN
   Future<void> _generarImagenConDatosTrain(
+      DatosProvider datosProvider,
       ImagenNuevaProvider imagenNuevaProvider,
       ParametrosProvider parametrosProvider,
       TipoColoreado tipoColoreado) async {
     if (tipoColoreado == TipoColoreado.clustering) {
       /// Llama a clustering (con datos de entrenamiento) y a nuevos datos (con los nuevos datos)
-      /// mapaDatoCluster tiene idPixel(dato) : idCluster  {0: 3, 1: 3, 2: 3, 3: 3, ... , 39274: 3, 39275: 3, 39276: 3}
-      mapaDatoCluster = await imagenNuevaProvider.datoClusterImagenOriginal(
-          context, clustersController.text);
-
       /// listaIdClusterColor es un mapa de {idCluster : Color}
+      var val = datosProvider.cantDatosEntrenamiento();
+      if (validarColumnasDatos(int.parse(anchoPixelesController.text),
+          int.parse(altoPixelesController.text), val)) {
+        /// mapaDatoCluster tiene idPixel(dato) : idCluster  {0: 3, 1: 3, 2: 3, 3: 3, ... , 39274: 3, 39275: 3, 39276: 3}
+        mapaDatoCluster = await imagenNuevaProvider.datoClusterImagenOriginal(
+            context, clustersController.text);
 
-      /// Genera imagen a partir del clustering
-      customImage = await _generarImagenConDatos(
-          int.parse(anchoPixelesController.text),
-          int.parse(altoPixelesController.text),
-          mapaDatoCluster,
-          listaIdClusterColor);
+        /// Genera imagen a partir del clustering
+        customImage = await _generarImagenConDatos(
+            int.parse(anchoPixelesController.text),
+            int.parse(altoPixelesController.text),
+            mapaDatoCluster,
+            listaIdClusterColor);
+      } else {
+        mostrarDialogTexto(context, "Error de dimensiones",
+            "El ancho por alto debe coincidir con la cantidad de datos de entrada");
+      }
     } else {
       mapaDatoBmu = await imagenNuevaProvider.datoBmuImagenOriginal(
           context, clustersController.text);
@@ -813,7 +822,7 @@ Future<void> _downloadImage(ui.Image image) async {
   final url = html.Url.createObjectUrlFromBlob(blob);
   var now = DateTime.now();
   final anchor = html.AnchorElement(href: url)
-    ..setAttribute("download", "Imgen-$now.png")
+    ..setAttribute("download", "Imagen-$now.png")
     ..click();
   html.Url.revokeObjectUrl(url);
 }

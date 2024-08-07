@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class ConfigProvider extends ChangeNotifier {
-  final String defaultIP = '0.0.0.0';
+  final String defaultIP = '127.0.0.1';
   final String defaultPuerto = '7777';
-  String IP = '0.0.0.0';
+  String IP = '127.0.0.1';
   String puerto = '7777';
   String hosteado = 'host';
 
@@ -17,16 +17,15 @@ class ConfigProvider extends ChangeNotifier {
     this.hosteado = hosteado;
   }
 
-  String getIP(){
-    return hosteado=='host'?defaultIP:IP;
+  String getIP() {
+    return hosteado == 'host' ? defaultIP : IP;
   }
 
-  String getPuerto(){
-    return hosteado=='host'?defaultPuerto:puerto;
+  String getPuerto() {
+    return hosteado == 'host' ? defaultPuerto : puerto;
   }
 
-  String getStatus(){
+  String getStatus() {
     return hosteado;
   }
-
 }
