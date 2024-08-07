@@ -116,27 +116,28 @@ class _HomePageState extends State<HomePage> {
               } , icon: const Icon(Icons.settings)),
          const SizedBox(width: 15)
         ],
-        title: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          //mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.asset(
-              'assets/logo.png', // replace with your image path
-              height: 50.0, // adjust the height as needed
-              fit: BoxFit
-                  .contain, // ensures the image scales to fit within the available space
-            ),
-            const SizedBox(width: 10),
-            const Text(
-              'VisualiSOM',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 24,
+        title: Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              /// LOGO APP
+              Flexible(
+                child: Image.asset(
+                  'assets/logo.png', // replace with your image path
+                  height: 50.0, // adjust the height as needed
+                  fit: BoxFit
+                      .contain, // ensures the image scales to fit within the available space
+                ),
               ),
-            ),
-          ],
+              const SizedBox(width: 10),
+              /// TITULO APP
+              const Text('VisualiSOM', style: TituloStyleLarge()),
+            ],
+          ),
+        ),
       )
-      ),
+     ),
       body: Container(
         color: AppTheme.colorFondoPrimary,
         child: Padding(
