@@ -3,7 +3,6 @@ import 'package:TF_SOM_UNMdP/presentacion/pestanas/clusters_pestana.dart';
 import 'package:TF_SOM_UNMdP/presentacion/pestanas/componentes_pestana.dart';
 import 'package:TF_SOM_UNMdP/presentacion/pestanas/hits_pestana.dart';
 import 'package:TF_SOM_UNMdP/presentacion/pestanas/imagen_nueva_pestana.dart';
-import 'package:TF_SOM_UNMdP/presentacion/pestanas/imagen_pestana.dart';
 import 'package:TF_SOM_UNMdP/presentacion/pestanas/nuevo_dato_pestana.dart';
 import 'package:TF_SOM_UNMdP/presentacion/pestanas/umat_pestana.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/dialogs/info_errores_dialog.dart';

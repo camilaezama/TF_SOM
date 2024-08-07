@@ -1,5 +1,6 @@
 import 'package:TF_SOM_UNMdP/config/tema.dart';
 import 'package:TF_SOM_UNMdP/models/resultado_entrenamiento_model.dart';
+import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/dialogs/configuraciones_dialog.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/dialogs/configurar_gradiente_dialog.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/dialogs/configurar_parametros_dialog.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/dialogs/seleccionar_opciones_dialog.dart';
@@ -101,6 +102,20 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppTheme.colorFondoPrimary,
+        actions:  [
+          IconButton(onPressed: () {
+                showDialog<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return ConfiguracionesDialog(
+                      widthPantalla: _width,
+                      heightPantalla: _height,
+                    );
+                  },
+                );
+              } , icon: const Icon(Icons.settings)),
+         const SizedBox(width: 15)
+        ],
         title: Padding(
           padding: const EdgeInsets.only(top: 10.0),
           child: Row(
@@ -121,7 +136,8 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
-      ),
+      )
+     ),
       body: Container(
         color: AppTheme.colorFondoPrimary,
         child: Padding(
@@ -392,8 +408,6 @@ class _HomePageState extends State<HomePage> {
     final datosProvider = context.read<DatosProvider>();
 
     if (csvData.isNotEmpty) {
-      //TODO: Si hay columnas de string, preguntar si se quieren seleccionar como etiquetas o algo asi
-
       List<List<dynamic>> filteredCsv = filtroColumnasSeleccionadasYEtiquetas();
 
       List<Map<String, String>> data = csvToData(filteredCsv);
@@ -421,7 +435,7 @@ class _HomePageState extends State<HomePage> {
           cargando = true;
         });
         ResultadoEntrenamientoModel resultadoEntrenamiento =
-            await datosProvider.entrenamiento(
+            await datosProvider.entrenamiento(context,
                 tipoLlamada, parametros, jsonResult, jsonResultEtiquetas);
         setState(() {
           Navigator.pushNamed(
@@ -447,10 +461,9 @@ class _HomePageState extends State<HomePage> {
 
   void _llamadaAPIRapida() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
-    final parametrosProvider = context.read<ParametrosProvider>();
     final datosProvider = context.read<DatosProvider>();
     if (result != null) {
-      Uint8List? fileBytes = result!.files.first.bytes;
+      Uint8List? fileBytes = result.files.first.bytes;
       fileName = result.files.first.name;
 
       if (fileName.endsWith('.json')) {
@@ -493,10 +506,9 @@ void deteccionAutomatica(
     List<bool> listaBoolColumnasSeleccionadas,
     List<bool> listaBoolEtiquetasSeleccionadas) {
   List<String> primeraFilaValores = csvData[1][0].toString().split(';');
-  double x;
   for (int i = 0; i < primeraFilaValores.length; i++) {
     try {
-      x = double.parse(primeraFilaValores[i]);
+      double.parse(primeraFilaValores[i]);
     } catch (e) {
       //si no pudo parsear entonces son letras, es etiqueta
       listaBoolColumnasSeleccionadas[i] = false;
