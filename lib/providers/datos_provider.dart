@@ -39,10 +39,10 @@ class DatosProvider extends ChangeNotifier {
 
     final configurationProvider = context.read<ConfigProvider>();
     String urlX = "";
-    if (configurationProvider.getStatus() == 'host'){
+    if (configurationProvider.getStatus() != 'host'){
       urlX = 'http://${configurationProvider.getIP()}:${configurationProvider.getPuerto()}';
     } else { // esto es necesario para diferenciar entre HTTP y HTTPS
-      urlX = 'https://${configurationProvider.getIP()}:${configurationProvider.getPuerto()}';
+      urlX = 'https://${configurationProvider.getIP()}';
     }   
     var url = Uri.parse('$urlX/$tipoLlamada');
 

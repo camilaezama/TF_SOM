@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class ConfigProvider extends ChangeNotifier {
-  final String defaultIP = '127.0.0.1';
+  final String defaultIP = 'som-flask.onrender.com';
   final String defaultPuerto = '7777';
-  String IP = '127.0.0.1';
+  String IP = 'som-flask.onrender.com';
   String puerto = '7777';
   String hosteado = 'host';
 
