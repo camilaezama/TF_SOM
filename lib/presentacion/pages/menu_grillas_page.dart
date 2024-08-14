@@ -5,6 +5,7 @@ import 'package:TF_SOM_UNMdP/presentacion/pestanas/hits_pestana.dart';
 import 'package:TF_SOM_UNMdP/presentacion/pestanas/imagen_nueva_pestana.dart';
 import 'package:TF_SOM_UNMdP/presentacion/pestanas/nuevo_dato_pestana.dart';
 import 'package:TF_SOM_UNMdP/presentacion/pestanas/umat_pestana.dart';
+import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/dialogs/configuraciones_dialog.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/dialogs/info_errores_dialog.dart';
 import 'package:TF_SOM_UNMdP/providers/datos_provider.dart';
 import 'package:TF_SOM_UNMdP/providers/gradiente_provider.dart';
@@ -106,6 +107,29 @@ class _GrillasPageState extends State<GrillasPage>
               ),
             ),
           ),
+          const SizedBox(width: 15),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Tooltip(
+              message: 'Configuración',
+              child: ElevatedButton(
+                child: const Icon(Icons.settings),
+                onPressed: () {
+                  showDialog<void>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return ConfiguracionesDialog(
+                        widthPantalla: _width,
+                        heightPantalla: _height,
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ),
+
+          const SizedBox(width: 15)
         ],
         title: Text(appBarTitle),
       ),

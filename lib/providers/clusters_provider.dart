@@ -26,9 +26,11 @@ class ClustersProvider extends ChangeNotifier {
     final datosProvider = context.read<DatosProvider>();
     final configurationProvider = context.read<ConfigProvider>();
     String urlX = "";
-    if (configurationProvider.getStatus() != 'host'){
-      urlX = 'http://${configurationProvider.getIP()}:${configurationProvider.getPuerto()}';
-    } else { // esto es necesario para diferenciar entre HTTP y HTTPS
+    if (configurationProvider.getStatus() != 'host') {
+      urlX =
+          'http://${configurationProvider.getIP()}:${configurationProvider.getPuerto()}';
+    } else {
+      // esto es necesario para diferenciar entre HTTP y HTTPS
       urlX = 'https://${configurationProvider.getIP()}';
     }
 
@@ -77,6 +79,7 @@ class ClustersProvider extends ChangeNotifier {
     } catch (e) {
       cargando = false;
       mostarGrilla = false;
+      notifyListeners();
       // ignore: use_build_context_synchronously
       mostrarDialogTexto(context, "Error", "$e");
     }

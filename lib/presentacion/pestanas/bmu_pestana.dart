@@ -11,7 +11,15 @@ class BmuPestana extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final datosProvider = context.read<DatosProvider>();
+    List<double> doubleValues = datosProvider
+        .resultadoEntrenamiento.dataUdist.values
+        .map((value) => double.tryParse(value))
+        .where((value) => value != null && value != -1)
+        .toList()
+        .cast<double>();
 
+    double minValue = doubleValues.reduce((a, b) => a < b ? a : b);
+    double maxValue = doubleValues.reduce((a, b) => a > b ? a : b);
     return GrillaHexagonos(
       titulo: "Mapa",
       gradiente: gradiente,
@@ -21,8 +29,8 @@ class BmuPestana extends StatelessWidget {
       clusters: null,
       filas: datosProvider.resultadoEntrenamiento.filas,
       columnas: datosProvider.resultadoEntrenamiento.columnas,
-      min: 0,
-      max: 1,
+      min: minValue,
+      max: maxValue,
     );
   }
 }

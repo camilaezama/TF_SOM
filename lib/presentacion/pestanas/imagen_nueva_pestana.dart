@@ -569,50 +569,57 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana>
       TipoColoreado tipoColoreado) async {
     // Preparacion datos del csv
     List<List<dynamic>> filteredCsv = filtroColumnasSeleccionadasYEtiquetas();
-    List<Map<String, String>> data = csvToData(filteredCsv);
-    String jsonResult = jsonEncode(data);
-    List<List<dynamic>> filteredEtiquetas = filtrarCsvData(
-        listaBoolEtiquetasSeleccionadas,
-        listaNombresColumnasOriginal,
-        csvDataOriginal);
-    List<Map<String, String>> dataEtiquetas = csvToData(filteredEtiquetas);
-    String jsonResultEtiquetas = jsonEncode(dataEtiquetas);
+    if (filteredCsv.isNotEmpty) {
+      List<Map<String, String>> data = csvToData(filteredCsv);
+      String jsonResult = jsonEncode(data);
+      List<List<dynamic>> filteredEtiquetas = filtrarCsvData(
+          listaBoolEtiquetasSeleccionadas,
+          listaNombresColumnasOriginal,
+          csvDataOriginal);
+      List<Map<String, String>> dataEtiquetas = csvToData(filteredEtiquetas);
+      String jsonResultEtiquetas = jsonEncode(dataEtiquetas);
 
-    if (tipoColoreado == TipoColoreado.clustering) {
-      /// Genera imagen a partir del clustering
+      if (tipoColoreado == TipoColoreado.clustering) {
+        /// Genera imagen a partir del clustering
 
-      var val = datosProvider.cantDatosEntrenamiento();
-      if (validarColumnasDatos(int.parse(anchoPixelesController.text),
-          int.parse(altoPixelesController.text), val)) {
-        /// Llama a clustering (con datos de entrenamiento) y a nuevos datos (con los nuevos datos)
-        /// mapaDatoCluster tiene idPixel(dato) : idCluster  {0: 3, 1: 3, 2: 3, 3: 3, ... , 39274: 3, 39275: 3, 39276: 3}
-        mapaDatoCluster = await imagenNuevaProvider.llamadaImagenDatoCluster(
+        var val = datosProvider.cantDatosEntrenamiento();
+        if (validarColumnasDatos(int.parse(anchoPixelesController.text),
+            int.parse(altoPixelesController.text), val)) {
+          /// Llama a clustering (con datos de entrenamiento) y a nuevos datos (con los nuevos datos)
+          /// mapaDatoCluster tiene idPixel(dato) : idCluster  {0: 3, 1: 3, 2: 3, 3: 3, ... , 39274: 3, 39275: 3, 39276: 3}
+          mapaDatoCluster = await imagenNuevaProvider.llamadaImagenDatoCluster(
+              context,
+              clustersController.text,
+              jsonResult,
+              jsonResultEtiquetas);
+
+          /// listaIdClusterColor es un mapa de {idCluster : Color}
+          customImage = await _generarImagenConDatos(
+              int.parse(anchoPixelesController.text),
+              int.parse(altoPixelesController.text),
+              mapaDatoCluster,
+              listaIdClusterColor);
+        } else {
+          mostrarDialogTexto(context, "Error de dimensiones",
+              "El ancho por alto debe coincidir con la cantidad de datos de entrada");
+        }
+      } else {
+        mapaDatoBmu = await imagenNuevaProvider.llamadaImagenDatoBMU(
             context, clustersController.text, jsonResult, jsonResultEtiquetas);
 
-        /// listaIdClusterColor es un mapa de {idCluster : Color}
+        /// Mapa {BMU : Color} (Le paso cada BMU como un cluster diferente)
+        Map<int, Color> listaBMUColor = matrixToMap(
+            int.parse(parametrosProvider.filas),
+            int.parse(parametrosProvider.columnas));
+
         customImage = await _generarImagenConDatos(
             int.parse(anchoPixelesController.text),
             int.parse(altoPixelesController.text),
-            mapaDatoCluster,
-            listaIdClusterColor);
-      } else {
-        mostrarDialogTexto(context, "Error de dimensiones",
-            "El ancho por alto debe coincidir con la cantidad de datos de entrada");
+            mapaDatoBmu,
+            listaBMUColor);
       }
     } else {
-      mapaDatoBmu = await imagenNuevaProvider.llamadaImagenDatoBMU(
-          context, clustersController.text, jsonResult, jsonResultEtiquetas);
-
-      /// Mapa {BMU : Color} (Le paso cada BMU como un cluster diferente)
-      Map<int, Color> listaBMUColor = matrixToMap(
-          int.parse(parametrosProvider.filas),
-          int.parse(parametrosProvider.columnas));
-
-      customImage = await _generarImagenConDatos(
-          int.parse(anchoPixelesController.text),
-          int.parse(altoPixelesController.text),
-          mapaDatoBmu,
-          listaBMUColor);
+      mostrarDialogTexto(context, "Error", "Debe seleccionar un archivo CSV");
     }
 
     setState(() {});
