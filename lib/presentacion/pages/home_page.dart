@@ -34,7 +34,8 @@ class _HomePageState extends State<HomePage> {
   String botonAceptar = 'Entrenar';
   String botonParam = 'Parametros';
 
-  bool cargando = false;
+  bool cargandoEntrenamiento = false;
+  bool cargandoArchivo = false;
   bool deteccionAutomaticaFeatures = true;
 
   /// Lista con todos los nombres de las columnas, seleccionados o no
@@ -98,6 +99,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     _width = MediaQuery.of(context).size.width;
     _height = MediaQuery.of(context).size.height;
+    Color onPrimary = Theme.of(context).colorScheme.onPrimary;
 
     return Scaffold(
       appBar: AppBar(
@@ -288,8 +290,11 @@ class _HomePageState extends State<HomePage> {
                           child: ElevatedButton(
                               onPressed: _llamadaAPIRapida,
                               style: AppTheme.secondaryButtonStyle,
-                              child: cargando
-                                  ? const CircularProgressIndicator()
+                              child: cargandoArchivo
+                                  ? const Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 5.0),
+                                    child: CircularProgressIndicator(),
+                                  )
                                   : const Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
@@ -309,8 +314,11 @@ class _HomePageState extends State<HomePage> {
                           child: ElevatedButton(
                               onPressed: _llamadaAPI,
                               style: AppTheme.primaryButtonStyle,
-                              child: cargando
-                                  ? const CircularProgressIndicator()
+                              child: cargandoEntrenamiento
+                                  ? Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 5.0),
+                                    child: CircularProgressIndicator(color: onPrimary),
+                                  )
                                   : Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 14.0),
@@ -431,7 +439,7 @@ class _HomePageState extends State<HomePage> {
         final parametros = parametrosProvider.mapaParametros();
 
         setState(() {
-          cargando = true;
+          cargandoEntrenamiento = true;
         });
         ResultadoEntrenamientoModel resultadoEntrenamiento =
             await datosProvider.entrenamiento(context,
@@ -442,13 +450,13 @@ class _HomePageState extends State<HomePage> {
             'grillas',
             arguments: resultadoEntrenamiento,
           );
-          cargando = false;
+          cargandoEntrenamiento = false;
         });
       } catch (e) {
         mostrarDialogTexto(
             context, 'Error', 'Error en la  llamada de servicio: $e');
         setState(() {
-          cargando = false;
+          cargandoEntrenamiento = false;
           botonAceptar = "Entrenar";
         });
       }
@@ -468,7 +476,7 @@ class _HomePageState extends State<HomePage> {
       if (fileName.endsWith('.json')) {
         try {
           setState(() {
-            cargando = true;
+            cargandoArchivo = true;
           });
           final contents = utf8.decode(fileBytes!);
           final jsonData = jsonDecode(contents);
@@ -482,13 +490,13 @@ class _HomePageState extends State<HomePage> {
               'grillas',
               arguments: resultadoEntrenamiento,
             );
-            cargando = false;
+            cargandoArchivo = false;
           });
         } catch (e) {
           mostrarDialogTexto(
               context, 'Error', 'Error en el archivo ingresado.');
           setState(() {
-            cargando = false;
+            cargandoArchivo = false;
             botonAceptar = "Entrenar";
           });
         }
