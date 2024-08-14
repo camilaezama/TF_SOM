@@ -197,122 +197,135 @@ class GrillaHexagonos extends StatelessWidget {
                                 }
                               }
 
-                              return deshabilitarBotonesHexagonos == true ? const Text('') : valorDist == '-1'
-                                  ? const Text("")
-                                  : (((row + 1) % 2 == 0 ||
-                                              (columna + 1) % 2 == 0) &&
-                                          expandida)
+                              return deshabilitarBotonesHexagonos == true
+                                  ? const Text('')
+                                  : valorDist == '-1'
                                       ? const Text("")
-                                      : Tooltip(
-                                          message: hits ? tooltipHits(bMU) : '',
-                                          child: ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                  textStyle: const TextStyle(
-                                                    // Tamaño del texto
-                                                    color: Colors
-                                                        .black, // Color del texto
-                                                  ),
-                                                  backgroundColor: Colors
-                                                      .transparent, // Fondo transparente
-                                                  //onPrimary: Colors.blue, // Color del texto cuando se presiona
-                                                  elevation:
-                                                      0, // Elimina la sombra del botón
-                                                  // shape: RoundedRectangleBorder(
-                                                  //   borderRadius: BorderRadius.circular(8.0),
-                                                  //side: BorderSide(color: Colors.blue), // Borde del color deseado
-                                                  //),
+                                      : (((row + 1) % 2 == 0 ||
+                                                  (columna + 1) % 2 == 0) &&
+                                              expandida)
+                                          ? const Text("")
+                                          : Tooltip(
+                                              message:
+                                                  hits ? tooltipHits(bMU) : '',
+                                              child: ElevatedButton(
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                          textStyle:
+                                                              const TextStyle(
+                                                            // Tamaño del texto
+                                                            color: Colors
+                                                                .black, // Color del texto
+                                                          ),
+                                                          backgroundColor: Colors
+                                                              .transparent, // Fondo transparente
+                                                          //onPrimary: Colors.blue, // Color del texto cuando se presiona
+                                                          elevation:
+                                                              0, // Elimina la sombra del botón
+                                                          // shape: RoundedRectangleBorder(
+                                                          //   borderRadius: BorderRadius.circular(8.0),
+                                                          //side: BorderSide(color: Colors.blue), // Borde del color deseado
+                                                          //),
 
-                                                  padding: const EdgeInsets.all(
-                                                      0.0)),
-                                              onPressed: () {
-                                                showDialog<void>(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return hits
-                                                        ? dialogBotonHits(
-                                                            context,
-                                                            bMU,
-                                                            valorDist)
-                                                        : dialogBotonBMUS(
-                                                            context,
-                                                            bMU,
-                                                            valorDist);
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(0.0)),
+                                                  onPressed: () {
+                                                    showDialog<void>(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return hits
+                                                            ? dialogBotonHits(
+                                                                context,
+                                                                bMU,
+                                                                valorDist)
+                                                            : dialogBotonBMUS(
+                                                                context,
+                                                                bMU,
+                                                                valorDist);
+                                                      },
+                                                    );
                                                   },
-                                                );
-                                              },
-                                              child: hits
-                                                  ? widgetHits(bMU,
-                                                      mayoritario:
-                                                          hitsPorMayoritario)
-                                                  : const Text(
-                                                      '',
-                                                      //'',
-                                                      //'123456789',
-                                                      //'$BMU',
-                                                      style: TextStyle(
-                                                        color: Colors.black,
-                                                      ),
-                                                    )),
-                                        );
+                                                  child: hits
+                                                      ? widgetHits(bMU,
+                                                          mayoritario:
+                                                              hitsPorMayoritario)
+                                                      : const Text(
+                                                          '',
+                                                          //'',
+                                                          //'123456789',
+                                                          //'$BMU',
+                                                          style: TextStyle(
+                                                            color: Colors.black,
+                                                          ),
+                                                        )),
+                                            );
                             }),
                       ),
                     ),
                     if (mostrarGradiente)
-                      Container(
-                        width: 80.0, // ajusta la altura según tus necesidades
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment
-                                .topCenter, // comienza desde la parte superior
-                            end: Alignment
-                                .bottomCenter, // termina en la parte inferior
-                            colors: gradiente!.colors.reversed
-                                .toList(), //para que quede bien (arriba hacia abajo)
-                            stops: gradiente!.stops,
-                          ),
-                        ),
-
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20.0),
+                        child: Row(
                           children: [
-                            for (double stop in [
-                              double.parse(max!.toStringAsFixed(1)),
-                              double.parse((min! +
-                                      4 *
-                                          double.parse(((max! - min!) / 5)
-                                              .toStringAsFixed(1)))
-                                  .toStringAsFixed(1)),
-                              double.parse((min! +
-                                      3 *
-                                          double.parse(((max! - min!) / 5)
-                                              .toStringAsFixed(1)))
-                                  .toStringAsFixed(1)),
-                              double.parse((min! +
-                                      2 *
-                                          double.parse(((max! - min!) / 5)
-                                              .toStringAsFixed(1)))
-                                  .toStringAsFixed(1)),
-                              double.parse((min! +
-                                      1 *
-                                          double.parse(((max! - min!) / 5)
-                                              .toStringAsFixed(1)))
-                                  .toStringAsFixed(1)),
-                              double.parse(min!.toStringAsFixed(1)),
-                            ])
-                              Text(
-                                '$stop',
-                                style: (gradiente!.colors.contains(
-                                            const Color.fromARGB(
-                                                255, 0, 0, 0)) ||
-                                        gradiente!.colors.contains(
-                                            const Color.fromARGB(
-                                                255, 40, 40, 40)))
-                                    ? const TextStyle(
-                                        color: Color.fromARGB(255, 247, 255, 9))
-                                    : const TextStyle(
-                                        color: Color.fromARGB(255, 0, 0, 0)),
+                            Container(
+                              width:
+                                  60.0, // ajusta la altura según tus necesidades
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.black, // Color del borde
+                                  width: 1.0, // Grosor del borde
+                                ),
+                                gradient: LinearGradient(
+                                  begin: Alignment
+                                      .topCenter, // comienza desde la parte superior
+                                  end: Alignment
+                                      .bottomCenter, // termina en la parte inferior
+                                  colors: gradiente!.colors.reversed
+                                      .toList(), //para que quede bien (arriba hacia abajo)
+                                  stops: gradiente!.stops,
+                                ),
                               ),
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                for (double stop in [
+                                  double.parse(max!.toStringAsFixed(1)),
+                                  double.parse((min! +
+                                          4 *
+                                              double.parse(((max! - min!) / 5)
+                                                  .toStringAsFixed(1)))
+                                      .toStringAsFixed(1)),
+                                  double.parse((min! +
+                                          3 *
+                                              double.parse(((max! - min!) / 5)
+                                                  .toStringAsFixed(1)))
+                                      .toStringAsFixed(1)),
+                                  double.parse((min! +
+                                          2 *
+                                              double.parse(((max! - min!) / 5)
+                                                  .toStringAsFixed(1)))
+                                      .toStringAsFixed(1)),
+                                  double.parse((min! +
+                                          1 *
+                                              double.parse(((max! - min!) / 5)
+                                                  .toStringAsFixed(1)))
+                                      .toStringAsFixed(1)),
+                                  double.parse(min!.toStringAsFixed(1)),
+                                ])
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: Text(
+                                      '$stop',
+                                      style: const TextStyle(
+                                              color:
+                                                  Color.fromARGB(255, 0, 0, 0)),
+                                    ),
+                                  ),
+                              ],
+                            ),
                           ],
                         ),
                       ),
@@ -327,17 +340,17 @@ class GrillaHexagonos extends StatelessWidget {
   }
 
   /// Funcion que devuelve el color del hexagono
-  Color colorHexagono(double valor, int bmu, int row,int col){
-    if (grillaBlanca){
+  Color colorHexagono(double valor, int bmu, int row, int col) {
+    if (grillaBlanca) {
       return const Color.fromARGB(255, 211, 211, 211);
     }
-    if (clusters != null){
+    if (clusters != null) {
       return getClusterColor(col, row, clusters);
     }
-    if (mapaBmuColor != null){
+    if (mapaBmuColor != null) {
       return mapaBmuColor![bmu]!;
     }
-    
+
     return getInterpolatedColor(valor, gradiente, min!, max!);
   }
 
