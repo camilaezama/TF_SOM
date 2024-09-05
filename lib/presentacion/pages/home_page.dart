@@ -104,8 +104,9 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppTheme.colorFondoPrimary,
-        actions:  [
-          IconButton(onPressed: () {
+        actions: [
+          IconButton(
+              onPressed: () {
                 showDialog<void>(
                   context: context,
                   builder: (BuildContext context) {
@@ -115,8 +116,9 @@ class _HomePageState extends State<HomePage> {
                     );
                   },
                 );
-              } , icon: const Icon(Icons.settings)),
-         const SizedBox(width: 15)
+              },
+              icon: const Icon(Icons.settings)),
+          const SizedBox(width: 15)
         ],
         title: Padding(
           padding: const EdgeInsets.only(top: 10.0),
@@ -133,6 +135,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               const SizedBox(width: 10),
+
               /// TITULO APP
               const Text('VisualiSOM', style: TituloStyleLarge()),
             ],
@@ -166,6 +169,7 @@ class _HomePageState extends State<HomePage> {
                         const SizedBox(
                           width: 100.0,
                         ),
+
                         /// BOTON SELECCIONAR ARCHIVO
                         Padding(
                           padding: const EdgeInsets.all(20.0),
@@ -197,6 +201,7 @@ class _HomePageState extends State<HomePage> {
                                     );
                                   },
                                   icon: const Icon(Icons.gradient_outlined)),
+
                               /// CHECK FEATURES
                               Tooltip(
                                 message: "Deteccion automática de features",
@@ -292,11 +297,13 @@ class _HomePageState extends State<HomePage> {
                               style: AppTheme.secondaryButtonStyle,
                               child: cargandoArchivo
                                   ? const Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 5.0),
-                                    child: CircularProgressIndicator(),
-                                  )
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 5.0),
+                                      child: CircularProgressIndicator(),
+                                    )
                                   : const Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Icon(Icons.attach_file),
                                         SizedBox(
@@ -316,9 +323,11 @@ class _HomePageState extends State<HomePage> {
                               style: AppTheme.primaryButtonStyle,
                               child: cargandoEntrenamiento
                                   ? Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 5.0),
-                                    child: CircularProgressIndicator(color: onPrimary),
-                                  )
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5.0),
+                                      child: CircularProgressIndicator(
+                                          color: onPrimary),
+                                    )
                                   : Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 14.0),
@@ -331,7 +340,7 @@ class _HomePageState extends State<HomePage> {
                         SizedBox(
                           width: 180.0,
                           child: ElevatedButton(
-                            style: AppTheme.secondaryButtonStyle,
+                              style: AppTheme.secondaryButtonStyle,
                               onPressed: () {
                                 //loadData();
                                 showDialog<void>(
@@ -345,7 +354,7 @@ class _HomePageState extends State<HomePage> {
                                 );
                               },
                               child: Row(
-                                 mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   const Icon(Icons.tune),
                                   const SizedBox(
@@ -435,15 +444,15 @@ class _HomePageState extends State<HomePage> {
                 "Una de las columnas marcada como Features contiene datos no numéricos. Deseleccione la columna e intente nuevamente.");
           }
         }
-        String tipoLlamada = "bmu";
+        String tipoLlamada = "api/train";
         final parametros = parametrosProvider.mapaParametros();
 
         setState(() {
           cargandoEntrenamiento = true;
         });
         ResultadoEntrenamientoModel resultadoEntrenamiento =
-            await datosProvider.entrenamiento(context,
-                tipoLlamada, parametros, jsonResult, jsonResultEtiquetas);
+            await datosProvider.entrenamiento(context, tipoLlamada, parametros,
+                jsonResult, jsonResultEtiquetas);
         setState(() {
           Navigator.pushNamed(
             context,

@@ -34,7 +34,7 @@ class ClustersProvider extends ChangeNotifier {
       urlX = 'https://${configurationProvider.getIP()}';
     }
 
-    String TIPO_LLAMADA = "clusters";
+    String TIPO_LLAMADA = "api/clusters";
 
     var url = Uri.parse('$urlX/$TIPO_LLAMADA');
 

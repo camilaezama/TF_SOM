@@ -102,13 +102,15 @@ class ImagenNuevaProvider extends ChangeNotifier {
     final datosProvider = context.read<DatosProvider>();
     final configurationProvider = context.read<ConfigProvider>();
     String urlX = "";
-    if (configurationProvider.getStatus() != 'host'){
-      urlX = 'http://${configurationProvider.getIP()}:${configurationProvider.getPuerto()}';
-    } else { // esto es necesario para diferenciar entre HTTP y HTTPS
+    if (configurationProvider.getStatus() != 'host') {
+      urlX =
+          'http://${configurationProvider.getIP()}:${configurationProvider.getPuerto()}';
+    } else {
+      // esto es necesario para diferenciar entre HTTP y HTTPS
       urlX = 'https://${configurationProvider.getIP()}';
     }
 
-    String tipoLlamada = "clusters";
+    String tipoLlamada = "api/clusters";
     var url = Uri.parse('$urlX/$tipoLlamada');
 
     final parametros = <String, dynamic>{
