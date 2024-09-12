@@ -51,9 +51,10 @@ class _GrillasPageState extends State<GrillasPage>
       WidgetsBinding.instance.addPostFrameCallback((_) {
         // Navigate to HomePage after the initial build
         Navigator.pushReplacementNamed(context, '/');
+        // Clear the flag
+        html.window.localStorage.remove('isReloading');
       });
-      // Clear the flag
-      html.window.localStorage.remove('isReloading');
+      
     }
 
     // Set a flag indicating that the page is about to be reloaded
