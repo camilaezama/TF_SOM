@@ -18,13 +18,14 @@ class ConfiguracionesDialog extends StatefulWidget {
 class _ConfiguracionesDialogState extends State<ConfiguracionesDialog> {
   late TextEditingController IPController;
   late TextEditingController puertoController;
-  late String hosteado = 'host';
+  late String hosteado;
 
   @override
   void initState() {
     final configProvider = context.read<ConfigProvider>();
     IPController = TextEditingController(text: configProvider.IP);
     puertoController = TextEditingController(text: configProvider.puerto);
+    hosteado = configProvider.selectedOption ?? 'host';
 
     super.initState();
   }
@@ -48,7 +49,7 @@ class _ConfiguracionesDialogState extends State<ConfiguracionesDialog> {
               Row(
                 children: [
                   RadioButtonsHost(
-                    getValue: changeHosteado,
+                    getValue: changeHosteado, IPController: IPController, puertoController: puertoController,
                   )
                 ],
               ),

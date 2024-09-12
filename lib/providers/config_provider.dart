@@ -6,6 +6,13 @@ class ConfigProvider extends ChangeNotifier {
   String IP = 'som-flask.onrender.com';
   String puerto = '7777';
   String hosteado = 'host';
+  String? selectedOption = 'host';
+
+  void updateSelectedOption({
+    String? opcion
+  }){
+    this.selectedOption = opcion;
+  }
 
   void updateConfig({
     required String IP,
