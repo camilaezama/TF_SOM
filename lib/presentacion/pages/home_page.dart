@@ -12,7 +12,8 @@ import 'package:TF_SOM_UNMdP/utils/mostrar_dialog_texto.dart';
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html;
 import 'dart:convert';
 import 'package:flutter/services.dart';
 //import 'dart:typed_data'; // Para Uint8List
@@ -51,6 +52,11 @@ class _HomePageState extends State<HomePage> {
   late double _width, _height;
 
   String fileName = '';
+  @override
+  void initState() {
+    super.initState();
+    html.window.localStorage.remove('isReloading');
+  }
 
   void _loadCSVData(FilePickerResult result) async {
     Uint8List? fileBytes = result.files.first.bytes;
