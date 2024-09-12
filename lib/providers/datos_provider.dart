@@ -22,7 +22,7 @@ class DatosProvider extends ChangeNotifier {
       String jsonResult,
       String jsonResultEtiquetas) async {
     Map<String, dynamic> decodedJson = await llamadaApiEntrenamiento(
-        context ,tipoLlamada, parametros, jsonResult, jsonResultEtiquetas);
+        context, tipoLlamada, parametros, jsonResult, jsonResultEtiquetas);
 
     ResultadoEntrenamientoModel resultado =
         procesarDatos(decodedJson, tipoLlamada, parametros);
@@ -34,16 +34,17 @@ class DatosProvider extends ChangeNotifier {
       BuildContext context,
       String tipoLlamada,
       Map<String, dynamic> parametros,
-      String jsonResult, 
+      String jsonResult,
       String jsonResultEtiquetas) async {
-
     final configurationProvider = context.read<ConfigProvider>();
     String urlX = "";
-    if (configurationProvider.getStatus() != 'host'){
-      urlX = 'http://${configurationProvider.getIP()}:${configurationProvider.getPuerto()}';
-    } else { // esto es necesario para diferenciar entre HTTP y HTTPS
+    if (configurationProvider.getStatus() != 'host') {
+      urlX =
+          'http://${configurationProvider.getIP()}:${configurationProvider.getPuerto()}';
+    } else {
+      // esto es necesario para diferenciar entre HTTP y HTTPS
       urlX = 'https://${configurationProvider.getIP()}';
-    }   
+    }
     var url = Uri.parse('$urlX/$tipoLlamada');
 
     var response = await http.post(url,
@@ -58,15 +59,6 @@ class DatosProvider extends ChangeNotifier {
       var error = json.decode(response.body);
       throw Exception(error["error"]);
     }
-    //Descargar response.body para copiar en resultadoPrueba.json
-    // final bytes = utf8.encode(response.body);
-    // DateTime now = DateTime.now();
-    // final blob = html.Blob([bytes]);
-    // final urlAux = html.Url.createObjectUrlFromBlob(blob);
-    // final anchor = html.AnchorElement(href: urlAux)
-    //   ..setAttribute("download", "train-$now.json")
-    //   ..click();
-    // html.Url.revokeObjectUrl(urlAux);
     responseBody = response.body;
 
     Map<String, dynamic> decodedJson = json.decode(response.body);
@@ -92,6 +84,7 @@ class DatosProvider extends ChangeNotifier {
     var etiquetas = procesarEtiquetas(etiquetasJSON);
     var parametrosEntrenamiento = procesarParametos(decodedJson["Parametros"]);
     var erroresEntrenamiento = procesarErrores(decodedJson["Errores"]);
+
     ResultadoEntrenamientoModel resultado = ResultadoEntrenamientoModel(
         codebook: tempCodebook,
         mapaRta: tempMapaRta,
@@ -107,10 +100,6 @@ class DatosProvider extends ChangeNotifier {
         errores: erroresEntrenamiento);
 
     resultadoEntrenamiento = resultado;
-    //Descargar archivo de texto con resultado
-    // DateTime now = DateTime.now();
-    // downloadSummaryTxtFile(parametrosEntrenamiento, erroresEntrenamiento,
-    //     "ResumenEntrenamiento-$now.txt");
     return resultado;
   }
 

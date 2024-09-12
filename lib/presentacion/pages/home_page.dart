@@ -446,13 +446,19 @@ class _HomePageState extends State<HomePage> {
         }
         String tipoLlamada = "api/train";
         final parametros = parametrosProvider.mapaParametros();
-
+        int filas = int.parse(parametros['filas']);
+        bool impar = filas % 2 != 0;
+        if (impar) {
+          filas += 1;
+          parametros['filas'] = filas.toString();
+        }
         setState(() {
           cargandoEntrenamiento = true;
         });
         ResultadoEntrenamientoModel resultadoEntrenamiento =
             await datosProvider.entrenamiento(context, tipoLlamada, parametros,
                 jsonResult, jsonResultEtiquetas);
+
         setState(() {
           Navigator.pushNamed(
             context,
@@ -460,6 +466,10 @@ class _HomePageState extends State<HomePage> {
             arguments: resultadoEntrenamiento,
           );
           cargandoEntrenamiento = false;
+          if (impar) {
+            mostrarDialogTexto(context, 'Conversión',
+                'El numero de filas no puede ser impar. Se convirtio a $filas filas');
+          }
         });
       } catch (e) {
         mostrarDialogTexto(
