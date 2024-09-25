@@ -320,8 +320,7 @@ class GrillaHexagonos extends StatelessWidget {
                                     child: Text(
                                       '$stop',
                                       style: const TextStyle(
-                                              color:
-                                                  Color.fromARGB(255, 0, 0, 0)),
+                                          color: Color.fromARGB(255, 0, 0, 0)),
                                     ),
                                   ),
                               ],
@@ -414,20 +413,24 @@ class GrillaHexagonos extends StatelessWidget {
       return dialogBotonBMUS(context, bmu, valorDist);
     } else {
       final etiquetas = mapaBMUconEtiquetas![bmu]![selectedKey];
-      final List<Color> colores =
-          etiquetas!.map((etiqueta) => mapaColores![etiqueta]!).toList();
-      return HitDialog(
-        bmu: bmu,
-        etiquetas: etiquetas,
-        colores: colores,
-        tablaDatos: Table(
-          border: TableBorder.all(
-              color: Colors.black, style: BorderStyle.solid, width: 1),
-          children:
-              crearTablaDatos(nombreColumnas, (codebook[bmu - 1]), titulo),
-        ),
-        selectedKey: selectedKey!,
-      );
+      if (etiquetas!.length <= 20) {
+        final List<Color> colores =
+            etiquetas!.map((etiqueta) => mapaColores![etiqueta]!).toList();
+        return HitDialog(
+          bmu: bmu,
+          etiquetas: etiquetas,
+          colores: colores,
+          tablaDatos: Table(
+            border: TableBorder.all(
+                color: Colors.black, style: BorderStyle.solid, width: 1),
+            children:
+                crearTablaDatos(nombreColumnas, (codebook[bmu - 1]), titulo),
+          ),
+          selectedKey: selectedKey!,
+        );
+      } else {
+        return dialogBotonBMUS(context, bmu, valorDist);
+      }
     }
   }
 
@@ -483,17 +486,22 @@ class GrillaHexagonos extends StatelessWidget {
     if (mapaBMUconEtiquetas!.containsKey(bmu)) {
       final bmuInfo = mapaBMUconEtiquetas![bmu]!;
       final StringBuffer infoBuffer = StringBuffer();
+      final etiquetas = mapaBMUconEtiquetas![bmu]![selectedKey];
+      if (etiquetas!.length <= 20) {
+        bmuInfo.forEach((key, value) {
+          infoBuffer.write('$key: ');
+          infoBuffer.writeAll(value, ', ');
+          // Agregar un salto de línea solo si no es la última clave
+          if (key != bmuInfo.keys.last) {
+            infoBuffer.writeln();
+          }
+        });
 
-      bmuInfo.forEach((key, value) {
-        infoBuffer.write('$key: ');
-        infoBuffer.writeAll(value, ', ');
-        // Agregar un salto de línea solo si no es la última clave
-        if (key != bmuInfo.keys.last) {
-          infoBuffer.writeln();
-        }
-      });
-
-      return infoBuffer.toString();
+        return infoBuffer.toString();
+      } else {
+        // Si el BMU no existe en el mapa, retornar un string vacío
+        return 'La cantidad de etiquetas supera el límite.';
+      }
     } else {
       // Si el BMU no existe en el mapa, retornar un string vacío
       return '';
