@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 Color colorPrimaryRojo = const Color.fromARGB(255,233,81,81);
 Color colorSecondaryRojo = const Color.fromARGB(223, 223, 147, 147);
 
-Color colorPrimaryAzul = Color.fromARGB(255, 0, 151, 178);
-Color colorSecondaryAzul = Color.fromARGB(255,204,234,240);
+Color colorPrimaryAzul = const Color.fromARGB(255, 0, 151, 178);
+Color colorSecondaryAzul = const Color.fromARGB(255,204,234,240);
 
 Color colorPrimaryVerde = const Color.fromARGB(255,126,217,87);
 Color colorSecondaryVerde  = const Color.fromARGB(255, 163, 214, 141);

@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/dialogs/seleccionar_opciones_dialog.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/grilla_con_etiquetas.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/tabla_datos.dart';
-import 'package:TF_SOM_UNMdP/providers/datos_provider.dart';
 import 'package:TF_SOM_UNMdP/providers/nuevos_datos_provider.dart';
 import 'package:TF_SOM_UNMdP/utils/colores_hits.dart';
 import 'package:TF_SOM_UNMdP/utils/csv_to_data.dart';

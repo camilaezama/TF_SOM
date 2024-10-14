@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:TF_SOM_UNMdP/models/resultado_entrenamiento_model.dart';
 import 'package:TF_SOM_UNMdP/providers/config_provider.dart';
@@ -108,7 +107,7 @@ class DatosProvider extends ChangeNotifier {
     DateTime now = DateTime.now();
     final blob = html.Blob([bytes]);
     final urlAux = html.Url.createObjectUrlFromBlob(blob);
-    final anchor = html.AnchorElement(href: urlAux)
+    html.AnchorElement(href: urlAux)
       ..setAttribute("download", "train-$now.json")
       ..click();
     html.Url.revokeObjectUrl(urlAux);
@@ -119,7 +118,7 @@ class DatosProvider extends ChangeNotifier {
     DateTime now = DateTime.now();
     final blob = html.Blob([bytes]);
     final urlAux = html.Url.createObjectUrlFromBlob(blob);
-    final anchor = html.AnchorElement(href: urlAux)
+    html.AnchorElement(href: urlAux)
       ..setAttribute("download", "codebook-$now.json")
       ..click();
     html.Url.revokeObjectUrl(urlAux);
@@ -150,7 +149,7 @@ class DatosProvider extends ChangeNotifier {
     final url = html.Url.createObjectUrlFromBlob(blob);
 
     // Create an anchor element and set the href attribute to the Blob URL
-    final anchor = html.AnchorElement(href: url)
+    html.AnchorElement(href: url)
       ..setAttribute('download', fileName)
       ..click();
 

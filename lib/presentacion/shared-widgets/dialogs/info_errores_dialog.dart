@@ -1,7 +1,5 @@
 import 'package:TF_SOM_UNMdP/providers/datos_provider.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:image/image.dart';
 import 'package:provider/provider.dart';
 
 class InfoErroresDialog extends StatefulWidget {
@@ -72,7 +70,7 @@ class _InfoErroresDialogState extends State<InfoErroresDialog> {
                     label: const Text('Errores'),
                     icon: const Icon(Icons.download),
                   ),
-                  SizedBox(width: 20.0,),
+                  const SizedBox(width: 20.0,),
                   TextButton.icon(
                     onPressed: () {
                       datosProvider.descargarResultadoEntrenamiento();
@@ -80,7 +78,7 @@ class _InfoErroresDialogState extends State<InfoErroresDialog> {
                     label: const Text('Resultado entrenamiento'),
                     icon: const Icon(Icons.download),
                   ),
-                  SizedBox(width: 20.0,),
+                  const SizedBox(width: 20.0,),
                   TextButton.icon(
                     onPressed: () {
                       datosProvider.descargarCodebook();

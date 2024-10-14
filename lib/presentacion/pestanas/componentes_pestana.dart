@@ -63,7 +63,7 @@ class _ComponentesPestanaState extends State<ComponentesPestana>
         Row(
           children: [
             const Padding(
-              padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+              padding: EdgeInsets.only(left: 20.0, right: 20.0),
               child: Text("Cantidad de componentes por fila:"),
             ),
             DropdownButton<int>(
@@ -82,9 +82,9 @@ class _ComponentesPestanaState extends State<ComponentesPestana>
                 }
               },
             ),
-            SizedBox(width: 20),
+            const SizedBox(width: 20),
             IconButton(
-              icon: Icon(Icons.list),
+              icon: const Icon(Icons.list),
               onPressed: () {
                 showDialog(
                   context: context,
@@ -99,19 +99,19 @@ class _ComponentesPestanaState extends State<ComponentesPestana>
               },
               //onPressed: () => {_mostrarListaOpciones(context)},
             ),
-            SizedBox(width: 20),
+            const SizedBox(width: 20),
             IconButton(
               tooltip: "Mostrar gradiente",
               icon: _mostrarGradiente
-                  ? Icon(Icons.visibility)
-                  : Icon(Icons.visibility_off),
+                  ? const Icon(Icons.visibility)
+                  : const Icon(Icons.visibility_off),
               onPressed: () {
                 setState(() {
                   _mostrarGradiente = !_mostrarGradiente;
                 });
               },
             ),
-            SizedBox(width: 20),
+            const SizedBox(width: 20),
             ElevatedButton(onPressed: save, child: const Icon(Icons.download))
           ],
         ),
@@ -192,7 +192,7 @@ class _ComponentesPestanaState extends State<ComponentesPestana>
                         ),
                         //child: Text(opciones[index * 2]),
                       )
-                    : Text(""),
+                    : const Text(""),
                 // Expanded(child:
                 //     // child: Text((index * 2 + 1 < opciones.length)
                 //     //     ? opciones[index * 2 + 1]
@@ -282,8 +282,8 @@ class _ComponentesPestanaState extends State<ComponentesPestana>
 
       final blob = html.Blob([pngBytes]);
       final url = html.Url.createObjectUrlFromBlob(blob);
-      DateTime now = new DateTime.now();
-      final anchor = html.AnchorElement(href: url)
+      DateTime now = DateTime.now();
+      html.AnchorElement(href: url)
         ..setAttribute('download', "MapaComponentes-$now.png")
         ..click();
 

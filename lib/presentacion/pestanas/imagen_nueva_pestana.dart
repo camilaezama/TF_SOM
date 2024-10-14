@@ -6,7 +6,6 @@ import 'package:TF_SOM_UNMdP/config/tema.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/color_picker.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/dialogs/seleccionar_opciones_dialog.dart';
 import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/grilla_hexagonos.dart';
-import 'package:TF_SOM_UNMdP/presentacion/shared-widgets/tabla_datos.dart';
 import 'package:TF_SOM_UNMdP/providers/datos_provider.dart';
 import 'package:TF_SOM_UNMdP/providers/imagen_nueva_provider.dart';
 import 'package:TF_SOM_UNMdP/providers/parametros_provider.dart';
@@ -259,10 +258,9 @@ class _ImagenNuevaPestanaState extends State<ImagenNuevaPestana>
                       final valuesList = mapaDatoCluster.values.toList();
                       final valuesString = valuesList.join(' ');
                       final bytes = utf8.encode(valuesString);
-                      DateTime now = DateTime.now();
                       final blob = html.Blob([bytes]);
                       final urlAux = html.Url.createObjectUrlFromBlob(blob);
-                      final anchor = html.AnchorElement(href: urlAux)
+                      html.AnchorElement(href: urlAux)
                         ..setAttribute("download", "Clusters.txt")
                         ..click();
                       html.Url.revokeObjectUrl(urlAux);
@@ -828,7 +826,7 @@ Future<void> _downloadImage(ui.Image image) async {
   final blob = html.Blob([pngBytes], 'image/png');
   final url = html.Url.createObjectUrlFromBlob(blob);
   var now = DateTime.now();
-  final anchor = html.AnchorElement(href: url)
+  html.AnchorElement(href: url)
     ..setAttribute("download", "Imagen-$now.png")
     ..click();
   html.Url.revokeObjectUrl(url);

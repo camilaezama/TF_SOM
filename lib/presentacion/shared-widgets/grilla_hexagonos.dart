@@ -96,13 +96,13 @@ class GrillaHexagonos extends StatelessWidget {
       this.hitsPorMayoritario = false,
       this.mapaBmuColor,
       this.deshabilitarBotonesHexagonos = false});
-  late double _width, _height;
+  late double _width; //_height;
   final _widgetKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
     _width = MediaQuery.of(context).size.width;
-    _height = MediaQuery.of(context).size.height;
+    //_height = MediaQuery.of(context).size.height; no se usa
 
     return Column(
       children: [
@@ -415,7 +415,7 @@ class GrillaHexagonos extends StatelessWidget {
       final etiquetas = mapaBMUconEtiquetas![bmu]![selectedKey];
       if (etiquetas!.length <= 20) {
         final List<Color> colores =
-            etiquetas!.map((etiqueta) => mapaColores![etiqueta]!).toList();
+            etiquetas.map((etiqueta) => mapaColores![etiqueta]!).toList();
         return HitDialog(
           bmu: bmu,
           etiquetas: etiquetas,
@@ -519,7 +519,7 @@ class GrillaHexagonos extends StatelessWidget {
     final blob = html.Blob([pngBytes]);
     final url = html.Url.createObjectUrlFromBlob(blob);
     DateTime now = new DateTime.now();
-    final anchor = html.AnchorElement(href: url)
+    html.AnchorElement(href: url)
       ..setAttribute('download', "$titulo-$now.png")
       ..click();
 

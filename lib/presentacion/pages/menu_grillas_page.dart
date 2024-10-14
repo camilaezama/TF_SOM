@@ -93,7 +93,7 @@ class _GrillasPageState extends State<GrillasPage>
             child: Tooltip(
               message: 'Información',
               child: ElevatedButton(
-                child: Icon(Icons.info),
+                child: const Icon(Icons.info),
                 onPressed: () {
                   showDialog<void>(
                     context: context,
@@ -159,8 +159,8 @@ class _GrillasPageState extends State<GrillasPage>
                   ],
                 )),
             ListTile(
-              leading: Icon(Icons.grid_3x3_sharp),
-              title: Text('Mapa'),
+              leading: const Icon(Icons.grid_3x3_sharp),
+              title: const Text('Mapa'),
               onTap: () {
                 setState(() {
                   appBarTitle = 'Mapa';
@@ -170,8 +170,8 @@ class _GrillasPageState extends State<GrillasPage>
               },
             ),
             ListTile(
-              leading: Icon(Icons.grid_on),
-              title: Text('Umat+'),
+              leading: const Icon(Icons.grid_on),
+              title: const Text('Umat+'),
               onTap: () {
                 setState(() {
                   appBarTitle = 'Umat+';
@@ -181,8 +181,8 @@ class _GrillasPageState extends State<GrillasPage>
               },
             ),
             ListTile(
-              leading: Icon(Icons.dashboard),
-              title: Text('Componentes'),
+              leading: const Icon(Icons.dashboard),
+              title: const Text('Componentes'),
               onTap: () {
                 setState(() {
                   appBarTitle = 'Componentes';
@@ -192,8 +192,8 @@ class _GrillasPageState extends State<GrillasPage>
               },
             ),
             ListTile(
-              leading: Icon(Icons.insert_chart),
-              title: Text('Hits'),
+              leading: const Icon(Icons.insert_chart),
+              title: const Text('Hits'),
               onTap: () {
                 setState(() {
                   appBarTitle = 'Hits';
@@ -203,8 +203,8 @@ class _GrillasPageState extends State<GrillasPage>
               },
             ),
             ListTile(
-              leading: Icon(Icons.group_work),
-              title: Text('Clustering'),
+              leading: const Icon(Icons.group_work),
+              title: const Text('Clustering'),
               onTap: () {
                 setState(() {
                   appBarTitle = 'Clustering';
@@ -214,8 +214,8 @@ class _GrillasPageState extends State<GrillasPage>
               },
             ),
             ListTile(
-              leading: Icon(Icons.add),
-              title: Text('Nuevo dato'),
+              leading: const Icon(Icons.add),
+              title: const Text('Nuevo dato'),
               onTap: () {
                 setState(() {
                   appBarTitle = 'Nuevo dato';
@@ -225,8 +225,8 @@ class _GrillasPageState extends State<GrillasPage>
               },
             ),
             ListTile(
-              leading: Icon(Icons.image),
-              title: Text('Imagen Datos Train'),
+              leading: const Icon(Icons.image),
+              title: const Text('Imagen Datos Train'),
               onTap: () {
                 setState(() {
                   appBarTitle = 'Imagen Datos Train';
@@ -236,8 +236,8 @@ class _GrillasPageState extends State<GrillasPage>
               },
             ),
             ListTile(
-              leading: Icon(Icons.image_search),
-              title: Text('Imagen Nueva'),
+              leading: const Icon(Icons.image_search),
+              title: const Text('Imagen Nueva'),
               onTap: () {
                 setState(() {
                   appBarTitle = 'Imagen Nueva';

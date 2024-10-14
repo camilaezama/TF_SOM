@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 class BmuPestana extends StatelessWidget {
   final Gradient gradiente;
 
-  BmuPestana({super.key, required this.gradiente});
+  const BmuPestana({super.key, required this.gradiente});
 
   @override
   Widget build(BuildContext context) {

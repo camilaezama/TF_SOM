@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_import
+
 import 'dart:ui';
 import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
@@ -100,7 +102,7 @@ Color getClusterColor(int col, int row, List<List<int>>? clusters) {
     return colores[nroClusters];
   }
 
-  return Color.fromARGB(0, 0, 0, 0);
+  return const Color.fromARGB(0, 0, 0, 0);
 }
 
 Color getColorYaNorm(
